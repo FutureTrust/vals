@@ -1,11 +1,126 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.futuretrust.rub</groupId>
-    <artifactId>SSOValidationService</artifactId>
+    <groupId>org.rub.nds.futuretrust</groupId>
+    <artifactId>sso_validationservice</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+    
+    <developers>
+        <developer>
+            <id>jsomorovsky</id>
+            <name>Juraj Somorovsky</name>
+            <email>Juraj.Somorovsky@rub.de</email>
+            <url>http://www.nds.rub.de/</url>
+            <organization>NDS</organization>
+            <organizationUrl>http://www.nds.rub.de</organizationUrl>
+            <roles>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>vmladenov</id>
+            <name>Vladislav Mladenov</name>
+            <email>Vladislav.Mladenov@rub.de</email>
+            <url>http://www.nds.rub.de/</url>
+            <organization>NDS</organization>
+            <organizationUrl>http://www.nds.rub.de</organizationUrl>
+            <roles>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>olemke</id>
+            <name>Ole Lemke</name>
+            <email>Ole.Lemke@rub.de</email>
+            <url>http://www.nds.rub.de/</url>
+            <organization>NDS</organization>
+            <organizationUrl>http://www.nds.rub.de</organizationUrl>
+            <roles>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+    
+    <modules>
+        <module>saml_vs</module>
+        <module>oidc_vs</module>
+        <module>oauth_vs</module>
+        <module>config</module>
+        <module>controller</module>
+        <module>utils</module>
+    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    
+    <build>
+        <directory>${project.basedir}/target</directory>
+        <outputDirectory>${project.build.directory}/classes</outputDirectory>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
+        <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+        <scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/src/test/resources</directory>
+            </testResource>
+        </testResources>
+    </build>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>LATEST</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>LATEST</version>
+        </dependency>
+    </dependencies>
+    
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>LATEST</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>LATEST</version>
+                <configuration>
+                    <configLocation>${main.basedir}/checkstyle.xml</configLocation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>LATEST</version>
+                <configuration>
+                    <linkXref>true</linkXref>
+                    <sourceEncoding>utf-8</sourceEncoding>
+                    <minimumTokens>100</minimumTokens>
+                    <targetJdk>1.7</targetJdk>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataBase 
+    xmlns="http://www.api.sso.cvs.futuretrust.nds.rub.org" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://www.api.sso.cvs.futuretrust.nds.rub.org futureTrustInterface.xsd">
+    <registeredEntity>
+        <authentication>
+            <client_id>11111</client_id>
+            <client_secret>secret</client_secret>
+            <client_cert>xxxx</client_cert>
+        </authentication>
+        <authentication>
+            <client_id>sp_admin</client_id>
+            <client_secret>secret2</client_secret>
+        </authentication>
+        <verificationProfile ID="1">
+            <samlTokenVerificationChecks>
+                <verifySchema>true</verifySchema>
+                <verifyXSW>true</verifyXSW>
+                <verifySAMLResponseID>true</verifySAMLResponseID>
+                <verifiySAMLAssertionID>true</verifiySAMLAssertionID>
+                <verifiySAMLAssertionSignatureTrusted>true</verifiySAMLAssertionSignatureTrusted>
+                <verifySAMLAssertionSbjConfirmationTimestamps>true</verifySAMLAssertionSbjConfirmationTimestamps>
+                <verifiySAMLAssertionSbjConfirmationDestination>true</verifiySAMLAssertionSbjConfirmationDestination>
+            </samlTokenVerificationChecks>
+            <log>
+                <logLevel>info</logLevel>
+            </log>
+        </verificationProfile>
+        <verificationProfile ID="2">
+            <samlTokenVerificationChecks>
+                <verifySchema>true</verifySchema>
+                <verifySAMLResponseID>true</verifySAMLResponseID>
+                <verifiySAMLAssertionID>true</verifiySAMLAssertionID>
+                <verifiySAMLAssertionSignature>true</verifiySAMLAssertionSignature>
+                <verifiySAMLAssertionSbjConfirmationDestination>true</verifiySAMLAssertionSbjConfirmationDestination>
+                <verifySAMLAssertionConditionsTimestamps>true</verifySAMLAssertionConditionsTimestamps> 
+            </samlTokenVerificationChecks>
+            <samlTokenVerificationParameters>
+                <x509certificate>xxxx</x509certificate>
+                <destination>http://sp.com/saml</destination>
+                <saml_metadata_url>/src/main/resources/samlSPMetadata.xml</saml_metadata_url>
+            </samlTokenVerificationParameters>
+            <log>
+                <logLevel>info</logLevel>
+            </log>
+        </verificationProfile>
+    </registeredEntity>
+</DataBase>
