@@ -57,6 +57,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     
+    
     <build>
         <directory>${project.basedir}/target</directory>
         <outputDirectory>${project.build.directory}/classes</outputDirectory>
@@ -76,6 +77,17 @@
             </testResource>
         </testResources>
     </build>
+    
+    <repositories>
+        <repository>
+            <id>Single Sign-On Libraries</id>
+            <url>https://github.com/RUB-NDS/Single-Sign-On-Libraries</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
     
     <dependencies>
         <dependency>
