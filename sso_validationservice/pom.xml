@@ -77,6 +77,18 @@
         </testResources>
     </build>
     
+    
+    <repositories>
+        <repository>
+            <id>Single Sign-On Libraries</id>
+            <url>https://github.com/RUB-NDS/Single-Sign-On-Libraries</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+    
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
