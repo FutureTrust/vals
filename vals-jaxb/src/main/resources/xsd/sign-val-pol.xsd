@@ -1,0 +1,857 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xades="http://uri.etsi.org/01903/v1.3.2#"
+           vc:minVersion="1.1" xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
+           targetNamespace="http://www.arhs-group.com/spikeseed"
+           xmlns="http://www.arhs-group.com/spikeseed"
+           elementFormDefault="qualified">
+  <xs:import namespace="http://uri.etsi.org/01903/v1.3.2#"
+             schemaLocation="XAdESv132.xsd"/>
+  <xs:element name="SignaturePolicy" type="SignaturePolicyType"/>
+  <xs:complexType name="SignaturePolicyType">
+    <xs:sequence>
+      <xs:element name="SignaturePolicyDigest" type="xs:base64Binary" minOccurs="0"/> <!-- this is pointless -->
+      <xs:element ref="SignaturePolicyInfo" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="SignaturePolicyInfo" type="SignaturePolicyInfoType"/>
+  <!-- one or more elements of this type -->
+  <!-- there can be multiple policies merged into a single policy file -->
+  <xs:complexType name="SignaturePolicyInfoType">
+    <xs:sequence>
+      <xs:element name="SignaturePolicyId" type="SignaturePolicyIdType"/>
+      <xs:element name="SignaturePolicyImplied" type="xs:string" minOccurs="0"/>
+      <xs:element name="DigestAlgorithm" type="xs:string"/>
+      <xs:element name="DateOfIssue" type="xs:dateTime"/>
+      <xs:element name="PolicyIssuerName" type="xs:string"/>
+      <xs:element name="FieldOfApplication" type="xs:string"/>
+      <xs:element ref="SignatureValidationPolicy"/>
+      <xs:element name="SigPolicyExtensions" type="SignPolicyExtensionsType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SignaturePolicyIdType -->
+  <xs:complexType name="SignaturePolicyIdType">
+    <xs:sequence>
+      <xs:element name="SignPolicyId" type="xs:anyURI"/> <!-- TODO: check if anyURI is better -->
+      <xs:element name="SignPolicyName" type="xs:string"/>
+      <xs:element name="SignPolicyVersion" type="xs:string"/>
+      <xs:element name="SignPolicyAuthority" type="SignPolicyAuthorityType"/>
+      <xs:element name="SignPolicyQualifiers" type="SignPolicyQualifiersType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignPolicyAuthorityType">
+    <xs:sequence>
+      <xs:element name="SignPolicyAuthorityId" type="xs:ID"/>
+      <xs:element name="SignPolicyAuthorityName" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="SignPolicyQualifiersType">
+    <xs:sequence>
+      <xs:element name="SignPolicyQualifierInfo" type="SignQualifierInfoType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignQualifierInfoType">
+    <xs:sequence>
+      <xs:element name="SignQualifierInfoId" type="xs:ID"/>
+      <xs:element name="SignQualifier" type="SignQualifierType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignQualifierType">
+    <xs:sequence>
+      <xs:element name="SignQualifierId" type="xs:ID"/>
+      <xs:element name="SignPolicyUserNotice" type="SignPolicyUserNoticeType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignPolicyUserNoticeType">
+    <xs:sequence>
+      <xs:element name="UserNoticeRef" type="UserNoticeRefType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="UserNoticeRefType">
+    <xs:sequence>
+      <xs:element name="Organization" type="xs:string"/>
+      <xs:element name="NoticeNumbers" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <!-- SignaturePolicyIdType -->
+
+  <xs:element name="SignatureValidationPolicy" type="SignatureValidationPolicyType"/>
+  <!-- SignatureValidationPolicyType -->
+  <!-- temporarily marked most of the elements as optional for implementation purposes -->
+  <xs:complexType name="SignatureValidationPolicyType">
+    <xs:sequence>
+      <xs:element name="SigningPeriod" type="SigningPeriodType"/>
+      <xs:element ref="CommonRules" minOccurs="0"/>
+      <xs:element name="CommitmentRules" type="CommitmentRulesType" minOccurs="0"/>
+      <xs:element name="WorkflowSequencingAndTiming" type="WorkflowSequencingAndTimingType" minOccurs="0"/>
+      <xs:element name="DataToBeSigned" type="DataToBeSignedType" minOccurs="0"/>
+      <xs:element name="TargetedCommunity" type="TargetedCommunityType" minOccurs="0"/>
+      <xs:element name="ValidationAndAugmentation" type="ValidationAndAugmentationType" minOccurs="0"/>
+      <xs:element name="CertificateMetadata" type="CertificateMetadataType" minOccurs="0"/>
+      <xs:element name="CommitmentTypesRequired" type="CommitmentTypesRequiredType" minOccurs="0"/>
+      <xs:element name="LoAOnTimingEvidences" type="LoAOnTimingEvidencesType" minOccurs="0"/>
+      <xs:element name="FormalititesOnSigning" type="FormalitiesOnSigningType" minOccurs="0"/>
+      <xs:element name="LoAOnLongevityAndResilience" type="xs:string" minOccurs="0"/>
+      <!-- Not a lot of info in TS 119 172 -->
+      <xs:element name="ArchivalConstraints" type="xs:string" minOccurs="0"/>
+      <xs:element name="IdentityAndRoleAttributesSigner" type="IdentityAndRoleAttributesSignerType" minOccurs="0"/>
+      <xs:element name="LoASignerAuthentication" type="LoASignerAuthenticationType" minOccurs="0"/>
+      <xs:element name="SignatureCreationDevices" type="SignatureCreationDevicesType" minOccurs="0"/>
+      <xs:element name="CryptographicSuites" type="CryptographicSuitesType" minOccurs="0"/>
+      <xs:element name="TechnologicalEnvironment" type="TechnologicalEnvironmentType" minOccurs="0"/>
+      <xs:element name="OtherInfoAssociateWithSignatures"
+                  type="OtherInfoAssociateWithSignaturesType" minOccurs="0"/>
+      <xs:element name="SignPolicyExtensions" type="SignPolicyExtensionsType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SigningPeriodType">
+    <xs:sequence>
+      <xs:element name="NotBefore" type="xs:dateTime"/>
+      <xs:element name="NotAfter" type="xs:dateTime"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="CommonRules" type="CommonRulesType"/>
+  <!-- SignatureValidationPolicy.CommonRules and  SignatureValidationPolicy.CommitmentRules -->
+  <xs:complexType name="CommonRulesType">
+    <xs:sequence>
+      <xs:element ref="SignerAndVerifierRules"/>
+      <xs:element name="SigningCertTrustCondition" type="SigningCertTrustConditionType"/>
+      <xs:element name="TimeStampTrustCondition" type="TimeStampTrustConditionType" minOccurs="0"/>
+      <!-- Role could be AttributeTrustCondition -->
+      <xs:element name="RoleTrustCondition" type="RoleTrustConditionType" minOccurs="0"/>
+      <xs:element name="AlgorithmConstraintSet" type="AlgorithmConstraintSetType" minOccurs="0"/>
+      <xs:element name="SignPolicyExtensions" type="SignPolicyExtensionsType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CommitmentRulesType">
+    <xs:sequence>
+      <xs:element name="SelCommitmentTypes" type="SelCommitmentTypesType"/>
+      <xs:element name="SignerAndVerifierRules" type="SignerAndVerifierRulesType"/>
+      <xs:element name="SigningCertTrustCondition" type="SigningCertTrustConditionType"/>
+      <xs:element name="TimeStampTrustCondition" type="TimeStampTrustConditionType"/>
+      <!-- Role could be AttributeTrustCondition -->
+      <xs:element name="RoleTrustCondition" type="RoleTrustConditionType"/>
+      <xs:element name="AlgorithmConstraintSet" type="AlgorithmConstraintSetType"/>
+      <xs:element name="SignPolicyExtensions" type="SignPolicyExtensionsType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SelCommitmentTypesType">
+    <xs:sequence>
+      <xs:element name="Empty" type="xs:string"/>
+      <xs:element name="RecognizedCommitmentType" type="RecognizedCommitmentTypeElem"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RecognizedCommitmentTypeElem">
+    <xs:sequence>
+      <xs:element name="CommitmentId" type="xades:ObjectIdentifierType"/>
+      <xs:element name="FieldOfApplication" type="xs:string"/>
+      <xs:element name="Semantics" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="SignerAndVerifierRules" type="SignerAndVerifierRulesType"/>
+
+  <xs:complexType name="SignerAndVerifierRulesType">
+    <xs:sequence>
+      <xs:element ref="SignerRules"/>
+      <xs:element name="VerifierRules" type="VerifierRulesType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="SignerRules" type="SignerRulesType"/>
+
+  <xs:complexType name="SignerRulesType">
+    <xs:sequence>
+      <xs:element name="ExternalSignedObjects" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="MandatedSignedQProperties" type="MandatedQPropertiesType"/>
+      <!-- MandatedUnsignedQProperties should be optional -->
+      <xs:element name="MandatedUnsignedQProperties" type="MandatedQPropertiesType"/>
+      <xs:element name="MandatedCertificateRef" type="CertificateReqType"/>
+      <xs:element name="MandatedCertificateInfo" type="CertificateReqType"/>
+      <xs:element name="SignPolicyExtensions" type="SignPolicyExtensionsType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VerifierRulesType">
+    <xs:sequence>
+      <xs:element name="MandatedUnsignedQProperties" type="MandatedQPropertiesType"/>
+      <xs:element name="SignPolicyExtensions" type="SignPolicyExtensionsType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="MandatedQPropertiesType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="QPropertyID" type="xs:anyURI"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="CertificateReqType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="signerOnly"/>
+      <xs:enumeration value="fullPath"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="SignPolicyExtensionsType">
+    <xs:sequence>
+      <xs:element name="ExtenId" type="xs:ID"/>
+      <xs:element name="ExtenValue" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SigningCertTrustConditionType">
+    <xs:sequence>
+      <xs:element name="SignerTrustTrees" type="CertificateTrustTreesType"/>
+      <xs:element name="SignerRevReq" type="SignerRevReqType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CertificateTrustTreesType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="CertificateTrustPoint" type="CertificateTrustPointType" minOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CertificateTrustPointType">
+    <xs:sequence>
+      <xs:element name="TrustPoint" type="xs:base64Binary"/>
+      <xs:element name="PathLenConstraint" type="xs:integer" minOccurs="0"/>
+      <xs:element name="AcceptablePolicySet" type="AcceptablePolicySetType" minOccurs="0"/>
+      <xs:element name="NameConstraints" type="NameConstraintsType" minOccurs="0"/>
+      <xs:element name="PolicyConstraints" type="PolicyConstraintsType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="AcceptablePolicySetType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="AcceptablePolicy" type="xades:ObjectIdentifierType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- as defined in RFC 5280 -->
+  <xs:complexType name="NameConstraintsType">
+    <xs:sequence>
+      <xs:element name="PermittedSubtrees" type="GeneralSubTreeListType" minOccurs="0"/>
+      <xs:element name="ExcludedSubtrees" type="GeneralSubTreeListType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GeneralSubTreeListType">
+    <xs:sequence>
+      <xs:element name="GeneralSubTree" type="GeneralSubTreeType" maxOccurs="10"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GeneralSubTreeType">
+    <xs:sequence>
+      <xs:element name="Base" type="xs:string"/>
+      <xs:element name="Minimum" type="xs:integer" default="0"/>
+      <xs:element name="Maximum" type="xs:integer" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PolicyConstraintsType">
+    <xs:sequence>
+      <xs:element name="RequireExplicityPolicy" type="xs:integer"/>
+      <xs:element name="InhibitExplicityPolicy" type="xs:integer"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignerRevReqType">
+    <xs:sequence>
+      <xs:element name="EndCertRevReq" type="CertRevReqType"/>
+      <xs:element name="CACerts" type="CertRevReqType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CertRevReqType">
+    <xs:sequence>
+      <xs:element name="EnuRevReq" type="EnuRevReqType"/>
+      <xs:element name="ExRevReq" type="SignPolicyExtensionsType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="EnuRevReqType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="crlCheck"/>
+      <xs:enumeration value="ocspCheck"/>
+      <xs:enumeration value="bothCheck"/>
+      <xs:enumeration value="eitherCheck"/>
+      <xs:enumeration value="noCheck"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="TimeStampTrustConditionType">
+    <xs:sequence>
+      <xs:element name="TtsCertificateTrustTrees" type="CertificateTrustTreesType"/>
+      <xs:element name="TtsRevReq" type="CertRevReqType"/>
+      <xs:element name="TtsNameConstraints" type="NameConstraintsType"/>
+      <xs:element name="CautionPeriod" type="DeltaTimeType"/>
+      <xs:element name="SignatureTimeStampDelay" type="DeltaTimeType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DeltaTimeType">
+    <xs:sequence>
+      <xs:element name="DeltaSeconds" type="xs:integer"/>
+      <xs:element name="DeltaMinutes" type="xs:integer"/>
+      <xs:element name="DeltaHours" type="xs:integer"/>
+      <xs:element name="DeltaDays" type="xs:integer"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RoleTrustConditionType">
+    <xs:sequence>
+      <xs:element name="RoleMandated" type="xs:boolean"/>
+      <xs:element name="HowCertRole" type="HowCertRoleType" minOccurs="0"/>
+      <xs:element name="RoleCertTrustTrees" type="CertificateTrustTreesType" minOccurs="0"/>
+      <xs:element name="RoleRevReq" type="CertRevReqType" minOccurs="0"/>
+      <xs:element name="RoleConstraints" type="RoleConstraintsType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="HowCertRoleType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ClaimedRole"/>
+      <xs:enumeration value="CertifiedRole"/>
+      <xs:enumeration value="Either"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="RoleConstraintsType">
+    <xs:sequence>
+      <xs:element name="RoleTypeConstraint" type="xs:ID" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="RoleValueConstraint" type="xs:anyType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AlgorithmConstraintSetType">
+    <xs:sequence>
+      <xs:element name="SignerAlgConstraints" type="AlgConstraintsListType" minOccurs="0"/>
+      <xs:element name="EeCertAlgConstraints" type="AlgConstraintsListType" minOccurs="0"/>
+      <xs:element name="CACertAlgConstraints" type="AlgConstraintsListType" minOccurs="0"/>
+      <xs:element name="AaCertAlgConstraints" type="AlgConstraintsListType" minOccurs="0"/>
+      <xs:element name="TSACertAlgConstraints" type="AlgConstraintsListType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AlgConstraintsListType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="AlgAndLength" type="AlgAndLengthType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AlgAndLengthType">
+    <xs:sequence>
+      <xs:element name="AlgId" type="xs:ID"/>
+      <xs:element name="MinKeyLength" type="xs:integer" minOccurs="0"/>
+      <xs:element name="Other" type="SignPolicyExtensionsType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicy.CommonRules and  SignatureValidationPolicy.CommitmentRules -->
+
+  <!-- SignatureValidationPolicy.WorkflowSequencingAndTiming -->
+  <xs:complexType name="WorkflowSequencingAndTimingType">
+    <xs:sequence>
+      <xs:element name="OrderInSequence" type="OrderInSequenceType"/>
+      <xs:element name="SequencingNature" type="SequencingNatureType"/>
+      <xs:element name="TimingRelevance" type="TimingRelevanceType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="OrderInSequenceType">
+    <xs:sequence>
+      <xs:element name="Position" type="xs:integer"/>
+      <xs:element name="Total" type="xs:integer"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="SequencingNatureType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="mandated-independent"/>
+      <xs:enumeration value="mandated-serial"/>
+      <xs:enumeration value="mandatedUnsignedQProperties-counter-signature"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="TimingRelevanceType">
+    <xs:sequence>
+      <xs:element name="TimingRelevanceOnSequencing" type="TimingRelevanceOnSequencingType"/>
+      <xs:element name="TimeRelevanceOnEvidence" type="TimeRelevanceOnEvidenceType"/>
+      <xs:element name="MassSigningAcceptable" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TimingRelevanceOnSequencingType">
+    <xs:sequence>
+      <xs:element name="SigningSequence" type="SigningPeriodType"/>
+      <xs:element name="SigningSequenceExact" type="xs:dateTime"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:annotation>
+    <xs:appinfo>TimeRelevanceOnEvidence</xs:appinfo>
+    <xs:documentation>
+      Indicates the required timing evidence under the form of signed or
+      unsigned qualifying properties that are mandated to be present in the signature.
+    </xs:documentation>
+  </xs:annotation>
+  <xs:complexType name="TimeRelevanceOnEvidenceType">
+    <xs:sequence>
+      <xs:element name="MSQP-signing-time" type="xs:boolean"/>
+      <xs:element name="MSQP-content-time-stamp" type="xs:boolean"/>
+      <xs:element name="MUQP-signature-time-stamp" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicy.WorkflowSequencingAndTiming -->
+
+  <!-- SignatureValidationPolicy.DataToBeSigned -->
+
+  <xs:complexType name="DataToBeSignedType">
+    <xs:sequence>
+      <xs:element name="ContentRelatedConstraints" type="ContentRelatedConstraintsType"/>
+      <xs:element name="DTBSContentToSign" type="DTBSContentToSignType"/>
+      <xs:element name="Signature" type="SignatureType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:annotation>
+    <xs:appinfo>ContentRelatedConstraints</xs:appinfo>
+    <xs:documentation>
+      Indicate the required content related information
+      elements under the form of signed or unsigned qualifying properties that are
+      mandated to be present in the signature.
+    </xs:documentation>
+  </xs:annotation>
+  <xs:complexType name="ContentRelatedConstraintsType">
+    <xs:sequence>
+      <xs:element name="MSQPs-DataObjectFormat" type="xs:boolean"/>
+      <xs:element name="MSQPs-content-hints" type="xs:boolean"/>
+      <xs:element name="MSQPs-content-reference" type="xs:boolean"/>
+      <xs:element name="MSQPs-content-identifier" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="DTBSContentToSignType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="whole"/>
+      <xs:enumeration value="parts"/>
+      <!-- TS 119 172: no details provided on how to express which parts to sign -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="SignatureType">
+    <xs:sequence>
+      <xs:element name="BulkSigning" type="BulkSigningType"/>
+      <xs:element name="AmountOfDataToBeSigned" type="MinMaxType"/>
+      <xs:element name="RelativePosition" type="RelativePositionType"/>
+      <xs:element name="MandatedSignatureFormat" type="MandatedSignatureFormatType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="BulkSigningType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="mandatedBulkSigning"/>
+      <xs:enumeration value="prohibitedBuldSigning"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:complexType name="MinMaxType">
+    <xs:sequence>
+      <xs:element name="MinValue" type="xs:integer"/>
+      <xs:element name="MaxValue" type="xs:integer"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="RelativePositionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="associated"/>
+      <xs:enumeration value="enveloped"/>
+      <xs:enumeration value="enveloping"/>
+      <xs:enumeration value="detached"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="MandatedSignatureFormatType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="RelationBetSignedDataAndSignature"
+                  type="RelationBetSignedDataAndSignatureType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RelationBetSignedDataAndSignatureType">
+    <xs:sequence>
+      <xs:element name="SignatureId" type="xs:ID"/>
+      <xs:element name="SignedDataReferencingMechanisms" type="xs:boolean"/>
+      <xs:element name="DTBSCovered" type="xs:string"/>
+      <xs:element name="RelativePositionDataAndSignature"
+                  type="RelativePositionDataAndSignatureType"/>
+      <xs:element name="SignatureFormat" type="SignatureFormatType"/>
+      <xs:element name="SignatureLevel" type="SignatureLevelType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="RelativePositionDataAndSignatureType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="asicContainer"/>
+      <xs:enumeration value="enveloped"/>
+      <xs:enumeration value="enveloping"/>
+      <xs:enumeration value="detached"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SignatureFormatType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ASiC"/>
+      <xs:enumeration value="CAdES"/>
+      <xs:enumeration value="PAdES"/>
+      <xs:enumeration value="XAdES"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SignatureLevelType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="BASELINE_B"/>
+      <xs:enumeration value="BASELINE_T"/>
+      <xs:enumeration value="BASELINE_LT"/>
+      <xs:enumeration value="BASELINE_LTA"/>
+      <xs:enumeration value="101733_A"/>
+      <xs:enumeration value="101733_C"/>
+      <xs:enumeration value="101733_X"/>
+      <xs:enumeration value="A"/>
+      <xs:enumeration value="C"/>
+      <xs:enumeration value="X"/>
+      <xs:enumeration value="XL"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- SignatureValidationPolicy.DataToBeSigned -->
+
+  <!-- SignatureValidationPolicy.TargetedCommunity -->
+  <!-- the content in TS 119 172 is too vague, added a basic signature-document binding entry -->
+  <xs:complexType name="TargetedCommunityType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="SignatureEntry" type="SignatureEntryType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignatureEntryType">
+    <xs:sequence>
+      <xs:element name="DocumentId" type="xs:ID"/>
+      <xs:element name="SignaureId" type="xs:ID"/>
+      <xs:element name="AddressedCommunity" type="xs:string"/>
+      <xs:element name="SpecificCommunityRules" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicy.TargetedCommunity -->
+
+  <!-- SignatureValidationPolicy.ValidationAndAugmentation -->
+
+  <xs:complexType name="ValidationAndAugmentationType">
+    <xs:sequence>
+      <xs:element name="ValidationRequiredBeforeAugmenting" type="xs:boolean"/>
+      <xs:element name="AugmentToLevel" type="SignatureLevelType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicy.ValidationAndAugmentation -->
+
+  <!-- SignatureValidationPolicy.CertificateMetadata -->
+
+  <xs:complexType name="CertificateMetadataType">
+    <xs:sequence>
+      <xs:element name="LegalPersonSignerRequired" type="xs:boolean"/>
+      <xs:element name="LegalPersonSignerAllowed" type="xs:boolean"/>
+      <xs:element name="EUQualifiedCertificateRequired" type="xs:boolean"/>
+      <xs:element name="EUQualifiedCertificateSigRequired" type="xs:boolean"/>
+      <xs:element name="EUQualifiedCertificateSealRequired" type="xs:boolean"/>
+      <!-- private key must reside in a secure signature creation device -->
+      <xs:element name="EUSSCDRequired" type="xs:boolean"/>
+      <xs:element name="EUAdESigRequired" type="xs:boolean"/>
+      <!-- private key must reside in a qualified signature creation device (ANNEX II-EUNo910/2014) -->
+      <xs:element name="EUQSigCDRequired" type="xs:boolean"/>
+      <xs:element name="EUQSealCDRequired" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicy.CertificateMetadata -->
+
+  <!-- SignatureValidationPolicy.CommitmentTypesRequired -->
+
+  <xs:complexType name="CommitmentTypesRequiredType">
+    <xs:sequence>
+      <xs:element name="MSQP-commitment-type-indication" type="xs:boolean"/>
+      <xs:element name="MCommitmentTypeValues" type="MCommitmentTypeValuesType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="MCommitmentTypeValuesType">
+    <xs:sequence>
+      <xs:element name="MatchingValuesIndicator" type="MatchingValuesIndicatorType"/>
+      <xs:element name="CommitmentTypeValues" type="CommitmentTypeValuesType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="MatchingValuesIndicatorType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="all"/>
+      <xs:enumeration value="atLeastOne"/>
+      <xs:enumeration value="none"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="CommitmentTypeValuesType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="CommitmentType" type="CommitmentTypeInstance"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CommitmentTypeInstance">
+    <xs:sequence>
+      <xs:element name="CommitmentId" type="xs:ID"/>
+      <xs:element name="MultilingualDescription" type="MultilingualDescriptionType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="MultilingualDescriptionType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="Description" type="DescriptionType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DescriptionType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="lang" type="xs:string" default="EN"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicy.CommitmentTypesRequired-->
+
+  <!-- SignatureValidationPolicy.LoAOnTimingEvidences-->
+
+  <xs:complexType name="LoAOnTimingEvidencesType">
+    <xs:sequence>
+      <xs:element name="OnSigningTime" type="LoAType"/>
+      <xs:element name="OnContentTimeStamp" type="LoAType"/>
+      <xs:element name="OnSignatureTimeStamp" type="LoAType"/>
+      <xs:element name="OnArchivalTimeStamp" type="LoAType"/>
+      <xs:element name="OnTimeInOCSPResponse" type="LoAType"/>
+      <xs:element name="OnTimeInCRL" type="LoAType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- There should be a table of standard LoAs for each element -->
+  <xs:simpleType name="LoAType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LoA-0"/>
+      <xs:enumeration value="LoA-1"/>
+      <xs:enumeration value="LoA-N"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- SignatureValidationPolicy.LoAOnTimingEvidences-->
+
+  <!-- SignatureValidationPolicy.FormalitiesOnSigning-->
+
+  <xs:complexType name="FormalitiesOnSigningType">
+    <xs:sequence>
+      <xs:element name="WYSIWYSRequired" type="xs:boolean"/>
+      <xs:element name="WYSIWHBSRequired" type="xs:boolean"/>
+      <xs:element name="ProperAdviceAndInformationRequired" type="xs:boolean"/>
+      <xs:element name="UserInterfaceDesignConstraints" type="xs:boolean"/>
+      <xs:element name="CorrectValidationAndArchivalProcedures"
+                  type="CorrectValidationAndArchivalProceduresType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CorrectValidationAndArchivalProceduresType">
+    <xs:sequence>
+      <xs:element name="Required" type="xs:boolean"/>
+      <xs:element name="Description" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicy.FormalitiesOnSigning-->
+
+  <xs:complexType name="LoAOnLongevityAndResilienceType"/>
+  <xs:complexType name="ArchivalConstraintsType"/>
+
+  <!-- SignatureValidationPolicy.IdentityAndRoleAttributesSigner -->
+
+  <xs:complexType name="IdentityAndRoleAttributesSignerType">
+    <xs:sequence>
+      <xs:element name="MSQP-signer-attributes" type="MSQP-signer-attributesType"/>
+      <xs:element name="NameConstraints" type="NameConstraintsType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="MSQP-signer-attributesType">
+    <xs:sequence>
+      <xs:element name="Required" type="xs:boolean"/>
+      <xs:element name="RequiredAttributes" type="RequiredAttributesType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RequiredAttributesType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="Attribute" type="AttributeType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AttributeType">
+    <xs:sequence>
+      <xs:element name="Id" type="xs:ID"/>
+      <!-- more info on these constraints in TS 119 172 -->
+      <xs:element name="Constraints" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicy.IdentityAndRoleAttributesSigner -->
+
+  <!-- SignatureValidationPolicy.LoASignerAuthentication -->
+
+  <xs:complexType name="LoASignerAuthenticationType">
+    <xs:sequence>
+      <xs:element name="X509CertificateValidationConstraints"
+                  type="X509CertificateValidationConstraintsType"/>
+      <xs:element name="RevocationConstraints" type="RevocationConstraintsType"/>
+      <!-- TS 119 172 "LoA on the practices implemented by the TSP(s) having issued
+        the certificates to be validated during the certificate
+        path validation process" -->
+      <xs:element name="LoAOnTSPPractices" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="X509CertificateValidationConstraintsType">
+    <xs:sequence>
+      <xs:element name="SetOfTrustAnchors" type="SetOfTrustAnchorsType"/>
+      <xs:element name="CertificationPath" type="CertificationPathType"/>
+      <xs:element name="UserInitialPolicySet" type="xs:string"/>
+      <xs:element name="InitialPolicyMappingInhibit" type="xs:boolean"/>
+      <xs:element name="InitialExplicitPolicy" type="xs:boolean"/>
+      <xs:element name="InitialAnyPolicyInhibit" type="xs:boolean"/>
+      <xs:element name="InitialPermittedSubtrees" type="InitialPermittedSubtreesType"/>
+      <xs:element name="InitialExcludedSubtrees" type="InitialExcludedSubtreesType"/>
+      <xs:element name="PathLengthConstraints" type="xs:integer"/>
+      <xs:element name="PolicyConstraints" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SetOfTrustAnchorsType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="TrustAnchor" type="TrustAnchorType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TrustAnchorType">
+    <xs:sequence>
+      <xs:element name="TAX509Certificate" type="xs:base64Binary"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CertificationPathType">
+    <xs:sequence>
+      <xs:element name="Length" type="xs:integer"/>
+      <xs:element name="InitialTrustAnchor" type="TrustAnchorType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InitialPermittedSubtreesType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="NameType" type="NameTypeInstance"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NameTypeInstance">
+    <xs:sequence>
+      <xs:element name="Denomination" type="xs:ID"/>
+      <xs:element name="PermittedSubtreesSet" type="GeneralSubTreeListType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="InitialExcludedSubtreesType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="NameType" type="NameTypeInstance"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RevocationConstraintsType">
+    <xs:sequence>
+      <xs:element name="RevocationCheckingConstraints" type="EnuRevReqType"/>
+      <xs:element name="RevocationFreshnessConstraints" type="RevocationFreshnessConstraintsType"/>
+      <xs:element name="RevocationInfoOnExpiredCerts" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RevocationFreshnessConstraintsType">
+    <xs:choice>
+      <xs:element name="MaxDistFromIssuanceRevocationStatus" type="xs:dateTime"/>
+      <xs:element name="MaxDistFromSignatureIssuance" type="xs:dateTime"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicy.LoASignerAuthentication -->
+
+  <!-- SignatureValidationPolicy.SignatureCreationDevices -->
+
+  <xs:complexType name="SignatureCreationDevicesType">
+    <xs:sequence>
+      <xs:element name="LoAOnSCD" type="LoAType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicy.SignatureCreationDevices -->
+
+  <!-- SignatureValidationPolicy.CryptographicSuites -->
+
+  <xs:complexType name="CryptographicSuitesType">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="CryptographicSuite" type="CryptographicSuiteType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="CryptographicSuiteType">
+    <xs:sequence>
+      <xs:element name="TypeOfSignature" type="SignatureFormatType"/>
+      <xs:element name="AlgorithmIds" type="xs:string"/>
+      <xs:element name="MinSignKeySize" type="xs:integer"/>
+      <xs:element name="MinLenHashValue" type="xs:integer"/>
+      <xs:element name="ExpirationDate" type="xs:dateTime"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicy.CryptographicSuites -->
+
+  <xs:complexType name="TechnologicalEnvironmentType"/>
+
+  <xs:complexType name="OtherInfoAssociateWithSignaturesType">
+    <xs:sequence>
+      <xs:element name="MSQPSignerLocation" type="xs:string"/>
+      <xs:element name="MUQPSignaturePolicyExtension" type="xs:boolean"/>
+      <xs:element name="MUQPIncludeSignPolInArchivalForm" type="xs:boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- SignatureValidationPolicyType -->
+
+</xs:schema>

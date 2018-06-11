@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:dss="urn:oasis:names:tc:dss:2.0:core:schema"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:saml2="urn:oasis:names:tc:SAML:2.0:assertion"
+  targetNamespace="urn:oasis:names:tc:dss:2.0:core:schema"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
+  <xs:annotation>
+    <xs:documentation xml:lang="en">This Schema defines the Digital Signature Service Core
+      Protocols, Elements, and Bindings Committee Draft 1 for Public Review
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:import namespace="http://www.w3.org/2000/09/xmldsig#"
+    schemaLocation="xmldsig-core-schema.xsd"/>
+  <xs:import namespace="urn:oasis:names:tc:SAML:2.0:assertion"
+    schemaLocation="saml-schema-assertion-2.0.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+    schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+
+  <!-- 3.1.1 Component NsPrefixMapping -->
+  <xs:element name="NsPrefixMapping" type="dss:NsPrefixMappingType"/>
+  <xs:complexType name="NsPrefixMappingType">
+    <xs:sequence>
+      <xs:element name="NamespaceURI" type="xs:anyURI"/>
+      <xs:element name="NamespacePrefix" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.2 Component Any -->
+  <xs:element name="Any" type="dss:AnyType"/>
+  <xs:complexType name="AnyType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="1" name="Content">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Base64Content" type="xs:base64Binary"/>
+          </xs:sequence>
+          <xs:attribute name="MimeType" type="xs:string" use="optional"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.3 Component InternationalString -->
+  <xs:element name="InternationalString" type="dss:InternationalStringType"/>
+  <xs:complexType name="InternationalStringType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute ref="xml:lang" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- 3.1.4 Component DigestInfo -->
+  <xs:element name="DigestInfo" type="dss:DigestInfoType"/>
+  <xs:complexType name="DigestInfoType">
+    <xs:sequence>
+      <xs:element name="DigestMethod" type="xs:string"/>
+      <xs:element name="DigestValue" type="xs:base64Binary"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.5 Component AttachmentReference -->
+  <xs:element name="AttachmentReference" type="dss:AttachmentReferenceType"/>
+  <xs:complexType name="AttachmentReferenceType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="DigestInfo" type="dss:DigestInfoType"/>
+    </xs:sequence>
+    <xs:attribute name="AttRefURI" type="xs:anyURI" use="required"/>
+  </xs:complexType>
+
+  <!-- 3.1.6 Component Base64Data -->
+  <xs:element name="Base64Data" type="dss:Base64DataType"/>
+  <xs:complexType name="Base64DataType">
+    <xs:choice>
+      <xs:element name="Value" type="xs:base64Binary"/>
+      <xs:element name="AttRef" type="dss:AttachmentReferenceType"/>
+    </xs:choice>
+    <xs:attribute name="MimeType" type="xs:string" use="optional"/>
+    <xs:attribute name="ID" type="xs:ID" use="optional"/>
+    <xs:attribute name="IDREF" type="xs:IDREF" use="optional"/>
+  </xs:complexType>
+
+  <!-- 3.1.7 Component Result -->
+  <xs:element name="Result" type="dss:ResultType"/>
+  <xs:complexType name="ResultType">
+    <xs:sequence>
+      <xs:element name="ResultMajor">
+        <xs:simpleType>
+          <xs:restriction base="xs:anyURI">
+            <xs:enumeration value="urn:oasis:names:tc:dss:1.0:resultmajor:Success"/>
+            <xs:enumeration value="urn:oasis:names:tc:dss:1.0:resultmajor:RequesterError"/>
+            <xs:enumeration value="urn:oasis:names:tc:dss:1.0:resultmajor:ResponderError"/>
+            <xs:enumeration value="urn:oasis:names:tc:dss:1.0:resultmajor:InsufficientInformation"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element minOccurs="0" name="ResultMinor" type="xs:anyURI"/>
+      <xs:element minOccurs="0" name="ResultMessage" type="dss:InternationalStringType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.8 Component RequestBase -->
+  <xs:complexType abstract="true" name="RequestBaseType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="Profile" type="xs:anyURI"/>
+    </xs:sequence>
+    <xs:attribute name="RequestID" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <!-- 3.1.9 Component ResponseBase -->
+  <xs:complexType abstract="true" name="ResponseBaseType">
+    <xs:sequence>
+      <xs:element name="Result" type="dss:ResultType"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="AppliedProfile" type="xs:anyURI"/>
+    </xs:sequence>
+    <xs:attribute name="RequestID" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <!-- 3.1.10 Component Info -->
+  <xs:element name="Info" type="dss:InfoType"/>
+  <xs:complexType name="InfoType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="1" name="Call" type="dss:DescriptionType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.11 Component Description -->
+  <xs:element name="Description" type="dss:DescriptionType"/>
+  <xs:complexType name="DescriptionType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string"/>
+      <xs:element name="Specification" type="xs:anyURI"/>
+      <xs:element name="Schema" type="xs:anyURI"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="Option" type="dss:DescriptionType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.12 Component InputDocuments -->
+  <xs:element name="InputDocuments" type="dss:InputDocumentsType"/>
+  <xs:complexType name="InputDocumentsType">
+    <xs:choice>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="Document" type="dss:DocumentType"/>
+      </xs:sequence>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="TransformedData" type="dss:TransformedDataType"/>
+      </xs:sequence>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="DocumentHash" type="dss:DocumentHashType"/>
+      </xs:sequence>
+    </xs:choice>
+  </xs:complexType>
+
+  <!-- 3.1.13 Component DocumentBase -->
+  <xs:complexType abstract="true" name="DocumentBaseType">
+    <xs:attribute name="ID" type="xs:ID" use="optional"/>
+    <xs:attribute name="RefURI" type="xs:anyURI" use="optional"/>
+    <xs:attribute name="RefType" type="xs:anyURI" use="optional"/>
+    <xs:attribute name="SchemaRefs" type="xs:IDREFS" use="optional"/>
+  </xs:complexType>
+
+  <!-- 3.1.14 Component Document -->
+  <xs:element name="Document" type="dss:DocumentType"/>
+  <xs:complexType name="DocumentType">
+    <xs:complexContent>
+      <xs:extension base="dss:DocumentBaseType">
+        <xs:choice>
+          <xs:element name="Base64Data" type="dss:Base64DataType"/>
+        </xs:choice>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 3.1.15 Component TransformedData -->
+  <xs:element name="TransformedData" type="dss:TransformedDataType"/>
+  <xs:complexType name="TransformedDataType">
+    <xs:complexContent>
+      <xs:extension base="dss:DocumentBaseType">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Transforms"
+            type="dss:TransformsType"/> <!-- type="ds:TransformsType" -->
+          <xs:element name="Base64Data" type="dss:Base64DataType"/>
+        </xs:sequence>
+        <xs:attribute name="WhichReference" type="xs:integer" use="optional"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 3.1.16 Component DocumentHash -->
+  <xs:element name="DocumentHash" type="dss:DocumentHashType"/>
+  <xs:complexType name="DocumentHashType">
+    <xs:complexContent>
+      <xs:extension base="dss:DocumentBaseType">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Transforms"
+            type="dss:TransformsType"/> <!-- type="ds:TransformsType" -->
+          <xs:element maxOccurs="unbounded" minOccurs="1" name="DigestInfos"
+            type="dss:DigestInfoType"/>
+        </xs:sequence>
+        <xs:attribute name="WhichReference" type="xs:integer" use="optional"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 3.1.17 Component SignRequest -->
+  <xs:element name="SignRequest" type="dss:SignRequestType"/>
+  <xs:complexType name="SignRequestType">
+    <xs:complexContent>
+      <xs:extension base="dss:RequestBaseType">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="InputDocuments" type="dss:InputDocumentsType"/>
+          <xs:element minOccurs="0" name="OptionalInputs" type="dss:OptionalInputsSignType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 3.1.18 Component SignResponse -->
+  <xs:element name="SignResponse" type="dss:SignResponseType"/>
+  <xs:complexType name="SignResponseType">
+    <xs:complexContent>
+      <xs:extension base="dss:ResponseBaseType">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="OptionalOutputs" type="dss:OptionalOutputsSignType"/>
+          <xs:element minOccurs="0" name="SignatureObject" type="dss:SignatureObjectType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 3.1.19 Component SignatureObject -->
+  <xs:element name="SignatureObject" type="dss:SignatureObjectType"/>
+  <xs:complexType name="SignatureObjectType">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="Base64Signature" type="dss:Base64DataType"/>
+        <xs:element name="SignaturePtr" type="dss:SignaturePtrType"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="SchemaRefs" type="xs:IDREFS" use="optional"/>
+  </xs:complexType>
+
+  <!-- 3.1.20 Component SignaturePtr -->
+  <xs:element name="SignaturePtr" type="dss:SignaturePtrType"/>
+  <xs:complexType name="SignaturePtrType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="NsPrefixMapping"
+        type="dss:NsPrefixMappingType"/>
+    </xs:sequence>
+    <xs:attribute name="WhichDocument" type="xs:IDREF" use="required"/>
+    <xs:attribute name="XPath" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <!-- 3.1.21 Component VerifyRequest -->
+  <xs:element name="VerifyRequest" type="dss:VerifyRequestType"/>
+  <xs:complexType name="VerifyRequestType">
+    <xs:complexContent>
+      <xs:extension base="dss:RequestBaseType">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="InputDocuments" type="dss:InputDocumentsType"/>
+          <xs:element minOccurs="0" name="OptionalInputs" type="dss:OptionalInputsVerifyType"/>
+          <xs:element minOccurs="0" name="SignatureObject" type="dss:SignatureObjectType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 3.1.22 Component VerifyResponse -->
+  <xs:element name="VerifyResponse" type="dss:VerifyResponseType"/>
+  <xs:complexType name="VerifyResponseType">
+    <xs:complexContent>
+      <xs:extension base="dss:ResponseBaseType">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="OptionalOutputs" type="dss:OptionalOutputsVerifyType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 3.1.23 Component OptionalInputsBase -->
+  <xs:complexType abstract="true" name="OptionalInputsBaseType">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element maxOccurs="unbounded" minOccurs="0" name="ServicePolicy" type="xs:anyURI"/>
+        <xs:element maxOccurs="1" minOccurs="0" name="ClaimedIdentity"
+          type="dss:ClaimedIdentityType"/>
+        <xs:element maxOccurs="1" minOccurs="0" name="Language" type="xs:language"/>
+        <xs:element maxOccurs="1" minOccurs="0" name="Schemas" type="dss:SchemasType"/>
+        <xs:element maxOccurs="1" minOccurs="0" name="AddTimestamp"
+          type="dss:UpdateSignatureInstructionType"/>
+        <xs:element maxOccurs="unbounded" minOccurs="0" name="Other" type="dss:PropertyType"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.24 Component OptionalInputsSign -->
+  <xs:element name="OptionalInputsSign" type="dss:OptionalInputsSignType"/>
+  <xs:complexType name="OptionalInputsSignType">
+    <xs:complexContent>
+      <xs:extension base="dss:OptionalInputsBaseType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element maxOccurs="1" minOccurs="0" name="SignatureType" type="xs:anyURI"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="IntendedAudience"
+              type="dss:IntendedAudienceType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="KeySelector"
+              type="dss:KeySelectorType"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="Properties"
+              type="dss:PropertiesHolderType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="IncludeObject"
+              type="dss:IncludeObjectType"/>
+            <xs:element default="false" maxOccurs="1" minOccurs="0" name="IncludeEContent"
+              type="xs:boolean"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="SignaturePlacement"
+              type="dss:SignaturePlacementType"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="SignedReferences"
+              type="dss:SignedReferencesType"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="Nonce" type="xs:integer"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="SignatureAlgorithm" type="xs:string"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="SignatureActivationData"
+              type="xs:string"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 3.1.25 Component OptionalInputsVerify -->
+  <xs:element name="OptionalInputsVerify" type="dss:OptionalInputsVerifyType"/>
+  <xs:complexType name="OptionalInputsVerifyType">
+    <xs:complexContent>
+      <xs:extension base="dss:OptionalInputsBaseType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element maxOccurs="1" minOccurs="0" name="UseVerificationTime"
+              type="dss:UseVerificationTimeType"/>
+            <xs:element default="false" maxOccurs="1" minOccurs="0"
+              name="ReturnVerificationTimeInfo" type="xs:boolean"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="AdditionalKeyInfo"
+              type="dss:AdditionalKeyInfoType"/>
+            <xs:element default="false" maxOccurs="1" minOccurs="0" name="ReturnProcessingDetails"
+              type="xs:boolean"/>
+            <xs:element default="false" maxOccurs="1" minOccurs="0" name="ReturnSigningTimeInfo"
+              type="xs:boolean"/>
+            <xs:element default="false" maxOccurs="1" minOccurs="0" name="ReturnSignerIdentity"
+              type="xs:boolean"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="ReturnUpdatedSignature"
+              type="dss:UpdateSignatureInstructionType"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="ReturnTransformedDocument"
+              type="dss:ReturnTransformedDocumentType"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="ReturnTimestampedSignature"
+              type="dss:UpdateSignatureInstructionType"/>
+            <xs:element default="false" maxOccurs="1" minOccurs="0" name="VerifyManifests"
+              type="xs:boolean"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 3.1.26 Component OptionalOutputsBase -->
+  <xs:complexType abstract="true" name="OptionalOutputsBaseType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="AppliedPolicy" type="xs:anyURI"/>
+      <xs:element maxOccurs="1" minOccurs="0" name="TransformedDocument"
+        type="dss:TransformedDocumentType"/>
+      <xs:element maxOccurs="1" minOccurs="0" name="Schemas" type="dss:SchemasType"/>
+      <xs:element maxOccurs="1" minOccurs="0" name="DocumentWithSignature"
+        type="dss:DocumentWithSignatureType"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="Other" type="dss:PropertyType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.27 Component OptionalOutputsSign -->
+  <xs:element name="OptionalOutputsSign" type="dss:OptionalOutputsSignType"/>
+  <xs:complexType name="OptionalOutputsSignType">
+    <xs:complexContent>
+      <xs:extension base="dss:OptionalOutputsBaseType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 3.1.28 Component OptionalOutputsVerify -->
+  <xs:element name="OptionalOutputsVerify" type="dss:OptionalOutputsVerifyType"/>
+  <xs:complexType name="OptionalOutputsVerifyType">
+    <xs:complexContent>
+      <xs:extension base="dss:OptionalOutputsBaseType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element maxOccurs="1" minOccurs="0" name="VerifyManifestResults"
+              type="dss:VerifyManifestResultsType"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="SigningTimeInfo"
+              type="dss:SigningTimeInfoType"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="VerificationTimeInfo"
+              type="dss:VerificationTimeInfoType"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="ProcessingDetails"
+              type="dss:ProcessingDetailsType"/>
+            <xs:element maxOccurs="1" minOccurs="0" ref="dss:SignerIdentity"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="UpdatedSignature"
+              type="dss:UpdatedSignatureType"/>
+            <xs:element maxOccurs="1" minOccurs="0" name="TimestampedSignature"
+              type="dss:UpdatedSignatureType"/>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="SignerIdentity" type="saml2:NameIDType"/>
+
+  <!-- 3.1.29 Component ClaimedIdentity -->
+  <xs:element name="ClaimedIdentity" type="dss:ClaimedIdentityType"/>
+  <xs:complexType name="ClaimedIdentityType">
+    <xs:sequence>
+      <xs:element name="Name" type="saml2:NameIDType"/>
+      <xs:element minOccurs="0" name="SupportingInfo" type="dss:AnyType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.30 Component Schemas -->
+  <xs:element name="Schemas" type="dss:SchemasType"/>
+  <xs:complexType name="SchemasType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="Schema" type="dss:DocumentType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.31 Component UpdateSignatureInstruction -->
+  <xs:element name="UpdateSignatureInstruction" type="dss:UpdateSignatureInstructionType"/>
+  <xs:complexType name="UpdateSignatureInstructionType">
+    <xs:attribute name="Type" type="xs:anyURI" use="optional"/>
+  </xs:complexType>
+
+  <!-- 3.1.32 Component IntendedAudience -->
+  <xs:element name="IntendedAudience" type="dss:IntendedAudienceType"/>
+  <xs:complexType name="IntendedAudienceType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="Recipient" type="saml2:NameIDType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.33 Component KeySelector -->
+  <xs:element name="KeySelector" type="dss:KeySelectorType"/>
+  <xs:complexType name="KeySelectorType">
+    <xs:choice>
+      <xs:element name="X509Digest" type="dss:X509DigestType"/>
+      <xs:element name="X509SubjectName" type="xs:string"/>
+      <xs:element name="X509SKI" type="xs:base64Binary"/>
+      <xs:element name="X509Certificate" type="xs:base64Binary"/>
+      <xs:element name="KeyName" type="xs:string"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <!-- 3.1.34 Component X509Digest -->
+  <xs:element name="X509Digest" type="dss:X509DigestType"/>
+  <xs:complexType name="X509DigestType">
+    <xs:simpleContent>
+      <xs:extension base="xs:base64Binary">
+        <xs:attribute name="Algorithm" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- 3.1.35 Component PropertiesHolder -->
+  <xs:element name="PropertiesHolder" type="dss:PropertiesHolderType"/>
+  <xs:complexType name="PropertiesHolderType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="SignedProperties" type="dss:PropertiesType"/>
+      <xs:element minOccurs="0" name="UnsignedProperties" type="dss:PropertiesType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.36 Component Properties -->
+  <xs:element name="Properties" type="dss:PropertiesType"/>
+  <xs:complexType name="PropertiesType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="Property" type="dss:PropertyType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.37 Component Property -->
+  <xs:element name="Property" type="dss:PropertyType"/>
+  <xs:complexType name="PropertyType">
+    <xs:sequence>
+      <xs:element name="Identifier" type="xs:string"/>
+      <xs:element minOccurs="0" name="Value" type="dss:AnyType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.38 Component IncludeObject -->
+  <xs:element name="IncludeObject" type="dss:IncludeObjectType"/>
+  <xs:complexType name="IncludeObjectType">
+    <xs:attribute name="WhichDocument" type="xs:IDREF"/>
+    <xs:attribute default="false" name="hasObjectTagsAndAttributesSet" type="xs:boolean"/>
+    <xs:attribute name="ObjId" type="xs:string" use="optional"/>
+    <xs:attribute default="true" name="createReference" type="xs:boolean" use="optional"/>
+  </xs:complexType>
+
+  <!-- 3.1.39 Component SignaturePlacement -->
+  <xs:element name="SignaturePlacement" type="dss:SignaturePlacementType"/>
+  <xs:complexType name="SignaturePlacementType">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="XPathAfter" type="xs:string"/>
+        <xs:element name="XPathFirstChildOf" type="xs:string"/>
+      </xs:choice>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="NsPrefixMapping"
+        type="dss:NsPrefixMappingType"/>
+    </xs:sequence>
+    <xs:attribute name="WhichDocument" type="xs:IDREF"/>
+    <xs:attribute default="true" name="CreateEnvelopedSignature" type="xs:boolean"/>
+  </xs:complexType>
+
+  <!-- 3.1.40 Component DocumentWithSignature -->
+  <xs:element name="DocumentWithSignature" type="dss:DocumentWithSignatureType"/>
+  <xs:complexType name="DocumentWithSignatureType">
+    <xs:sequence>
+      <xs:element name="Document" type="dss:DocumentType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.41 Component SignedReferences -->
+  <xs:element name="SignedReferences" type="dss:SignedReferencesType"/>
+  <xs:complexType name="SignedReferencesType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="SignedReference" type="dss:SignedReferenceType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.42 Component SignedReference -->
+  <xs:element name="SignedReference" type="dss:SignedReferenceType"/>
+  <xs:complexType name="SignedReferenceType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Transforms"
+        type="dss:TransformsType"/> <!-- type="ds:TransformsType" -->
+    </xs:sequence>
+    <xs:attribute name="WhichDocument" type="xs:IDREF" use="required"/>
+    <xs:attribute name="RefURI" type="xs:anyURI" use="optional"/>
+    <xs:attribute name="RefId" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <!-- 3.1.43 Component VerifyManifestResults -->
+  <xs:element name="VerifyManifestResults" type="dss:VerifyManifestResultsType"/>
+  <xs:complexType name="VerifyManifestResultsType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="ManifestResult" type="dss:ManifestResultType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.44 Component ManifestResult-->
+  <xs:element name="ManifestResult" type="dss:ManifestResultType"/>
+  <xs:complexType name="ManifestResultType">
+    <xs:sequence>
+      <xs:element name="ReferenceXpath" type="xs:string"/>
+      <xs:element name="Status">
+        <xs:simpleType>
+          <xs:restriction base="xs:anyURI">
+            <xs:enumeration value="urn:oasis:names:tc:dss:1.0:manifeststatus:Valid"/>
+            <xs:enumeration value="urn:oasis:names:tc:dss:1.0:manifeststatus:Invalid"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="NsPrefixMapping"
+        type="dss:NsPrefixMappingType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.45 Component UseVerificationTime -->
+  <xs:element name="UseVerificationTime" type="dss:UseVerificationTimeType"/>
+  <xs:complexType name="UseVerificationTimeType">
+    <xs:choice>
+      <xs:element default="false" name="CurrentTime" type="xs:boolean"/>
+      <xs:element name="SpecificTime" type="xs:dateTime"/>
+      <xs:element maxOccurs="1" minOccurs="0" name="Base64Content" type="xs:base64Binary"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <!-- 3.1.46 Component AdditionalTimeInfo -->
+  <xs:element name="AdditionalTimeInfo" type="dss:AdditionalTimeInfoType"/>
+  <xs:complexType name="AdditionalTimeInfoType">
+    <xs:simpleContent>
+      <xs:extension base="xs:dateTime">
+        <xs:attribute name="Type" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:anyURI">
+              <xs:enumeration
+                value="urn:oasis:names:tc:dss:1.0:additionaltimeinfo:signatureTimestamp"/>
+              <xs:enumeration
+                value="urn:oasis:names:tc:dss:1.0:additionaltimeinfo:signatureTimemark"/>
+              <xs:enumeration
+                value="urn:oasis:names:tc:dss:1.0:additionaltimeinfo:signedObjectTimestamp"/>
+              <xs:enumeration
+                value="urn:oasis:names:tc:dss:1.0:additionaltimeinfo:claimedSigningTime"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="Ref" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <!-- 3.1.47 Component VerificationTimeInfo -->
+  <xs:element name="VerificationTimeInfo" type="dss:VerificationTimeInfoType"/>
+  <xs:complexType name="VerificationTimeInfoType">
+    <xs:sequence>
+      <xs:element name="VerificationTime" type="xs:dateTime"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="AdditionalTimeInfo"
+        type="dss:AdditionalTimeInfoType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.48 Component AdditionalKeyInfo -->
+  <xs:element name="AdditionalKeyInfo" type="dss:AdditionalKeyInfoType"/>
+  <xs:complexType name="AdditionalKeyInfoType">
+    <xs:complexContent>
+      <xs:extension base="dss:KeySelectorType">
+        <xs:choice>
+          <xs:element name="X509CRL" type="xs:base64Binary"/>
+        </xs:choice>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 3.1.49 Component ProcessingDetails -->
+  <xs:element name="ProcessingDetails" type="dss:ProcessingDetailsType"/>
+  <xs:complexType name="ProcessingDetailsType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="ValidDetail" type="dss:DetailType"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="IndeterminateDetail"
+        type="dss:DetailType"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="InvalidDetail" type="dss:DetailType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.50 Component Detail -->
+  <xs:element name="Detail" type="dss:DetailType"/>
+  <xs:complexType name="DetailType">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Code" type="xs:anyURI"/>
+      <xs:element minOccurs="0" name="Message" type="dss:InternationalStringType"/>
+      <xs:element maxOccurs="1" minOccurs="0" name="Base64Content" type="xs:base64Binary"/>
+    </xs:sequence>
+    <xs:attribute name="Type" type="xs:anyURI" use="required"/>
+  </xs:complexType>
+
+  <!-- 3.1.51 Component SigningTimeInfo -->
+  <xs:element name="SigningTimeInfo" type="dss:SigningTimeInfoType"/>
+  <xs:complexType name="SigningTimeInfoType">
+    <xs:sequence>
+      <xs:element name="SigningTime" type="xs:dateTime"/>
+      <xs:element minOccurs="0" name="SigningTimeBoundaries">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="LowerBoundary" type="xs:dateTime"/>
+            <xs:element minOccurs="0" name="UpperBoundary" type="xs:dateTime"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.1.52 Component UpdatedSignature -->
+  <xs:element name="UpdatedSignature" type="dss:UpdatedSignatureType"/>
+  <xs:complexType name="UpdatedSignatureType">
+    <xs:sequence>
+      <xs:element name="SignatureObject" type="dss:SignatureObjectType"/>
+    </xs:sequence>
+    <xs:attribute name="Type" type="xs:anyURI" use="optional"/>
+  </xs:complexType>
+
+  <!-- 3.1.53 Component ReturnTransformedDocument -->
+  <xs:element name="ReturnTransformedDocument" type="dss:ReturnTransformedDocumentType"/>
+  <xs:complexType name="ReturnTransformedDocumentType">
+    <xs:attribute name="WhichReference" type="xs:integer" use="required"/>
+  </xs:complexType>
+
+  <!-- 3.1.54 Component TransformedDocument -->
+  <xs:element name="TransformedDocument" type="dss:TransformedDocumentType"/>
+  <xs:complexType name="TransformedDocumentType">
+    <xs:sequence>
+      <xs:element name="Document" type="dss:DocumentType"/>
+    </xs:sequence>
+    <xs:attribute name="WhichReference" type="xs:integer" use="required"/>
+  </xs:complexType>
+
+
+  <!-- 3.2 Referenced Structure Models from other documents -->
+
+  <!-- 3.2.1 Component Transforms -->
+  <xs:element name="Transforms" type="dss:TransformsType"/>
+  <xs:complexType name="TransformsType">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="Transform" type="dss:TransformType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 3.2.2 Component Transform -->
+  <xs:element name="Transform" type="dss:TransformType"/>
+  <xs:complexType name="TransformType">
+    <xs:sequence>
+      <xs:element maxOccurs="1" minOccurs="0" name="value" type="xs:string"/>
+      <xs:element maxOccurs="1" minOccurs="0" name="Base64Content" type="xs:base64Binary"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="XPath" type="xs:string"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="NsPrefixMapping"
+        type="dss:NsPrefixMappingType"/>
+    </xs:sequence>
+    <xs:attribute name="Algorithm" type="xs:anyURI" use="required"/>
+  </xs:complexType>
+
+</xs:schema>

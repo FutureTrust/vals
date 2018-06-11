@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:vals="http://futuretrust.eu/vals/v1.0.0#"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://futuretrust.eu/vals/v1.0.0#" elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
+
+  <xs:annotation>
+    <xs:documentation xml:lang="en">Custom XML schema for the ValS application
+    </xs:documentation>
+  </xs:annotation>
+
+
+  <xs:element name="SignatureScopes" type="vals:SignatureScopesType"/>
+  <xs:complexType name="SignatureScopesType">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="SignatureScope" type="vals:SignatureScopeType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignatureScopeType">
+    <xs:attribute name="URI" type="xs:anyURI"/>
+  </xs:complexType>
+
+  <xs:element name="Policy" type="vals:PolicyType"/>
+  <xs:complexType name="PolicyType">
+    <xs:simpleContent>
+      <xs:extension base="xs:base64Binary">
+        <xs:attribute name="URI" type="xs:anyURI"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+
+  <xs:element name="ConstraintDescriptions" type="vals:ConstraintDescriptionsType"/>
+  <xs:complexType name="ConstraintDescriptionsType">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="ConstraintDescription" type="vals:ConstraintDescriptionType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ConstraintDescriptionType">
+    <xs:attribute name="Description" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:element name="ContainerInfo" type="vals:ContainerInfoType"/>
+  <xs:complexType name="ContainerInfoType">
+    <xs:sequence>
+      <xs:element name="ContainerType" type="xs:string" minOccurs="0" />
+      <xs:element name="ZipComment" type="xs:string" minOccurs="0" />
+      <xs:element name="MimeTypeFilePresent" type="xs:boolean" minOccurs="0" />
+      <xs:element name="MimeTypeContent" type="xs:string" minOccurs="0" />
+
+      <xs:element name="ManifestFiles" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ManifestFile" type="vals:ManifestFileType" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+
+      <xs:element name="ContentFiles" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ContentFile" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ManifestFileType">
+    <xs:sequence>
+      <xs:element name="Filename" type="xs:string" minOccurs="0" />
+      <xs:element name="SignatureFilename" type="xs:string" minOccurs="0" />
+      <xs:element name="Entries" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Entry" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

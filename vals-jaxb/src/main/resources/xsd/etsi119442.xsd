@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:etsival="http://uri.etsi.org/119442/v1.1.1#"
+  xmlns:dss="urn:oasis:names:tc:dss:2.0:core:schema"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:dssvalrep="urn:oasis:names:tc:dss:1.0:profiles:verificationreport:schema#"
+  targetNamespace="http://uri.etsi.org/119442/v1.1.1#" elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
+
+  <xs:annotation>
+    <xs:documentation xml:lang="en">This Schema defines a draft for the ETSI 119 442 eu.europa.ec.vals.protocol's
+      schema
+    </xs:documentation>
+  </xs:annotation>
+
+  <!-- OASIS DSS Core 2 - dss -->
+  <xs:import namespace="urn:oasis:names:tc:dss:2.0:core:schema"
+    schemaLocation="oasis-dss-core-2.0.xsd"/>
+
+  <!-- DSS-X-ValidationReport - dssvalrep -->
+  <xs:import namespace="urn:oasis:names:tc:dss:1.0:profiles:verificationreport:schema#"
+    schemaLocation="oasis-dss-x-multi.xsd"/>
+
+  <!-- ETSI 119 102-2 - etsivr -->
+  <xs:import namespace="http://uri.etsi.org/1191022/v1.1.1#" schemaLocation="etsi1191022.xsd"/>
+
+
+  <!-- 5.1 Components for requesting validation of AdES signatures -->
+
+  <!-- 5.1.1 Component for requesting validation -->
+  <xs:element name="VerifyRequest" type="etsival:VerifyRequestType"/>
+  <xs:complexType name="VerifyRequestType">
+    <xs:complexContent>
+      <xs:extension base="dss:RequestBaseType">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="InputDocuments" type="dss:InputDocumentsType"/>
+          <xs:element minOccurs="0" name="OptionalInputs" type="etsival:OptionalInputsVerifyType"/>
+          <xs:element minOccurs="0" name="SignatureObject" type="dss:SignatureObjectType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 5.1.4 Optional components -->
+  <xs:element name="OptionalInputsVerify" type="etsival:OptionalInputsVerifyType"/>
+  <xs:complexType name="OptionalInputsVerifyType">
+    <xs:complexContent>
+      <xs:extension base="dss:OptionalInputsBaseType">
+        <xs:sequence>
+          <!-- SHOULD NOT BE HERE (ETSI 119 442: not defined in xsd) -->
+          <xs:element minOccurs="0" name="DocumentWithSignature"
+            type="dss:DocumentWithSignatureType"/>
+          <xs:element minOccurs="0" name="UseVerificationTime" type="dss:UseVerificationTimeType"/>
+          <xs:element minOccurs="0" default="false" name="ReturnVerificationTimeInfo"
+            type="xs:boolean"/>
+          <!-- AdditionalKeyInfo -> maxOccurs="unbounded" in OASIS DSS Core 2 -->
+          <xs:element minOccurs="0" name="AdditionalKeyInfo" type="dss:AdditionalKeyInfoType"/>
+          <xs:element minOccurs="0" name="ReturnSignerIdentity" default="false" type="xs:boolean"/>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="ReturnTransformedDocument"
+            type="dss:ReturnTransformedDocumentType"/>
+          <xs:element minOccurs="0" ref="etsival:UseSignatureValidationPolicy"/>
+          <xs:element minOccurs="0" ref="dssvalrep:ReturnVerificationReport"/>
+          <xs:element minOccurs="0" name="VerifyManifests" default="false" type="xs:boolean"/>
+          <xs:element minOccurs="0" ref="etsival:SignVerificationReport"/>
+          <xs:element minOccurs="0" name="ReturnAugmentedSignature"
+            type="etsival:ReturnAugmentedSignatureType"/>
+          <!--<xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other"/>-->
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 5.1.4.10 Component for requesting validation against a certain signature policy -->
+  <xs:element name="UseSignatureValidationPolicy" type="etsival:UseSignatureValidationPolicyType"/>
+  <xs:complexType name="UseSignatureValidationPolicyType">
+    <xs:sequence>
+      <xs:element name="SignatureValidationPolicyID" type="xs:anyURI"/>
+      <xs:element name="SignaturePolicyLocation" type="xs:anyURI" minOccurs="0"
+        maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.1.4.12 Component for requesting that the validation report is signed by the server a detailed validation report (as the one to be specified in TS 119 102-2) -->
+  <xs:element name="SignVerificationReport" type="xs:boolean"/>
+
+  <!-- 6.1.1 Component for requesting validation and augmentation of the signature to a certain level -->
+  <xs:element name="ReturnAugmentedSignature" type="etsival:ReturnAugmentedSignatureType"/>
+  <xs:complexType name="ReturnAugmentedSignatureType">
+    <xs:attribute name="Level" type="xs:anyURI" use="required"/>
+  </xs:complexType>
+
+
+  <!-- 5.2 Components for eu.europa.futuretrust.protocol.response to validation request -->
+
+  <!-- 5.2.1 Component for responding to validation request -->
+  <xs:element name="VerifyResponse" type="etsival:VerifyResponseType"/>
+  <xs:complexType name="VerifyResponseType">
+    <xs:complexContent>
+      <xs:extension base="dss:ResponseBaseType">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="OptionalOutputs"
+            type="etsival:OptionalOutputsVerifyType"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 5.2.3 Optional components -->
+  <xs:element name="OptionalOutputsVerify" type="etsival:OptionalOutputsVerifyType"/>
+  <xs:complexType name="OptionalOutputsVerifyType">
+    <xs:complexContent>
+      <xs:extension base="dss:OptionalOutputsBaseType">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="VerifyManifestResults"
+            type="dss:VerifyManifestResultsType"/>
+          <xs:element minOccurs="0" name="SigningTimeInfo" type="dss:SigningTimeInfoType"/>
+          <xs:element minOccurs="0" name="VerificationTimeInfo"
+            type="dss:VerificationTimeInfoType"/>
+          <xs:element minOccurs="0" ref="dss:SignerIdentity"/>
+          <xs:element minOccurs="0" ref="etsival:AppliedSignatureValidationPolicy"/>
+          <xs:element minOccurs="0" ref="etsival:AvailableSignatureValidationPolicies"/>
+          <xs:element minOccurs="0" name="UpdatedSignature" type="dss:UpdatedSignatureType"/>
+          <!-- include dssasyn xsd<xs:element ref="dssasyn:ResponseID" minOccurs="0" maxOccurs="1"/> -->
+          <xs:element minOccurs="0" maxOccurs="unbounded" name="IndividualReport"
+            type="dssvalrep:IndividualReportType"/>
+          <!-- <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other"/> -->
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- 5.2.3.6 Component for notifying the signature policy applied during the validation -->
+  <xs:element name="AppliedSignatureValidationPolicy"
+    type="etsival:AppliedSignatureValidationPolicyType"/>
+  <xs:complexType name="AppliedSignatureValidationPolicyType">
+    <xs:sequence>
+      <xs:element name="SignatureValidationPolicyID" type="xs:anyURI"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.3.7 Component for notifying the signature policies under which the server can conduct validation -->
+  <xs:element name="AvailableSignatureValidationPolicies"
+    type="etsival:AvailableSignatureValidationPoliciesType"/>
+  <xs:complexType name="AvailableSignatureValidationPoliciesType">
+    <xs:sequence>
+      <xs:element name="AvailableSignatureValidationPolicyID" type="xs:anyURI" minOccurs="0"
+        maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

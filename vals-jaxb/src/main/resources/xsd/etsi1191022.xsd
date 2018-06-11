@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:etsivr="http://uri.etsi.org/1191022/v1.1.1#"
+  xmlns:vr="urn:oasis:names:tc:dss:1.0:profiles:verificationreport:schema#"
+  xmlns:xades="http://uri.etsi.org/01903/v1.3.2#"
+  xmlns:dss="urn:oasis:names:tc:dss:2.0:core:schema"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://uri.etsi.org/1191022/v1.1.1#" elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
+
+  <!-- DSS-X-ValidationReport - vr -->
+  <xs:import namespace="urn:oasis:names:tc:dss:1.0:profiles:verificationreport:schema#"
+    schemaLocation="oasis-dss-x-multi.xsd"/>
+
+  <!-- W3C XML Signature - ds -->
+  <xs:import namespace="http://www.w3.org/2000/09/xmldsig#"
+    schemaLocation="xmldsig-core-schema.xsd"/>
+
+  <!-- XAdES 1.3.2 - xades -->
+  <xs:import namespace="http://uri.etsi.org/01903/v1.3.2#" schemaLocation="XAdESv132.xsd"/>
+
+  <!-- XAdES 1.4.1 - xades -->
+  <xs:import namespace="http://uri.etsi.org/01903/v1.4.1#" schemaLocation="XAdESv141.xsd"/>
+
+  <!-- OASIS DSS Core 2 - dss -->
+  <xs:import namespace="urn:oasis:names:tc:dss:2.0:core:schema"
+    schemaLocation="oasis-dss-core-2.0.xsd"/>
+
+
+  <xs:complexType name="VOReferenceType">
+    <xs:attribute name="VOReference" type="xs:IDREFS" use="required"/>
+  </xs:complexType>
+
+
+  <!-- 5.2 Signature Validation Report Element -->
+
+  <!-- 5.2.2 Signature Identification Element -->
+  <!-- shall be the <vr:SignedObjectIdentifier> element -->
+
+  <!-- 5.2.2.1 ValidationBasedOnHash Element -->
+  <!-- shall be placed in <vr:Other> of <vr:SignedObjectIdentifier> -->
+  <!-- <element name="Other" type="dss:AnyType" maxOccurs="1" minOccurs="0"/> -->
+  <xs:element name="ValidationBasedOnHash" type="xs:boolean"/>
+
+  <!-- 5.2.3 Validator Information -->
+  <!-- shall be of type vr:IdentifierType -->
+  <!-- WHERE IT SHOULD BE PLACE ??? -->
+
+  <!-- 5.2.4 Signature Validation Status Indication -->
+  <!-- shall be of type vr:VerificationResultType -->
+  <!-- this type is used in etsivr:SingleValidationConstraintType -->
+
+  <!-- 5.2.5 Validation Constraints -->
+  <!-- shall be placed in <vr:Details> of <vr:IndividualReport> -->
+  <!-- <element name="Details" type="dss:AnyType" maxOccurs="1" minOccurs="0"/> -->
+  <xs:element name="ValidationConstraints" type="etsivr:ValidationConstraintsType"/>
+  <xs:complexType name="ValidationConstraintsType">
+    <xs:sequence>
+      <xs:element ref="xades:SignaturePolicyIdentifier" minOccurs="0"/>
+      <xs:element name="ValidationConstraint" type="etsivr:SingleValidationConstraintType"
+        minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.5.2 SingleValidationConstraint Type -->
+  <xs:element name="SingleValidationConstraint" type="etsivr:SingleValidationConstraintType"/>
+  <xs:complexType name="SingleValidationConstraintType">
+    <xs:sequence>
+      <xs:element name="ValidationConstraintIdentifier" type="xs:anyURI"/>
+      <xs:element name="ValidationConstraintParameter"
+        type="etsivr:ValidationConstraintParameterType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="ConstraintStatus" type="etsivr:ConstraintStatusType"/>
+      <xs:element name="VerificationResult" type="vr:VerificationResultType" minOccurs="0"/>
+      <xs:element name="Hint" type="xs:anyType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.5.3 ValidationConstraintParameter Type -->
+  <xs:element name="ValidationConstraintParameter" type="etsivr:ValidationConstraintParameterType"/>
+  <xs:complexType name="ValidationConstraintParameterType">
+    <xs:sequence>
+      <xs:element name="ParameterType" type="xs:anyURI"/>
+      <xs:element name="ParameterValue" type="xs:anyType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.5.4 ConstraintStatus Type -->
+  <xs:element name="ConstraintStatus" type="etsivr:ConstraintStatusType"/>
+  <xs:complexType name="ConstraintStatusType">
+    <xs:sequence>
+      <xs:element name="Status" type="xs:anyURI"/>
+      <xs:element name="OverriddenBy" type="xs:anyType" minOccurs="0"/>
+      <xs:element name="Indications" type="xs:anyType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.6 Signature Validation Time Info -->
+  <!-- shall be of type dss:VerificationTimeInfoType -->
+  <!-- shall be placed in <vr:Details> of <vr:IndividualReport> -->
+  <!-- <element name="Details" type="dss:AnyType" maxOccurs="1" minOccurs="0"/> -->
+
+  <!-- 5.2.7 Signer’s Document -->
+  <!-- shall be placed in <vr:Details> of <vr:IndividualReport> -->
+  <!-- <element name="Details" type="dss:AnyType" maxOccurs="1" minOccurs="0"/> -->
+  <xs:element name="SignersDocument" type="etsivr:SignersDocumentType"/>
+  <xs:complexType name="SignersDocumentType">
+    <xs:sequence>
+      <xs:element name="DigestAlgAndValue" type="xades:DigestAlgAndValueType" minOccurs="0"/>
+      <xs:element name="SignersDocument" type="etsivr:VOReferenceType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.8 Signature Attributes -->
+  <!-- shall be contained in an element of type vr:PropertiesType -->
+  <xs:element name="SignatureAttributes" type="vr:PropertiesType"/>
+  <!-- WHERE IT SHOULD BE PLACE ??? -->
+
+  <!-- 5.2.9 Signer Information -->
+  <!-- shall be placed in <vr:Details> of <vr:IndividualReport> -->
+  <!-- <element name="Details" type="dss:AnyType" maxOccurs="1" minOccurs="0"/> -->
+  <xs:element name="SignerInformation" type="etsivr:SignerInformationType"/>
+  <xs:complexType name="SignerInformationType">
+    <xs:sequence>
+      <xs:element name="SignerCertificate" type="etsivr:VOReferenceType"/>
+      <xs:element name="Signer" type="xs:string"/>
+      <xs:element name="SignerInfo" type="dss:AnyType" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="Pseudonym" type="xs:boolean" use="optional"/>
+  </xs:complexType>
+
+  <!-- 5.2.10 Signature Quality Element -->
+  <!-- shall be placed in <vr:Details> of <vr:IndividualReport> -->
+  <!-- <element name="Details" type="dss:AnyType" maxOccurs="1" minOccurs="0"/> -->
+  <xs:element name="SignatureQuality" type="etsivr:SignatureQualityType"/>
+  <xs:complexType name="SignatureQualityType">
+    <xs:sequence>
+      <xs:element name="SignatureQualityInformation" type="xs:anyURI" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.11 Signature Validation Process Info -->
+  <!-- shall be placed in <vr:Details> of <vr:IndividualReport> -->
+  <!-- <element name="Details" type="dss:AnyType" maxOccurs="1" minOccurs="0"/> -->
+  <xs:element name="SignatureValidationProcess" type="etsivr:SignatureValidationProcessType"/>
+  <xs:complexType name="SignatureValidationProcessType">
+    <xs:sequence>
+      <xs:element name="SignatureValidationProcessID" type="xs:anyURI"/>
+      <xs:element name="SignatureValidationServicePolicy" type="xs:anyURI" minOccurs="0"/>
+      <xs:element name="SignatureValidationPracticeStatement" type="xs:anyURI" minOccurs="0"/>
+      <xs:element name="AugmentationInfo" type="xs:anyType"/>
+      <xs:element name="Other" type="xs:anyType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.12 Associated Validation Report Data -->
+  <!-- shall be placed in <vr:Details> of <vr:IndividualReport> -->
+  <!-- <element name="Details" type="dss:AnyType" maxOccurs="1" minOccurs="0"/> -->
+  <xs:element name="ValidationReportData" type="etsivr:ValidationReportDataType"/>
+  <xs:complexType name="ValidationReportDataType">
+    <xs:sequence>
+      <xs:element name="SigningCertificate" type="etsivr:VOReferenceType" minOccurs="0"/>
+      <xs:element name="CertificateChain" type="etsivr:VOReferenceType" minOccurs="0"/>
+      <xs:element name="SignedDataObjects" type="etsivr:VOReferenceType" minOccurs="0"/>
+      <xs:element name="RevocationStatusInformation" type="etsivr:RevocationStatusInformationType"
+        minOccurs="0"/>
+      <xs:element name="CryptoInformation" type="etsivr:CryptoInformationType" minOccurs="0"/>
+      <xs:element name="AdditionalValidationReportData"
+        type="etsivr:AdditionalValidationReportDataType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.12.5 Revocation Status Information Element -->
+  <xs:element name="RevocationStatusInformation" type="etsivr:RevocationStatusInformationType"/>
+  <xs:complexType name="RevocationStatusInformationType">
+    <xs:sequence>
+      <xs:element name="ValidationObjectId" type="etsivr:VOReferenceType"/>
+      <xs:element name="RevocationTime" type="xs:dateTime"/>
+      <xs:element name="RevocationReason" type="xs:anyURI" minOccurs="0"/>
+      <xs:element name="RevocationObject" type="etsivr:VOReferenceType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.12.6 Crypto Information Element -->
+  <xs:element name="AlgorithmParameter" type="etsivr:AlgorithmParameterType"/>
+  <xs:complexType name="AlgorithmParameterType">
+    <xs:sequence>
+      <xs:element name="ParameterID" type="xs:anyURI"/>
+      <xs:element name="Value" type="xs:anyType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="CryptoInformation" type="etsivr:CryptoInformationType"/>
+  <xs:complexType name="CryptoInformationType">
+    <xs:sequence>
+      <xs:element name="ValidationObjectId" type="etsivr:VOReferenceType"/>
+      <xs:element name="Algorithm" type="xs:anyURI"/>
+      <xs:element name="AlgorithmParameters" type="etsivr:AlgorithmParameterType" minOccurs="0"/>
+      <xs:element name="NotAfter" type="xs:dateTime" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.12.7 Additional Validation Report Data -->
+  <xs:element name="ReportData" type="etsivr:ReportDataType"/>
+  <xs:complexType name="ReportDataType">
+    <xs:sequence>
+      <xs:element name="InfoType" type="xs:anyURI"/>
+      <xs:element name="InfoData" type="xs:anyType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="AdditionalValidationReportData"
+    type="etsivr:AdditionalValidationReportDataType"/>
+  <xs:complexType name="AdditionalValidationReportDataType">
+    <xs:sequence>
+      <xs:element name="ReportData" type="etsivr:ReportDataType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- 5.2.13 Validation Report Signature -->
+  <!-- shall be a XadES Signature -->
+  <!-- shall be placed in <vr:Details> of <vr:IndividualReport> -->
+  <!-- <element name="Details" type="dss:AnyType" maxOccurs="1" minOccurs="0"/> -->
+
+
+  <!-- 5.3 Signature Validation Objects -->
+  <!-- shall be placed in <vr:Details> of <vr:IndividualReport> -->
+  <!-- <element name="Details" type="dss:AnyType" maxOccurs="1" minOccurs="0"/> -->
+  <!-- shall be contained in an element of type ValidationObjectListType -->
+  <xs:element name="ValidationObjectList" type="etsivr:ValidationObjectListType"/>
+  <xs:complexType name="ValidationObjectListType">
+    <xs:sequence>
+      <xs:element name="ValidationObject" type="etsivr:ValidationObjectType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="ValidationObject" type="etsivr:ValidationObjectType"/>
+  <xs:complexType name="ValidationObjectType">
+    <xs:sequence>
+      <xs:element name="ObjectType" type="xs:anyURI"/>
+      <xs:element name="ValidationObject" type="etsivr:ValidationObjectRepresentationType"/>
+      <xs:element name="PoE" type="etsivr:PoEType" minOccurs="0"/>
+      <xs:choice minOccurs="0">
+        <xs:element name="ValidationReport" type="vr:IndividualReportType"/>
+        <xs:element ref="vr:IndividualTimeStampReport"/>
+        <xs:element ref="vr:IndividualCertificateReport"/>
+        <xs:element ref="vr:IndividualAttributeCertificateReport"/>
+        <xs:element ref="vr:IndividualCRLReport"/>
+        <xs:element ref="vr:IndividualOCSPReport"/>
+        <xs:element ref="vr:EvidenceRecordReport"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+  </xs:complexType>
+
+  <xs:element name="ValidationObjectRepresentation"
+    type="etsivr:ValidationObjectRepresentationType"/>
+  <xs:complexType name="ValidationObjectRepresentationType">
+    <xs:choice>
+      <xs:element name="direct" type="xs:anyType"/>
+      <xs:element name="base64" type="xs:base64Binary"/>
+      <xs:element name="URI" type="xs:anyURI"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:element name="PoE" type="etsivr:PoEType"/>
+  <xs:complexType name="PoEType">
+    <xs:sequence>
+      <xs:element name="PoETime" type="xs:dateTime"/>
+      <xs:element name="PoEObject" type="etsivr:VOReferenceType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>

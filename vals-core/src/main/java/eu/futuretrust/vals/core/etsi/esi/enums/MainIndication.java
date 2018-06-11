@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2017 European Commission.
+ *
+ *  Licensed under the EUPL, Version 1.1 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence").
+ *  You may not use this work except in compliance with the Licence.
+ *  You may obtain a copy of the Licence at: https://joinup.ec.europa.eu/software/page/eupl5
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the Licence for the specific language governing permissions and limitations under the Licence.
+ *
+ */
+
+package eu.futuretrust.vals.core.etsi.esi.enums;
+
+/**
+ * Main indication values according to TS 119 102 v1.0.1 (page31/69 Table 6)
+ */
+public enum MainIndication {
+  TOTAL_PASSED("urn:oasis:names:tc:dss:1.0:detail:valid"),
+  TOTAL_FAILED("urn:oasis:names:tc:dss:1.0:detail:invalid"),
+  INDETERMINATE("urn:oasis:names:tc:dss:1.0:detail:indetermined");
+
+  private String uri;
+
+  MainIndication(String uri) {
+    this.uri = uri;
+  }
+
+  public String getURI() {
+    return this.uri;
+  }
+}

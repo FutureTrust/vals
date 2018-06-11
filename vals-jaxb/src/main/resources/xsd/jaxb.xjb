@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:namespace="http://jaxb2-commons.dev.java.net/namespace-prefix"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd
+                  http://jaxb2-commons.dev.java.net/namespace-prefix https://raw.githubusercontent.com/Siggen/jaxb2-namespace-prefix/master/src/main/resources/prefix-namespace-schema.xsd"
+  jaxb:version="2.1">
+
+  <jaxb:bindings>
+    <jaxb:globalBindings choiceContentProperty="false"
+      generateElementClass="true"
+      generateElementProperty="false"
+      generateValueClass="true">
+      <xjc:javaType name="byte[]" xmlType="xs:base64Binary"
+        adapter="eu.futuretrust.vals.jaxb.adapter.Base64Adapter"/>
+    </jaxb:globalBindings>
+  </jaxb:bindings>
+
+  <!--ESEAL -->
+  <jaxb:bindings schemaLocation="oasis-dss-profiles-eseal-schema-v1.0-os.xsd" node="/xs:schema">
+    <namespace:prefix name="eseal"/>
+    <jaxb:schemaBindings>
+      <jaxb:package name="eu.futuretrust.vals.jaxb.oasis.dss.profiles.eseal"/>
+    </jaxb:schemaBindings>
+  </jaxb:bindings>
+
+  <!--ASYNCHRONOUS -->
+  <jaxb:bindings schemaLocation="oasis-dss-profiles-asynchronous-processing-schema-v1.0-os.xsd"
+    node="/xs:schema">
+    <namespace:prefix name="async"/>
+    <jaxb:schemaBindings>
+      <jaxb:package name="eu.futuretrust.vals.jaxb.oasis.dss.profiles.asynchronous"/>
+    </jaxb:schemaBindings>
+  </jaxb:bindings>
+
+  <!--ADES (Xades and Cades) -->
+  <jaxb:bindings schemaLocation="oasis-dss-profiles-AdES-schema-v1.0-os.xsd" node="/xs:schema">
+    <namespace:prefix name="ades"/>
+    <jaxb:schemaBindings>
+      <jaxb:package name="eu.futuretrust.vals.jaxb.oasis.dss.profiles.ades"/>
+    </jaxb:schemaBindings>
+
+    <!--1-->
+    <jaxb:bindings schemaLocation="xmldsig-core-schema.xsd"
+      node="/xs:schema">
+      <namespace:prefix name="ds"/>
+      <jaxb:schemaBindings>
+        <jaxb:package name="eu.futuretrust.vals.jaxb.oasis.xmldsig.core"/>
+      </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+    <!--2-->
+    <jaxb:bindings schemaLocation="oasis-sstc-saml-schema-protocol-1.1.xsd"
+      node="/xs:schema">
+      <namespace:prefix name="saml"/>
+      <jaxb:schemaBindings>
+        <jaxb:package name="eu.futuretrust.vals.jaxb.oasis.saml.v1"/>
+      </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+    <!--3-->
+    <jaxb:bindings schemaLocation="XAdESv132.xsd"
+      node="/xs:schema">
+      <namespace:prefix name="xades"/>
+      <jaxb:schemaBindings>
+        <jaxb:package name="eu.futuretrust.vals.jaxb.etsi.esi.xades.v132"/>
+      </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+    <!--4-->
+    <!-- none -->
+    <!--5-->
+    <!-- duplicate elsewhere -->
+  </jaxb:bindings>
+
+  <!--TIMESTAMP -->
+  <jaxb:bindings schemaLocation="oasis-dss-profiles-timestamping-schema-v1.0-r1.xsd"
+    node="/xs:schema">
+    <namespace:prefix name="timestamping"/>
+    <jaxb:schemaBindings>
+      <jaxb:package name="eu.futuretrust.vals.jaxb.oasis.dss.profiles.timestamp"/>
+    </jaxb:schemaBindings>
+    <!--1-->
+    <!-- duplicate elsewhere -->
+    <!--2-->
+    <!-- duplicate elsewhere -->
+    <!--3-->
+    <!-- none -->
+    <!--4-->
+    <!-- duplicate elsewhere -->
+  </jaxb:bindings>
+
+
+  <!-- MULTI REPORT-->
+  <jaxb:bindings schemaLocation="oasis-dss-x-multi.xsd" node="/xs:schema">
+    <namespace:prefix name="vr"/>
+    <jaxb:schemaBindings>
+      <jaxb:package name="eu.futuretrust.vals.jaxb.oasis.dss.profiles.dssx"/>
+    </jaxb:schemaBindings>
+    <!-- 1-->
+    <jaxb:bindings schemaLocation="draft_ts102231v020101xsd_fixed.xsd"
+      node="/xs:schema">
+      <namespace:prefix name="ts102231"/>
+      <jaxb:schemaBindings>
+        <jaxb:package name="eu.futuretrust.vals.jaxb.etsi.esi.tsl"/>
+      </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+    <!-- 2 -->
+    <!-- duplicate elsewhere -->
+    <!-- 3 -->
+    <!-- duplicate elsewhere -->
+    <!-- 4 -->
+    <!-- duplicate elsewhere -->
+    <!-- 5 -->
+    <jaxb:bindings schemaLocation="saml-schema-assertion-2.0.xsd"
+      node="/xs:schema">
+      <namespace:prefix name="saml2"/>
+      <jaxb:schemaBindings>
+        <jaxb:package name="eu.futuretrust.vals.jaxb.oasis.saml.v2"/>
+      </jaxb:schemaBindings>
+
+      <jaxb:bindings schemaLocation="xenc-schema.xsd"
+        node="/xs:schema">
+        <namespace:prefix name="xenc"/>
+        <jaxb:schemaBindings>
+          <jaxb:package name="eu.futuretrust.vals.jaxb.xenc"/>
+        </jaxb:schemaBindings>
+      </jaxb:bindings>
+    </jaxb:bindings>
+    <!-- 6 -->
+    <!-- duplicate elsewhere -->
+  </jaxb:bindings>
+
+  <!-- VALS -->
+  <jaxb:bindings schemaLocation="vals.xsd" node="/xs:schema">
+    <namespace:prefix name="vals"/>
+    <jaxb:schemaBindings>
+      <jaxb:package name="eu.futuretrust.vals.jaxb.commons"/>
+    </jaxb:schemaBindings>
+  </jaxb:bindings>
+
+  <!-- ETSI 119 442 -->
+  <jaxb:bindings schemaLocation="etsi119442.xsd" node="/xs:schema">
+    <namespace:prefix name="etsival"/>
+    <jaxb:schemaBindings>
+      <jaxb:package name="eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol"/>
+    </jaxb:schemaBindings>
+
+    <!-- OASIS DSS Core 1 -->
+    <jaxb:bindings schemaLocation="oasis-dss-core-1.0.xsd" node="/xs:schema">
+      <namespace:prefix name="dss"/>
+      <jaxb:schemaBindings>
+        <jaxb:package name="eu.futuretrust.vals.jaxb.oasis.dss.core.v1"/>
+      </jaxb:schemaBindings>
+    </jaxb:bindings>
+
+    <!-- CORE2 - dss -->
+    <jaxb:bindings schemaLocation="oasis-dss-core-2.0.xsd" node="/xs:schema">
+      <namespace:prefix name="dss"/>
+      <jaxb:schemaBindings>
+        <jaxb:package name="eu.futuretrust.vals.jaxb.oasis.dss.core.v2"/>
+      </jaxb:schemaBindings>
+
+      <!-- DUPLICATE ELSEWHERE -->
+    </jaxb:bindings>
+
+    <!-- DSS-X-ValidationReport - dssvalrep -->
+    <!-- DUPLICATE ELSEWHERE -->
+  </jaxb:bindings>
+
+  <jaxb:bindings schemaLocation="etsi1191022.xsd" node="/xs:schema">
+    <namespace:prefix name="etsivr"/>
+    <jaxb:schemaBindings>
+      <jaxb:package name="eu.futuretrust.vals.jaxb.etsi.esi.validation.report"/>
+    </jaxb:schemaBindings>
+
+    <!-- DUPLICATE ELSEWHERE -->
+
+    <jaxb:bindings schemaLocation="XAdESv141.xsd">
+      <namespace:prefix name="xades141"/>
+      <jaxb:schemaBindings>
+        <jaxb:package name="eu.futuretrust.vals.jaxb.etsi.esi.xades.v141"/>
+      </jaxb:schemaBindings>
+    </jaxb:bindings>
+  </jaxb:bindings>
+
+  <jaxb:bindings schemaLocation="sign-val-pol.xsd" node="/xs:schema">
+    <namespace:prefix name="policy"/>
+    <jaxb:schemaBindings>
+      <jaxb:package name="eu.futuretrust.vals.jaxb.signvalpol"/>
+    </jaxb:schemaBindings>
+  </jaxb:bindings>
+
+
+</jaxb:bindings>

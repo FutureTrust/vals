@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with Notepad by Nick Pope -->
+<xs:schema targetNamespace="urn:oasis:names:tc:dss:1.0:eseal:1.0"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="urn:oasis:names:tc:dss:1.0:eseal:1.0" elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
+	<!--The Entity Seal profile does not define additional elements or attributes.-->
+</xs:schema>
