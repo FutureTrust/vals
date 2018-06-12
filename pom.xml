@@ -46,7 +46,7 @@
         <bouncycastle.version>1.58</bouncycastle.version>
         <jaxb2-namespace.version>1.3</jaxb2-namespace.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sd-dss.version>5.3</sd-dss.version>
+        <sd-dss.version>5.3-FT</sd-dss.version>
         <tika.version>1.17</tika.version>
         <xml-bind.version>2.3.0</xml-bind.version>
         <xmlsec.version>2.0.8</xmlsec.version>
