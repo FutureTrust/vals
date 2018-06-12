@@ -27,7 +27,8 @@ The source code of the Comprehensive Validation Service is organised as follows:
 * The vals-web module contains the SpringBoot web application exposing a RESTful validation interface. 
 
 ## Compiling the modules
-Besides the vals-web module, the other modules do not require any specific configuration.
+Besides the vals-web module, the other modules do not require any specific configuration. 
+The only specific requirement relates to the SD-DSS version, which corresponds to the library clone made for the FutureTrust project.
 For the vals-web module, the property files provided under the src/main/resources folder must be edited in order to match the local configuration:
 * The application.properties file currently has only a single property (unused at the moment), which is the URL of the GTSL end-point that must be contacted in order to retrieve trust status information related to a given electronic certificate;
 * The crypto.properties file contains all properties related to trust anchors, TSL certificates etc.;
