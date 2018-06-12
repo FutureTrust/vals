@@ -15,8 +15,9 @@
 package eu.futuretrust.vals.core;
 
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyRequestType;
+import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyResponseType;
 
 public interface DSSValidator
 {
-  void validate(final VerifyRequestType verifyRequest);
+  VerifyResponseType validate(final VerifyRequestType verifyRequest);
 }

@@ -12,22 +12,27 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
-package eu.futuretrust.vals.core.ers;
+package eu.futuretrust.vals.core.ers.rfc4998;
 
 import eu.europa.esig.dss.validation.CertificateVerifier;
-import eu.futuretrust.vals.core.DSSValidator;
+import eu.futuretrust.vals.core.ers.ERSDSSValidator;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyRequestType;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyResponseType;
 
-public abstract class ERSDSSValidator implements DSSValidator
+public class RFC4998DSSValidator extends ERSDSSValidator
 {
-  public ERSDSSValidator(final CertificateVerifier certificateVerifier) {
 
+
+  public RFC4998DSSValidator(CertificateVerifier certificateVerifier)
+  {
+    super(certificateVerifier);
   }
 
   @Override
-  public VerifyResponseType validate(VerifyRequestType verifyRequest)
-  {
+  public VerifyResponseType validate(final VerifyRequestType verifyRequestType) {
+
+    return null;
 
   }
+
 }
