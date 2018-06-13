@@ -21,6 +21,8 @@ import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyResponseType;
 
 public abstract class ERSDSSValidator implements DSSValidator
 {
+  private CertificateVerifier certificateVerifier;
+
   public ERSDSSValidator(final CertificateVerifier certificateVerifier) {
 
   }
