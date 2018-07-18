@@ -54,9 +54,13 @@ public class SignedObjectExtractor {
 
   protected byte[] getSignedObjectBytes(final VerifyRequestType verifyRequest)
       throws SignedObjectNotFoundException {
-    try {
-      if (containsSignatureObject(verifyRequest)) {
+    try
+    {
+      if (containsSignatureObject(verifyRequest))
+      {
         return Base64.decode(verifyRequest.getSignatureObject().getBase64Signature().getValue());
+      } else if (containsDocumentWithSignature(verifyRequest)) {
+        return Base64.decode(verifyRequest.getOptionalInputs().getDocumentWithSignature().getDocument().getBase64Data().getValue());
       } else {
         throw new SignedObjectNotFoundException("No signed object found in the VerifyRequest",
             ResultMajor.REQUESTER_ERROR, ResultMinor.NOT_SUPPORTED);
@@ -99,6 +103,14 @@ public class SignedObjectExtractor {
       default:
         throw new SignatureException("Signature format is not recognized");
     }
+  }
+
+  private boolean containsDocumentWithSignature(final VerifyRequestType verifyRequest) {
+    return verifyRequest.getOptionalInputs() != null
+            && verifyRequest.getOptionalInputs().getDocumentWithSignature() != null
+            && verifyRequest.getOptionalInputs().getDocumentWithSignature().getDocument() != null
+            && verifyRequest.getOptionalInputs().getDocumentWithSignature().getDocument()
+            .getBase64Data() != null;
   }
 
   private boolean containsSignatureObject(final VerifyRequestType verifyRequest) {
