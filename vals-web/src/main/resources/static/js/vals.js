@@ -59,6 +59,9 @@ ValS.initValidationForm = function () {
         droppedSignatureFile = false,
         droppedFile = false;
 
+    $('form.dropbox').show();
+    $('.result').hide();
+
     if (isDragAndDropSupported()) {
 
         $('.dropbox.validate').addClass('has-advanced-upload');
@@ -143,7 +146,6 @@ ValS.initValidationForm = function () {
                     $('.dropbox__success.validate').html('<p>' + data.resultMajor + '</p><p>'+ data.resultMinor + '</p>').show();
                     $('#trigger-validation').hide();
                     $('#reset-validation').show().css('display', 'inline-block');
-                    console.log(data);
                     submitVerifyRequest(JSON.stringify(data));
                 }, error: function (data) {
                     $('.dropbox__error.validate').html('<p>An error occurred while validating. Please try again later.</p>');
@@ -159,26 +161,54 @@ let submitVerifyRequest = function(verifyRequest) {
 
     let url = window.location.origin + "/api/validation";
 
-    console.log(verifyRequest);
-
     $.ajax({
         type: 'POST',
         url: url,
         contentType: 'application/json',
         data: verifyRequest,
         success: function (response) {
-
+            parseVerifyResponse(response);
         },
         error: function () {
-            console.log("Error...");
+            parseVerifyResponse(null, true);
         }
     });
 };
 
-let parseVerifyResponse = function(verifyResponse) {
+let parseVerifyResponse = function(verifyResponse, error) {
 
+    if (error) {
+        displayResult(null, null, true);
+    }
 
+    let globalResult = verifyResponse.result.resultMajor;
+
+    if (globalResult == "urn:oasis:names:tc:dss:1.0:resultmajor:Success") {
+        let result = verifyResponse.optionalOutputs.individualReport[0].result;
+        displayResult(result.resultMajor, result.resultMinor, false);
+    } else {
+        displayResult(null, null, true);
+    }
 };
+
+let displayResult = function (resultMajor, resultMinor, error) {
+
+    $('.result-major').text();
+    $('.result-minor').text();
+
+    if (error || (resultMajor == null && resultMinor == null)) {
+        $('.result-major').text("Error processing your request");
+    }
+
+    $('form').hide()
+    $('p.service-description').hide();
+
+    $('.result-major').html("<b>Main result: </b>" + resultMajor);
+    $('.result-minor').html("<b>Sub result: </b>" + resultMinor);
+    $('.result').show();
+    $('.result-major').show();
+    $('.result-minor').show();
+}
 
 let handleFormError = function (form) {
 
@@ -195,14 +225,15 @@ let resetFileInput = function (elt) {
 ValS.initResetButtons = function() {
 
     $('#reset-validation').on('click', function () {
-        let $form = $('form.dropbox-val');
+        let $form = $('form.dropbox');
         $form[0].reset();
+
         $form.removeClass('is-uploading');
         $form.find('div.dropbox__success').hide().html("");
         $form.find('div.dropbox__validation').show();
         $form.find('.dropbox__icon').show();
         $form.find('label[for="file-signature"]').text('Choose signature file').show();
-        $form.find('label[for="file-validate"]').text('Choose detached content').show();
+        $form.find('label[for="file-signed"]').text('Choose detached content').show();
         resetFileInput($('#file-signature'));
         resetFileInput($('#file-signed'));
         ValS.initValidationForm();
