@@ -1985,7 +1985,7 @@
 		-ms-transition: color 0.2s ease-in-out, border-bottom-color 0.2s ease-in-out;
 		transition: color 0.2s ease-in-out, border-bottom-color 0.2s ease-in-out;
 		border-bottom: dotted 1px;
-		color: #e89980;
+		color: rgb(0, 51, 153);
 		text-decoration: none;
 	}
 
@@ -2890,7 +2890,7 @@
 		input[type="reset"].special,
 		input[type="button"].special,
 		.button.special {
-			background-color: #e89980;
+			background-color: rgb(0, 51, 153) !important;
 			color: #ffffff !important;
 		}
 
@@ -2898,14 +2898,14 @@
 			input[type="reset"].special:hover,
 			input[type="button"].special:hover,
 			.button.special:hover {
-				background-color: #ecaa96;
+				background-color: rgb(0, 51, 200) !important;
 			}
 
 			input[type="submit"].special:active,
 			input[type="reset"].special:active,
 			input[type="button"].special:active,
 			.button.special:active {
-				background-color: #e4886a;
+				background-color: rgb(0, 51, 200) !important;
 			}
 
 		input[type="submit"].disabled, input[type="submit"]:disabled,

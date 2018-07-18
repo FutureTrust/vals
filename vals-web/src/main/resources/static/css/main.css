@@ -2398,7 +2398,7 @@
 
   #nav {
     cursor: default;
-    background-color: #666;
+    background-color: #0b3259;
     background-image: -moz-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0.3)), url("../images/bg01.png");
     background-image: -webkit-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0.3)), url("../images/bg01.png");
     background-image: -ms-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0.3)), url("../images/bg01.png");
@@ -3393,3 +3393,12 @@
 .obj{
     padding-top: 100px;
     }
+
+#reset-validation,
+#trigger-validation {
+  margin: 50px;
+}
+
+.btn-center {
+  text-align: center;
+}
