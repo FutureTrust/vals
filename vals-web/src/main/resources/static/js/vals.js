@@ -209,7 +209,10 @@ let displayResult = function (resultMajor, resultMinor, error) {
     $('form').hide()
 
     $('.result-major').html("<b>Main result: </b>" + resultMajor);
-    $('.result-minor').html("<b>Sub result: </b>" + resultMinor);
+    if (resultMinor != 'null' && resultMinor != null) {
+        $('.result-minor').html("<b>Sub result: </b>" + resultMinor);
+    }
+    
     $('.result').show();
     $('.result-major').show();
     $('.result-minor').show();

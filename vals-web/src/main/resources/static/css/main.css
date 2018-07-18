@@ -3402,3 +3402,8 @@
 .btn-center {
   text-align: center;
 }
+
+.result {
+  text-align: center;
+  font-size: larger;
+}
