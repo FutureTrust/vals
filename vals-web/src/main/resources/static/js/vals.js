@@ -131,6 +131,8 @@ ValS.initValidationForm = function () {
             data.append('signature', droppedSignatureFile);
             data.append('documents', droppedFile);
 
+            displayProcessMessage("Requesting VerifyRequest...");
+
             $.ajax({
                 type: 'POST',
                 url: window.location.origin + "/api/request",
@@ -139,6 +141,7 @@ ValS.initValidationForm = function () {
                 cache: false,
                 data: data,
                 success: function (data) {
+                    displayProcessMessage("Received VerifyRequest, will request validation now...");
                     $('.dropbox__icon').hide();
                     $('label[for="file-signature"]').hide();
                     $('label[for="file-signed"]').hide();
@@ -168,6 +171,7 @@ let submitVerifyRequest = function(verifyRequest) {
         data: verifyRequest,
         success: function (response) {
             parseVerifyResponse(response);
+            saveVerifyResponse(response);
         },
         error: function () {
             parseVerifyResponse(null, true);
@@ -193,6 +197,8 @@ let parseVerifyResponse = function(verifyResponse, error) {
 
 let displayResult = function (resultMajor, resultMinor, error) {
 
+    $('.message').text();
+    $('.message').hide();
     $('.result-major').text();
     $('.result-minor').text();
 
@@ -201,7 +207,6 @@ let displayResult = function (resultMajor, resultMinor, error) {
     }
 
     $('form').hide()
-    $('p.service-description').hide();
 
     $('.result-major').html("<b>Main result: </b>" + resultMajor);
     $('.result-minor').html("<b>Sub result: </b>" + resultMinor);
@@ -209,6 +214,20 @@ let displayResult = function (resultMajor, resultMinor, error) {
     $('.result-major').show();
     $('.result-minor').show();
 }
+
+let saveVerifyResponse = function (response) {
+
+  let json = JSON.stringify(response);
+
+  let blob = new Blob([json], {'type': 'application/json'});
+  saveAs(blob, 'verifyresponse.json');
+};
+
+let displayProcessMessage = function (message) {
+
+    $('.message').text(message);
+    $('.message').show();
+};
 
 let handleFormError = function (form) {
 
