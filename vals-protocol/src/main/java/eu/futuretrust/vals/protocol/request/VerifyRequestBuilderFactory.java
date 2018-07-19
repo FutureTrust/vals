@@ -45,6 +45,8 @@ public final class VerifyRequestBuilderFactory
         return new PadesVerifyRequestBuilder(signature);
       case ASIC:
         return new AsicVerifyRequestBuilder(signature);
+      case X509:
+        return new X509VerifyRequestBuilder(signature);
       default:
         throw new SignatureException("The signature format cannot be detected");
     }

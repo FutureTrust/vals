@@ -58,7 +58,7 @@ public final class XadesVerifyRequestBuilder extends VerifyRequestBuilder {
       throw new SignatureException("No signature found in the document");
     }
 
-    // TODO: Can the document have multiple signatures ? Do we have to handle all those signatures ?
+    // TODO: Ensure multiple signatures support
     XMLSignature xmlSignature = xmlSignatures.get(0);
     SignedObjectType signatureType = TypeDetector.detect(xmlSignature);
 

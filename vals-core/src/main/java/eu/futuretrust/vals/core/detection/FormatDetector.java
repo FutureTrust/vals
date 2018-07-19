@@ -14,11 +14,17 @@
 
 package eu.futuretrust.vals.core.detection;
 
+import com.sun.deploy.uitoolkit.impl.fx.ui.CertificateDialog;
 import eu.futuretrust.vals.core.enums.SignedObjectFormat;
 import eu.futuretrust.vals.core.signature.exceptions.FormatException;
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.Optional;
 import org.apache.tika.Tika;
 
@@ -42,6 +48,9 @@ public final class FormatDetector {
   }
 
   public static SignedObjectFormat detect(byte[] bytes) throws FormatException {
+    if (isX509Certificate(bytes)) {
+      return SignedObjectFormat.X509;
+    }
     String fileType = TIKA.detect(bytes);
     return getSignedObjectFormat(fileType);
   }
@@ -54,6 +63,18 @@ public final class FormatDetector {
           "The signature format cannot be detected (please check that you are submitting a XML, PDF, CMS document or ASiC container)");
     }
     return optionalSignatureFormat.get();
+  }
+
+  private static boolean isX509Certificate(final byte[] bytes)
+  {
+    try
+    {
+      CertificateFactory factory = CertificateFactory.getInstance("X.509");
+      factory.generateCertificate(new ByteArrayInputStream(bytes));
+    } catch (final Exception e) {
+      return false;
+    }
+    return true;
   }
 
 }

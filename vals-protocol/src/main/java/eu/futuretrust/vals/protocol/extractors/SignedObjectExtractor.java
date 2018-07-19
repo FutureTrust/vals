@@ -100,6 +100,8 @@ public class SignedObjectExtractor {
         return SignedObjectType.ENVELOPED;
       case ASIC:
         return SignedObjectType.DETACHED;
+      case X509:
+        return SignedObjectType.CERTIFICATE;
       default:
         throw new SignatureException("Signature format is not recognized");
     }

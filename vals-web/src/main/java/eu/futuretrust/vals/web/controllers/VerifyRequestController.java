@@ -11,6 +11,8 @@ import eu.futuretrust.vals.protocol.input.documents.InputDocument;
 import eu.futuretrust.vals.web.services.jaxb.JaxbService;
 import eu.futuretrust.vals.web.services.request.VerifyRequestService;
 import eu.futuretrust.vals.web.utils.MultipartFileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,6 +28,7 @@ import java.util.List;
 public class VerifyRequestController
 {
 
+  private final static Logger LOGGER = LoggerFactory.getLogger(VerifyRequestController.class);
   private final VerifyRequestService verifyRequestService;
   private JaxbService jaxbService;
 
@@ -62,14 +65,15 @@ public class VerifyRequestController
   }
 
   @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<VerifyRequestType> jsonCreateVerifyRequest(
+  public ResponseEntity<VerifyRequestType> createJsonVerifyRequest(
           @RequestParam("signature") MultipartFile signature,
           @RequestParam(value = "documents", required = false) MultipartFile[] documents) {
 
-    if (!MultipartFileUtils.valid(signature)) {
+    if (! MultipartFileUtils.valid(signature)) {
       return ResponseEntity.badRequest().build();
     }
-    if (!MultipartFileUtils.valid(documents)) {
+    //boolean docsVald = MultipartFileUtils.valid(documents);
+    if (! MultipartFileUtils.valid(documents)) {
       return ResponseEntity.badRequest().build();
     }
 
@@ -77,6 +81,7 @@ public class VerifyRequestController
     try {
       verifyRequest = generateVerifyRequest(signature, documents);
     } catch (Exception e) {
+      LOGGER.error("Error", e);
       return ResponseEntity.badRequest().build();
     }
 

@@ -24,7 +24,9 @@ public enum SignedObjectType {
   ENVELOPING_DETACHED,
   ENVELOPED_DETACHED,
 
-  ENVELOPED_ENVELOPING_DETACHED;
+  ENVELOPED_ENVELOPING_DETACHED,
+
+  CERTIFICATE;
 
   public boolean isEnveloped() {
     return this == ENVELOPED
@@ -45,6 +47,10 @@ public enum SignedObjectType {
         || this == ENVELOPED_ENVELOPING_DETACHED;
   }
 
+  public boolean isCertificate() {
+    return this == CERTIFICATE;
+  }
+
   public static Optional<SignedObjectType> fromBooleans(SignedObjectFormat signatureFormat,
       boolean isEnveloped, boolean isEnveloping,
       boolean isDetached) {
@@ -60,6 +66,8 @@ public enum SignedObjectType {
         return getSignedObjectTypeForCMS(isEnveloping, isDetached);
       case XML:
         return getSignedObjectTypeForXML(isEnveloped, isEnveloping, isDetached);
+      case X509:
+        return getSignedObjectTypeForX509();
       default:
         return Optional.empty();
     }
@@ -121,6 +129,10 @@ public enum SignedObjectType {
     else {
       return Optional.of(DETACHED);
     }
+  }
+
+  private static Optional<SignedObjectType> getSignedObjectTypeForX509() {
+    return Optional.of(CERTIFICATE);
   }
 
 }
