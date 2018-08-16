@@ -45,6 +45,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -56,11 +57,12 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
 
   private final static Logger LOGGER = LoggerFactory
       .getLogger(DSSValidationReportBuilderService.class);
+
   private final CertificateVerifierService certificateVerifierService;
   private final IndividualReportBuilderService individualReportBuilderService;
 
   @Autowired
-  public DSSValidationReportBuilderService(CertificateVerifierService certificateVerifierService,
+  public DSSValidationReportBuilderService(@Qualifier("certificateVerifierServiceImpl") final CertificateVerifierService certificateVerifierService,
       IndividualReportBuilderService individualReportBuilderService) {
     this.certificateVerifierService = certificateVerifierService;
     this.individualReportBuilderService = individualReportBuilderService;

@@ -17,13 +17,13 @@ import eu.futuretrust.vals.core.enums.ResultMinor;
 import eu.futuretrust.vals.protocol.exceptions.KeystoreLoadingException;
 import eu.futuretrust.vals.web.properties.CryptoProperties;
 import eu.futuretrust.vals.web.services.response.CertificateVerifierService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Date;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class CertificateVerifierServiceImpl implements CertificateVerifierService {

@@ -146,7 +146,12 @@ public enum ResultMinor
   /**
    * The certificate's status is currently on hold.
    */
-  ON_HOLD("urn:oasis:names:tc:dss:1.0:resultminor:certificate:onHold");
+  ON_HOLD("urn:oasis:names:tc:dss:1.0:resultminor:certificate:onHold"),
+
+  /**
+   * The certificate is not yet valid
+   */
+  NOT_VALID_YET("urn:oasis:names:tc:dss:1.0:resultminor:certificate:notValidYet");
 
   private String uri;
 
