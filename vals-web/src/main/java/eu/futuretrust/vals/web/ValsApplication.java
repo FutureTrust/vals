@@ -21,15 +21,25 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 @SpringBootApplication
-public class ValsApplication {
+public class ValsApplication extends SpringBootServletInitializer {
 
   public static void main(final String[] args) {
     org.apache.xml.security.Init.init();
     SpringApplication.run(ValsApplication.class, args);
+  }
+
+  /**
+   * To run the application as a deployed WAR archive
+   */
+  @Override
+  protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+    return builder.sources(ValsApplication.class);
   }
 
   @Bean
