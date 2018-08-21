@@ -14,19 +14,16 @@
 
 package eu.futuretrust.vals.core.detection;
 
-import com.sun.deploy.uitoolkit.impl.fx.ui.CertificateDialog;
 import eu.futuretrust.vals.core.enums.SignedObjectFormat;
 import eu.futuretrust.vals.core.signature.exceptions.FormatException;
+import org.apache.tika.Tika;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.Optional;
-import org.apache.tika.Tika;
 
 public final class FormatDetector {
 

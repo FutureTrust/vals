@@ -107,11 +107,13 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
     //Elements of OptionalInputsBase MUST NOT be used with this profile
     if (verifyRequestType.getOptionalInputs() != null
       && (verifyRequestType.getOptionalInputs().getServicePolicy() != null
+            && verifyRequestType.getOptionalInputs().getServicePolicy().size() > 0
             || verifyRequestType.getOptionalInputs().getClaimedIdentity() != null
             || verifyRequestType.getOptionalInputs().getLanguage() != null
             || verifyRequestType.getOptionalInputs().getSchemas() != null
             || verifyRequestType.getOptionalInputs().getAddTimestamp() != null
-            || verifyRequestType.getOptionalInputs().getOther() != null)) {
+            || verifyRequestType.getOptionalInputs().getOther() != null)
+            && verifyRequestType.getOptionalInputs().getOther().size() > 0) {
 
       return false;
     }
@@ -170,7 +172,8 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
 
   private NameIDType getSignerIdentity(final VerifyRequestType verifyRequest, final X509Certificate certificate) {
 
-    if (verifyRequest.getOptionalInputs().isReturnSignerIdentity()) {
+    if (verifyRequest.getOptionalInputs() != null
+            && verifyRequest.getOptionalInputs().isReturnSignerIdentity()) {
       final String certIssuerName = certificate.getIssuerX500Principal().getName();
       final NameIDType nameIDType = new NameIDType();
       nameIDType.setValue(certIssuerName);
