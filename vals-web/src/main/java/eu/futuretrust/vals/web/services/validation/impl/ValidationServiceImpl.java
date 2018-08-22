@@ -27,15 +27,11 @@ import eu.futuretrust.vals.protocol.utils.VerifyResponseUtils;
 import eu.futuretrust.vals.web.services.policy.PolicyFetchingService;
 import eu.futuretrust.vals.web.services.response.VerifyResponseBuilderService;
 import eu.futuretrust.vals.web.services.validation.ValidationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ValidationServiceImpl implements ValidationService {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(ValidationServiceImpl.class);
 
   private final PolicyFetchingService policyFetchingService;
   private final VerifyResponseBuilderService verifyResponseBuilderService;

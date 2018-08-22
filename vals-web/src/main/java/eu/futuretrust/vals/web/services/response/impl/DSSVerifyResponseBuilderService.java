@@ -9,12 +9,7 @@ import eu.futuretrust.vals.core.signature.exceptions.SignatureException;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyRequestType;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyResponseType;
 import eu.futuretrust.vals.protocol.enums.DSSResponseType;
-import eu.futuretrust.vals.protocol.exceptions.InputDocumentException;
-import eu.futuretrust.vals.protocol.exceptions.PolicyException;
-import eu.futuretrust.vals.protocol.exceptions.ProfileNotFoundException;
-import eu.futuretrust.vals.protocol.exceptions.SignedObjectException;
-import eu.futuretrust.vals.protocol.exceptions.VerifyRequestException;
-import eu.futuretrust.vals.protocol.exceptions.VerifyResponseException;
+import eu.futuretrust.vals.protocol.exceptions.*;
 import eu.futuretrust.vals.protocol.helpers.VerifyRequestElementsFinder;
 import eu.futuretrust.vals.protocol.input.Policy;
 import eu.futuretrust.vals.protocol.input.SignedObject;
@@ -22,15 +17,17 @@ import eu.futuretrust.vals.protocol.input.documents.InputDocument;
 import eu.futuretrust.vals.protocol.output.ValidationReport;
 import eu.futuretrust.vals.protocol.utils.ProfileUtils;
 import eu.futuretrust.vals.protocol.utils.VerifyResponseUtils;
-import eu.futuretrust.vals.web.services.report.ValidationReportBuilderService;
+import eu.futuretrust.vals.web.services.report.impl.DSSValidationReportBuilderService;
+import eu.futuretrust.vals.web.services.report.impl.X509ValidationReportBuilderServiceImpl;
 import eu.futuretrust.vals.web.services.response.VerifyResponseBuilderService;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DSSVerifyResponseBuilderService implements VerifyResponseBuilderService {
@@ -38,12 +35,16 @@ public class DSSVerifyResponseBuilderService implements VerifyResponseBuilderSer
   private static final Logger LOGGER = LoggerFactory
       .getLogger(DSSVerifyResponseBuilderService.class);
 
-  private ValidationReportBuilderService validationReportBuilderService;
+  private DSSValidationReportBuilderService dssValidationReportBuilderService;
+  private X509ValidationReportBuilderServiceImpl x509ValidationReportBuilderServiceImpl;
 
   @Autowired
   public DSSVerifyResponseBuilderService(
-      ValidationReportBuilderService validationReportBuilderService) {
-    this.validationReportBuilderService = validationReportBuilderService;
+          DSSValidationReportBuilderService dssValidationReportBuilderService,
+          X509ValidationReportBuilderServiceImpl x509ValidationReportBuilderServiceImpl)
+  {
+    this.dssValidationReportBuilderService = dssValidationReportBuilderService;
+    this.x509ValidationReportBuilderServiceImpl = x509ValidationReportBuilderServiceImpl;
   }
 
   @Override
@@ -69,12 +70,27 @@ public class DSSVerifyResponseBuilderService implements VerifyResponseBuilderSer
     }
 
     ValidationReport report;
+
     try {
       final SignedObject signedObject = VerifyRequestElementsFinder.findSignature(verifyRequest);
       final List<InputDocument> inputDocuments = VerifyRequestElementsFinder
-          .findInputDocuments(verifyRequest);
-      report = validationReportBuilderService
-          .generate(verifyRequest, signedObject, policy, inputDocuments, responseType);
+              .findInputDocuments(verifyRequest);
+
+      switch (signedObject.getType()) {
+        case ENVELOPED:
+        case ENVELOPED_DETACHED:
+        case ENVELOPED_ENVELOPING_DETACHED:
+        case DETACHED:
+        case ENVELOPING:
+        case ENVELOPING_DETACHED:
+          report = dssValidationReportBuilderService
+                  .generate(verifyRequest, signedObject, policy, inputDocuments, responseType);
+          return generateVerifyResponse(report, verifyRequest, mainProfile, subProfiles);
+        case CERTIFICATE:
+          report = x509ValidationReportBuilderServiceImpl
+                  .generate(verifyRequest, signedObject, policy, null, responseType);
+          return generateVerifyResponse(report, verifyRequest, mainProfile, subProfiles);
+      }
     } catch (SignedObjectException | InputDocumentException | VerifyResponseException e) {
       return VerifyResponseUtils
           .getVerifyResponse(e.getResultMajor(), e.getResultMinor(), e.getMessage(), verifyRequest);
@@ -84,13 +100,21 @@ public class DSSVerifyResponseBuilderService implements VerifyResponseBuilderSer
               verifyRequest);
     }
 
+    return null; //should throw an exception
+  }
+
+  private VerifyResponseType generateVerifyResponse(final ValidationReport report,
+                                                    final VerifyRequestType verifyRequest,
+                                                    final Profile mainProfile,
+                                                    final List<Profile> subProfiles) {
+
     VerifyResponseType verifyResponse = VerifyResponseUtils
-        .getVerifyResponse(report.getResult().getResultMajor(), report.getResult().getResultMinor(),
-            null, verifyRequest);
+            .getVerifyResponse(report.getResult().getResultMajor(), report.getResult().getResultMinor(),
+                    null, verifyRequest);
     verifyResponse.setOptionalOutputs(report.getOptionalOutputs());
     verifyResponse.getAppliedProfile().add(mainProfile.getUri());
     verifyResponse.getAppliedProfile()
-        .addAll(subProfiles.stream().map(Profile::getUri).collect(Collectors.toList()));
+            .addAll(subProfiles.stream().map(Profile::getUri).collect(Collectors.toList()));
     return verifyResponse;
   }
 

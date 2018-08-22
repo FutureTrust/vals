@@ -1,13 +1,8 @@
 package eu.futuretrust.vals.web.services.report.impl;
 
 import eu.europa.esig.dss.jaxb.diagnostic.XmlChainItem;
-import eu.europa.esig.dss.jaxb.diagnostic.XmlTimestampedObject;
 import eu.europa.esig.dss.validation.reports.Reports;
-import eu.europa.esig.dss.validation.reports.wrapper.CertificateWrapper;
-import eu.europa.esig.dss.validation.reports.wrapper.DiagnosticData;
-import eu.europa.esig.dss.validation.reports.wrapper.RevocationWrapper;
-import eu.europa.esig.dss.validation.reports.wrapper.SignatureWrapper;
-import eu.europa.esig.dss.validation.reports.wrapper.TimestampWrapper;
+import eu.europa.esig.dss.validation.reports.wrapper.*;
 import eu.futuretrust.vals.core.enums.ResultMajor;
 import eu.futuretrust.vals.core.enums.ResultMinor;
 import eu.futuretrust.vals.core.etsi.esi.enums.MainIndication;
@@ -22,33 +17,18 @@ import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.ManifestResultType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.ResultType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.VerificationTimeInfoType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.VerifyManifestResultsType;
-import eu.futuretrust.vals.jaxb.oasis.dss.profiles.dssx.CRLValidityType;
-import eu.futuretrust.vals.jaxb.oasis.dss.profiles.dssx.CertificateValidityType;
-import eu.futuretrust.vals.jaxb.oasis.dss.profiles.dssx.IndividualReportType;
-import eu.futuretrust.vals.jaxb.oasis.dss.profiles.dssx.OCSPValidityType;
-import eu.futuretrust.vals.jaxb.oasis.dss.profiles.dssx.TimeStampValidityType;
+import eu.futuretrust.vals.jaxb.oasis.dss.profiles.dssx.*;
 import eu.futuretrust.vals.jaxb.oasis.saml.v2.NameIDType;
 import eu.futuretrust.vals.jaxb.utils.ObjectFactoryUtils;
 import eu.futuretrust.vals.protocol.constants.OasisX509SubjectName;
 import eu.futuretrust.vals.protocol.enums.DSSResponseType;
 import eu.futuretrust.vals.protocol.enums.ManifestStatus;
-import eu.futuretrust.vals.protocol.exceptions.DSSParserException;
-import eu.futuretrust.vals.protocol.exceptions.IndividualReportException;
-import eu.futuretrust.vals.protocol.exceptions.InputDocumentException;
-import eu.futuretrust.vals.protocol.exceptions.SignedObjectException;
-import eu.futuretrust.vals.protocol.exceptions.SignerIdentityException;
-import eu.futuretrust.vals.protocol.exceptions.ValidationObjectException;
-import eu.futuretrust.vals.protocol.exceptions.VerifyResponseException;
+import eu.futuretrust.vals.protocol.exceptions.*;
 import eu.futuretrust.vals.protocol.helpers.XMLGregorianCalendarBuilder;
 import eu.futuretrust.vals.protocol.input.Policy;
 import eu.futuretrust.vals.protocol.input.SignedObject;
 import eu.futuretrust.vals.protocol.input.documents.InputDocument;
-import eu.futuretrust.vals.protocol.output.Certificate;
-import eu.futuretrust.vals.protocol.output.Crl;
-import eu.futuretrust.vals.protocol.output.DigestAlgoAndValue;
-import eu.futuretrust.vals.protocol.output.Ocsp;
-import eu.futuretrust.vals.protocol.output.Timestamp;
-import eu.futuretrust.vals.protocol.output.ValidationReport;
+import eu.futuretrust.vals.protocol.output.*;
 import eu.futuretrust.vals.protocol.validation.DSSCertificateWrapperParser;
 import eu.futuretrust.vals.protocol.validation.DSSEnumsParser;
 import eu.futuretrust.vals.protocol.validation.DSSRevocationWrapperParser;
@@ -60,30 +40,29 @@ import eu.futuretrust.vals.protocol.validation.validity.DSSTimestampValidityPars
 import eu.futuretrust.vals.web.services.report.IndividualReportBuilderService;
 import eu.futuretrust.vals.web.services.report.ValidationReportBuilderService;
 import eu.futuretrust.vals.web.services.response.CertificateVerifierService;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.collections.CollectionUtils;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class DSSValidationReportBuilderService implements ValidationReportBuilderService {
 
   private final static Logger LOGGER = LoggerFactory
       .getLogger(DSSValidationReportBuilderService.class);
+
   private final CertificateVerifierService certificateVerifierService;
   private final IndividualReportBuilderService individualReportBuilderService;
 
   @Autowired
-  public DSSValidationReportBuilderService(CertificateVerifierService certificateVerifierService,
+  public DSSValidationReportBuilderService(@Qualifier("certificateVerifierServiceImpl") final CertificateVerifierService certificateVerifierService,
       IndividualReportBuilderService individualReportBuilderService) {
     this.certificateVerifierService = certificateVerifierService;
     this.individualReportBuilderService = individualReportBuilderService;
@@ -404,33 +383,18 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
 
     List<Timestamp> timestamps = new ArrayList<>();
 
-    /*
     for (TimestampWrapper timestampWrapper : diagnosticData
-        .getTimestampList(signatureWrapper.getId())) {
+        .getTimestampList(signatureWrapper.getId()))
+    {
       DSSTimestampValidityParser dssTimestampValidityParser = new DSSTimestampValidityParser(
-          diagnosticData, timestampWrapper);
+              diagnosticData, timestampWrapper);
       TimeStampValidityType timeStampValidityType = dssTimestampValidityParser
-          .getTimestampValidity();
+              .getTimestampValidity();
 
       List<DigestAlgoAndValue> referencedObjectsByHash = new ArrayList<>();
-      // TODO: find base64 value, List<byte[]> referencedObjectsByBase64 = ;
-
-      for (XmlTimestampedObject xmlTimestampedObject : timestampWrapper.getTimestampedObjects()) {
-        DigestAlgoAndValue myDigestAlgoAndValue = new DigestAlgoAndValue();
-        myDigestAlgoAndValue
-            .setDigestAlgo(xmlTimestampedObject.getDigestAlgoAndValue().getDigestMethod());
-        myDigestAlgoAndValue
-            .setValue(Base64.decode(xmlTimestampedObject.getDigestAlgoAndValue().getDigestValue()));
-        referencedObjectsByHash.add(myDigestAlgoAndValue);
-      }
-
-      // TODO: find base64 value, timestampWrapper.getBase64Encoded()
-      timestamps.add(
-          new Timestamp(null, timeStampValidityType,
-              new ArrayList<>(), referencedObjectsByHash,
-              timestampWrapper.getProductionTime()));
+      timestamps.add(new Timestamp(timestampWrapper.getBase64Encoded().getBytes(), timeStampValidityType, new ArrayList<>(), referencedObjectsByHash,
+      timestampWrapper.getProductionTime()));
     }
-    */
 
     return timestamps;
   }

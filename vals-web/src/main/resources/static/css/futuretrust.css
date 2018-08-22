@@ -1,0 +1,89 @@
+#nav > ul > li a {
+    color: #fff;
+    text-decoration: none;
+    border: 0;
+    display: block;
+    padding: 0.75em 0.5em 0.75em 0.5em;
+}
+
+#nav > ul > li:hover a, #nav > ul > li.active a{
+    color: #41B7C4;
+}
+
+#nav > ul > li {
+    vertical-align: bottom;
+}
+
+.dropotron > li > a {
+    color: #fff;
+    text-decoration: none;
+    border: 0;
+}
+
+.dropotron > li.active > a, .dropotron > li:hover > a {
+    color: #41B7C4
+}
+
+#nav {
+    background-color: #0b3259;
+}
+
+.btn-primary {
+    background-color: #0b3259 !important;
+    border-color: #0b3259 !important;
+}
+
+.btn-primary.disabled {
+    background-color: #41B7C4 !important;
+    border-color: #41B7C4 !important;
+}
+
+
+#header {
+    padding: 0 0 0 0;
+    background-color: #fff;
+    border: none;
+}
+
+#nav::after {
+    content: '';
+    display: none;
+}
+
+#ft-logo {
+    display: inline-block;
+}
+
+.dropotron {
+    background-color: #0b3259;
+}
+
+.navtop {
+    font: normal normal normal 14px/1.4em raleway,sans-serif;
+    line-height: 1.4em;
+}
+
+.dropotron.level-0 {
+    font: normal normal normal 14px/1.4em raleway,sans-serif;
+}
+
+#banner {
+    background-color: #fff;
+}
+
+#footer-content {
+    background-color: #0b3259;
+}
+
+#footer-content li{
+    color: #fff;
+}
+
+#footer-content a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.container {
+    margin-top: 1em;
+}

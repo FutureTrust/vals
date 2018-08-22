@@ -10,8 +10,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>vals-web</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <description>Web application</description>
+
+    <properties>
+        <docker.image.prefix>springio</docker.image.prefix>
+        <start-class>eu.futuretrust.vals.web.ValsApplication</start-class>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -24,6 +29,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -45,17 +55,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>
         </dependency>
-        <!--
-                <dependency>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-web</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context</artifactId>
-                    <version>${spring.version}</version>
-                </dependency>
-        -->
 
         <!-- XML dependencies -->
         <dependency>
@@ -68,6 +67,22 @@
             <artifactId>jaxb-core</artifactId>
             <version>${xml-bind.version}</version>
         </dependency>
+
+        <!-- View templates: Velocity -->
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring4</artifactId>
+            <version>${thymeleaf.version}</version>
+        </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <finalName>${artifactId}</finalName>
+    </build>
 
 </project>

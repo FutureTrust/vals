@@ -21,11 +21,11 @@ public enum SignedObjectFormat
 {
   XML("application/xml"),
   PDF("application/pdf"),
-  CMS("application/pkcs7-signature"),
+  CMS("application/pkcs7-signature", "application/cms"),
   ASIC("application/zip", "application/vnd.etsi.asic-e+zip", "application/vnd.etsi.asic-s+zip"),
   //Note: Mimetypes starting with "x" are unregistered...
-  X509("application/x-x509-user-cert", "application/x-x509-ca-cert", "application/x-x509-email-cert",
-               "application/x-pem-file", "application/pkix", "application/pkix-attr-cert", "application/pkix-cert"),
+  X509("application/pkix-cert", "application/x-x509-user-cert", "application/x-x509-ca-cert", "application/x-x509-email-cert",
+               "application/x-pem-file", "application/pkix", "application/pkix-attr-cert"),
   BYTES("application/octet-stream"),
   TIMESTAMP("application/vnd.etsi.timestamp-token"),
   TSL("application/vnd.etsi.tsl.der", "application/vnd.etsi.tsl+xml"),

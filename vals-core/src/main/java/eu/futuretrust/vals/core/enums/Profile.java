@@ -21,6 +21,7 @@ public enum Profile {
   DSS_CORE_2("http://uri.etsi.org/19442/v1.1.1/validationprofile#", ProfileType.MAIN),
   ERS("urn:oasis:names:tc:dss:1.0:profiles:EvidenceRecord", ProfileType.MAIN),
   JWS("urn:oasis:names:tc:dss-x:2.0:profiles:JWS", ProfileType.MAIN),
+  X509("http://docs.oasis-open.org/dss/ns/X.509", ProfileType.MAIN),
   DSS_ADES("urn:oasis:names:tc:dss:1.0:profiles:AdES:schema#", ProfileType.MAIN),
   DSS_MULTI("urn:oasis:names:tc:dss-x:1.0:profiles:verificationreport:schema#", ProfileType.SUB),
   ASYNCHRONOUS("urn:oasis:names:tc:dss:1.0:profiles:asynchronousprocessing:1.0", ProfileType.SUB);
