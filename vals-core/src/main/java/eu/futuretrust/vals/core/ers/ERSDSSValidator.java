@@ -30,6 +30,6 @@ public abstract class ERSDSSValidator implements DSSValidator
   @Override
   public VerifyResponseType validate(VerifyRequestType verifyRequest)
   {
-
+    return null;
   }
 }

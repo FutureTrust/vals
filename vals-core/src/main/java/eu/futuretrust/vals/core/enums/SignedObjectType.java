@@ -26,6 +26,8 @@ public enum SignedObjectType {
 
   ENVELOPED_ENVELOPING_DETACHED,
 
+  EVIDENCE_RECORD,
+
   CERTIFICATE;
 
   public boolean isEnveloped() {
@@ -51,6 +53,10 @@ public enum SignedObjectType {
     return this == CERTIFICATE;
   }
 
+  public boolean isEvidenceRecord() {
+    return this == EVIDENCE_RECORD;
+  }
+
   public static Optional<SignedObjectType> fromBooleans(SignedObjectFormat signatureFormat,
       boolean isEnveloped, boolean isEnveloping,
       boolean isDetached) {
@@ -68,6 +74,8 @@ public enum SignedObjectType {
         return getSignedObjectTypeForXML(isEnveloped, isEnveloping, isDetached);
       case X509:
         return getSignedObjectTypeForX509();
+      case ERS_CMS:
+        return getSignedObjectTypeForERS_CMS();
       default:
         return Optional.empty();
     }
@@ -133,6 +141,10 @@ public enum SignedObjectType {
 
   private static Optional<SignedObjectType> getSignedObjectTypeForX509() {
     return Optional.of(CERTIFICATE);
+  }
+
+  private static Optional<SignedObjectType> getSignedObjectTypeForERS_CMS() {
+    return Optional.of(EVIDENCE_RECORD);
   }
 
 }

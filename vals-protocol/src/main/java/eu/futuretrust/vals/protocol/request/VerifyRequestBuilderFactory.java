@@ -47,6 +47,8 @@ public final class VerifyRequestBuilderFactory
         return new AsicVerifyRequestBuilder(signature);
       case X509:
         return new X509VerifyRequestBuilder(signature);
+      case ERS_CMS:
+        return new ERS_CMSVerifyRequestBuilder(signature);
       default:
         throw new SignatureException("The signature format cannot be detected");
     }

@@ -16,8 +16,6 @@ package eu.futuretrust.vals.common.exceptions;
 
 import eu.futuretrust.vals.common.enums.ResultMajor;
 import eu.futuretrust.vals.common.enums.ResultMinor;
-import eu.futuretrust.vals.core.enums.ResultMajor;
-import eu.futuretrust.vals.core.enums.ResultMinor;
 
 /**
  * A CommonException is an Exception which encapsulates a ResultMajor and a ResultMinor in order to

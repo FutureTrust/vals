@@ -18,7 +18,8 @@ import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.futuretrust.vals.common.exceptions.VerifyRequestException;
 import eu.futuretrust.vals.core.enums.SignedObjectFormat;
 import eu.futuretrust.vals.core.ers.ERSDSSValidator;
-import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.VerifyRequestType;
+import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyResponseType;
+import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.*;
 import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.asn1.EvidenceRecordVerifier;
 import org.bouncycastle.asn1.cms.EvidenceRecord;
@@ -38,8 +39,8 @@ public class CMSERSDSSValidator extends ERSDSSValidator
     this.verifier = evidenceRecordVerifier;
   }
 
-  @Override
-  public VerifyResponseType validate(final VerifyRequestType verifyRequest) {
+  public VerifyResponseType validate(final VerifyRequestType verifyRequest) throws VerifyRequestException
+  {
 
     if (verifyRequest == null || verifyRequest.getSignatureObject() == null) {
       throw new IllegalArgumentException("Invalid verifyRequest etc."); //todo
@@ -61,9 +62,7 @@ public class CMSERSDSSValidator extends ERSDSSValidator
 
       }
 
-      verifyRequest.getOptionalInputs()
-
-
+      verifyRequest.getOptionalInputs();
 
       return null;
     }

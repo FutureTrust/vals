@@ -79,10 +79,10 @@ public class SignedObjectExtractor {
   private SignedObjectType getSignedObjectType(final byte[] signedObject,
       final SignedObjectFormat format, final Profile mainProfile) throws SignatureException {
 
-    //TODO
+    //TODO: switch on the profile, THEN on the format.
+    //This will avoid possible confusion between XML used for XAdES and ERS, or CMS in CAdES, X.509 and ERS, etc.
     /*
     switch (mainProfile) {
-      case
     }
     */
 
@@ -102,6 +102,8 @@ public class SignedObjectExtractor {
         return SignedObjectType.DETACHED;
       case X509:
         return SignedObjectType.CERTIFICATE;
+      case ERS_CMS:
+        return SignedObjectType.EVIDENCE_RECORD;
       default:
         throw new SignatureException("Signature format is not recognized");
     }

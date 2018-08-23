@@ -17,6 +17,7 @@ package eu.futuretrust.vals.core.detection;
 import eu.futuretrust.vals.core.enums.SignedObjectFormat;
 import eu.futuretrust.vals.core.signature.exceptions.FormatException;
 import org.apache.tika.Tika;
+import org.bouncycastle.asn1.cms.EvidenceRecord;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -48,6 +49,9 @@ public final class FormatDetector {
     if (isX509Certificate(bytes)) {
       return SignedObjectFormat.X509;
     }
+    if (isEvidenceRecord(bytes)) {
+      return SignedObjectFormat.ERS_CMS;
+    }
     String fileType = TIKA.detect(bytes);
     return getSignedObjectFormat(fileType);
   }
@@ -68,6 +72,16 @@ public final class FormatDetector {
     {
       CertificateFactory factory = CertificateFactory.getInstance("X.509");
       factory.generateCertificate(new ByteArrayInputStream(bytes));
+    } catch (final Exception e) {
+      return false;
+    }
+    return true;
+  }
+
+  private static boolean isEvidenceRecord(final byte[] bytes)
+  {
+    try {
+      EvidenceRecord.getInstance(bytes);
     } catch (final Exception e) {
       return false;
     }
