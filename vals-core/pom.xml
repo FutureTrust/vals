@@ -57,6 +57,16 @@
       <artifactId>bcmail-jdk15on</artifactId>
       <version>${bouncycastle.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk15on</artifactId>
+      <version>${bouncycastle.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bccore-jdk15on</artifactId>
+      <version>${bouncycastle.version}</version>
+    </dependency>
 
     <!-- SD-DSS dependencies-->
     <dependency>
@@ -88,11 +98,6 @@
       <groupId>eu.europa.ec.joinup.sd-dss</groupId>
       <artifactId>dss-document</artifactId>
       <version>5.2.RC1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bc-rfc4998</artifactId>
-      <version>1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>eu.futuretrust.vals</groupId>
