@@ -15,12 +15,12 @@
 package eu.futuretrust.vals.core.ers;
 
 import eu.europa.esig.dss.validation.CertificateVerifier;
+import eu.futuretrust.vals.common.exceptions.VerifyRequestException;
 import eu.futuretrust.vals.core.DSSValidator;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyRequestType;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyResponseType;
 
-public abstract class ERSDSSValidator implements DSSValidator
-{
+public abstract class ERSDSSValidator implements DSSValidator {
   private CertificateVerifier certificateVerifier;
 
   public ERSDSSValidator(final CertificateVerifier certificateVerifier) {
@@ -28,8 +28,7 @@ public abstract class ERSDSSValidator implements DSSValidator
   }
 
   @Override
-  public VerifyResponseType validate(VerifyRequestType verifyRequest)
-  {
+  public VerifyResponseType validate(VerifyRequestType verifyRequest) throws VerifyRequestException {
     return null;
   }
 }

@@ -75,6 +75,11 @@ public enum ResultMinor
   KEY_INFO_NOT_PROVIDED("urn:oasis:names:tc:dss:1.0:resultminor:KeyInfoNotProvided"),
 
   /**
+   * If more than one document is provided and not all elements have a distinct ID
+   */
+  INVALID_DOCUMENT_ID("urn:oasis:names:tc:dss:1.0:resultminor:invalid:DocumentIDRequired"),
+
+  /**
    * The server was not able to create a signature because more than one RefUri was omitted.
    */
   MORE_THAN_ONE_REF_URI_OMITTED("urn:oasis:names:tc:dss:1.0:resultminor:MoreThanOneRefUriOmitted"),

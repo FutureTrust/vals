@@ -9,7 +9,12 @@ import eu.futuretrust.vals.core.signature.exceptions.SignatureException;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyRequestType;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyResponseType;
 import eu.futuretrust.vals.protocol.enums.DSSResponseType;
-import eu.futuretrust.vals.protocol.exceptions.*;
+import eu.futuretrust.vals.protocol.exceptions.InputDocumentException;
+import eu.futuretrust.vals.protocol.exceptions.PolicyException;
+import eu.futuretrust.vals.protocol.exceptions.ProfileNotFoundException;
+import eu.futuretrust.vals.protocol.exceptions.SignedObjectException;
+import eu.futuretrust.vals.protocol.exceptions.VerifyRequestException;
+import eu.futuretrust.vals.protocol.exceptions.VerifyResponseException;
 import eu.futuretrust.vals.protocol.helpers.VerifyRequestElementsFinder;
 import eu.futuretrust.vals.protocol.input.Policy;
 import eu.futuretrust.vals.protocol.input.SignedObject;
@@ -18,6 +23,7 @@ import eu.futuretrust.vals.protocol.output.ValidationReport;
 import eu.futuretrust.vals.protocol.utils.ProfileUtils;
 import eu.futuretrust.vals.protocol.utils.VerifyResponseUtils;
 import eu.futuretrust.vals.web.services.report.impl.DSSValidationReportBuilderService;
+import eu.futuretrust.vals.web.services.report.impl.ERSValidationReportBuilderService;
 import eu.futuretrust.vals.web.services.report.impl.X509ValidationReportBuilderServiceImpl;
 import eu.futuretrust.vals.web.services.response.VerifyResponseBuilderService;
 import org.apache.commons.lang.StringUtils;
@@ -37,14 +43,16 @@ public class DSSVerifyResponseBuilderService implements VerifyResponseBuilderSer
 
   private DSSValidationReportBuilderService dssValidationReportBuilderService;
   private X509ValidationReportBuilderServiceImpl x509ValidationReportBuilderServiceImpl;
+  private ERSValidationReportBuilderService ersValidationReportBuilderService;
 
   @Autowired
   public DSSVerifyResponseBuilderService(
-          DSSValidationReportBuilderService dssValidationReportBuilderService,
-          X509ValidationReportBuilderServiceImpl x509ValidationReportBuilderServiceImpl)
-  {
+      DSSValidationReportBuilderService dssValidationReportBuilderService,
+      X509ValidationReportBuilderServiceImpl x509ValidationReportBuilderServiceImpl,
+      ERSValidationReportBuilderService ersValidationReportBuilderService) {
     this.dssValidationReportBuilderService = dssValidationReportBuilderService;
     this.x509ValidationReportBuilderServiceImpl = x509ValidationReportBuilderServiceImpl;
+    this.ersValidationReportBuilderService = ersValidationReportBuilderService;
   }
 
   @Override
@@ -89,6 +97,10 @@ public class DSSVerifyResponseBuilderService implements VerifyResponseBuilderSer
         case CERTIFICATE:
           report = x509ValidationReportBuilderServiceImpl
                   .generate(verifyRequest, signedObject, policy, null, responseType);
+          return generateVerifyResponse(report, verifyRequest, mainProfile, subProfiles);
+        case EVIDENCE_RECORD:
+          report = ersValidationReportBuilderService
+              .generate(verifyRequest, signedObject, policy, inputDocuments, responseType);
           return generateVerifyResponse(report, verifyRequest, mainProfile, subProfiles);
       }
     } catch (SignedObjectException | InputDocumentException | VerifyResponseException e) {
