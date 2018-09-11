@@ -8,11 +8,14 @@ import eu.futuretrust.vals.protocol.exceptions.InputDocumentException;
 import eu.futuretrust.vals.protocol.exceptions.ProfileNotFoundException;
 import eu.futuretrust.vals.protocol.exceptions.SignedObjectNotFoundException;
 import eu.futuretrust.vals.protocol.extractors.InputDocumentsExtractor;
+import eu.futuretrust.vals.protocol.extractors.InputDoucmentsHashExtractor;
 import eu.futuretrust.vals.protocol.extractors.PolicyExtractor;
 import eu.futuretrust.vals.protocol.extractors.SignedObjectExtractor;
 import eu.futuretrust.vals.protocol.input.Policy;
 import eu.futuretrust.vals.protocol.input.SignedObject;
 import eu.futuretrust.vals.protocol.input.documents.InputDocument;
+import eu.futuretrust.vals.protocol.input.documents.InputDocumentHash;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +33,12 @@ public final class VerifyRequestElementsFinder {
   public static List<InputDocument> findInputDocuments(VerifyRequestType verifyRequest)
       throws InputDocumentException {
     InputDocumentsExtractor extractor = new InputDocumentsExtractor(verifyRequest);
+    return extractor.extract();
+  }
+
+  public static List<InputDocumentHash> findInputDocumentHashes(VerifyRequestType verifyRequesttype)
+      throws InputDocumentException {
+    InputDoucmentsHashExtractor extractor = new InputDoucmentsHashExtractor(verifyRequesttype);
     return extractor.extract();
   }
 

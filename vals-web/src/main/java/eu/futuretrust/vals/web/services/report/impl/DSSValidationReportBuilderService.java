@@ -24,10 +24,12 @@ import eu.futuretrust.vals.protocol.constants.OasisX509SubjectName;
 import eu.futuretrust.vals.protocol.enums.DSSResponseType;
 import eu.futuretrust.vals.protocol.enums.ManifestStatus;
 import eu.futuretrust.vals.protocol.exceptions.*;
+import eu.futuretrust.vals.protocol.helpers.VerifyRequestElementsFinder;
 import eu.futuretrust.vals.protocol.helpers.XMLGregorianCalendarBuilder;
 import eu.futuretrust.vals.protocol.input.Policy;
 import eu.futuretrust.vals.protocol.input.SignedObject;
 import eu.futuretrust.vals.protocol.input.documents.InputDocument;
+import eu.futuretrust.vals.protocol.input.documents.InputDocumentHash;
 import eu.futuretrust.vals.protocol.output.*;
 import eu.futuretrust.vals.protocol.validation.DSSCertificateWrapperParser;
 import eu.futuretrust.vals.protocol.validation.DSSEnumsParser;
@@ -73,9 +75,10 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
       final SignedObject signedObject, final Policy policy,
       final List<InputDocument> inputDocuments, final DSSResponseType responseType)
       throws VerifyResponseException, InputDocumentException, SignedObjectException, SignatureException, ManifestException {
+    final List<InputDocumentHash> inputDocumentHashes = VerifyRequestElementsFinder
+        .findInputDocumentHashes(verifyRequest);
     SignatureValidation validation = new SignatureValidation(signedObject.getContent(),
-        policy.getContent(),
-        inputDocuments);
+        policy.getContent(), inputDocuments, inputDocumentHashes);
     Reports reports = validation.validate(certificateVerifierService.getCertificateVerifier());
 
     for (SignatureWrapper signatureWrapper : reports.getDiagnosticData().getAllSignatures()) {
