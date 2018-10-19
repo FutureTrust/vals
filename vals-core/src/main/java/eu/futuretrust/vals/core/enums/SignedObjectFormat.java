@@ -21,7 +21,8 @@ public enum SignedObjectFormat
 {
   XML("application/xml"),
   PDF("application/pdf"),
-  CMS("application/pkcs7-signature", "application/cms"),
+  PKCS7("application/pkcs7-signature"),
+  ERS_CMS("application/cms"),
   ASIC("application/zip", "application/vnd.etsi.asic-e+zip", "application/vnd.etsi.asic-s+zip"),
   //Note: Mimetypes starting with "x" are unregistered...
   X509("application/pkix-cert", "application/x-x509-user-cert", "application/x-x509-ca-cert", "application/x-x509-email-cert",
@@ -29,8 +30,7 @@ public enum SignedObjectFormat
   BYTES("application/octet-stream"),
   TIMESTAMP("application/vnd.etsi.timestamp-token"),
   TSL("application/vnd.etsi.tsl.der", "application/vnd.etsi.tsl+xml"),
-  JWT("application/jwt"),
-  SAMLv2("application/xml");
+  JWT("application/jwt");
 
   private String[] mimeTypes;
 

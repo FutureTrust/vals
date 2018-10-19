@@ -26,7 +26,9 @@ public enum SignedObjectType {
 
   ENVELOPED_ENVELOPING_DETACHED,
 
-  CERTIFICATE;
+  CERTIFICATE,
+
+  EVIDENCE_RECORD;
 
   public boolean isEnveloped() {
     return this == ENVELOPED
@@ -62,7 +64,7 @@ public enum SignedObjectType {
     switch (signatureFormat) {
       case PDF:
         return getSignedObjectTypeForPDF(isEnveloped);
-      case CMS:
+      case PKCS7:
         return getSignedObjectTypeForCMS(isEnveloping, isDetached);
       case XML:
         return getSignedObjectTypeForXML(isEnveloped, isEnveloping, isDetached);

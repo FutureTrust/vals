@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.security.auth.x500.X500Principal;
+
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -50,8 +53,9 @@ import org.slf4j.LoggerFactory;
 /**
  * use -Djava.security.debug="certpath" in run configurations for detailed debug output
  */
+@Slf4j
 public class X509CertificateValidator implements X509Validation {
-  private static final Logger logger = LoggerFactory.getLogger(X509CertificateValidator.class);
+
   // context-specific tag value for GeneralNames entry fullName
   private final static int CONTEXT_TAG_FULLNAME = 0;
   // revocation checks
@@ -252,7 +256,7 @@ public class X509CertificateValidator implements X509Validation {
         if (this.isExtension(cert, X509Identifiers.id_pe_authorityInfoAccess.getId()) && issuer != null)
           this.getRootRecursively(this.getX509fromURL(issuer));
       } catch (CertificateValidationException e) {
-        e.printStackTrace();
+        log.error(e.getMessage());
       }
     }
 
@@ -296,37 +300,9 @@ public class X509CertificateValidator implements X509Validation {
     }
   }
 
-  /*private boolean checkCertSignature(X509Certificate toCheck, X509Certificate issuer) {
-    try {
-      return CryptoUtils.verifySignature(toCheck.getTBSCertificate(),
-        toCheck.getSignature(), issuer, toCheck.getSigAlgName());
-    } catch (CertificateEncodingException cee) {
-      System.out.println("Encoding exception: " + cee.getMessage());
-    }
-    return false;
-  }*/
-
   private int getExtensionCount(X509Certificate certificate) {
     return certificate.getCriticalExtensionOIDs().size() +
       certificate.getNonCriticalExtensionOIDs().size();
-  }
-
-  private void getOCSPResponder() {
-    try {
-      if (this.params.getOptions().contains(X509CVParameters.Option.OCSP_CHECK_CA)
-        || this.params.getOptions().contains(X509CVParameters.Option.OCSP_CHECK_EE) &&
-        this.isExtension(this.x509Cert, X509Identifiers.id_pe_authorityInfoAccess.getId()) &&
-        this.getAccessMethod(this.x509Cert, X509ObjectIdentifiers.id_ad_ocsp.getId()) != null) {
-
-        String ocspURIstr = this.getAccessMethod(this.x509Cert, X509ObjectIdentifiers.id_ad_ocsp.getId());
-        if (ocspURIstr != null)
-          logger.info(ocspURIstr);
-
-        //pkixrc.setOcspResponder(new URI(ocspURIstr));
-      }
-    } catch (Exception cve) {
-      cve.printStackTrace();
-    }
   }
 
   /**
@@ -347,24 +323,6 @@ public class X509CertificateValidator implements X509Validation {
     }
 
     return null;
-
-    /*if (path.size() == 1 &&
-      path.get(0).getSubjectX500Principal().equals(path.get(0).getIssuerX500Principal())
-      && this.checkCertSignature(path.get(0), path.get(0)))
-      return path.get(0);
-
-    for (int i = path.size() - 1; i >= 1; i--) {
-      X500Principal currSubject = path.get(i).getSubjectX500Principal();
-      if (currSubject.equals(path.get(i).getIssuerX500Principal()) &&
-        this.checkCertSignature(path.get(i), path.get(i))) {
-        root = path.get(i);
-      }
-      if (!currSubject.equals(path.get(i - 1).getIssuerX500Principal()) ||
-        !this.checkCertSignature(path.get(i - 1), path.get(i))) {
-        return null;
-      }
-    }*/
-    //return root;
   }
 
   /**
@@ -378,28 +336,28 @@ public class X509CertificateValidator implements X509Validation {
   private ValidationResult validateCertificate(Date inTime) throws CertificateValidationException {
     ValidationResult res = this.checkValidity(this.x509Cert, inTime);
     if (res.getMainIndication() == MainIndication.TOTAL_PASSED) {
-      logger.info("X.509 certificate validity check passed. Proceed with validation.");
+      log.info("X.509 certificate validity check passed. Proceed with validation.");
 
       if (this.certPath.size() == 0) {
 
-        logger.info("No certification path provided. Attempting extension-based init.");
+        log.info("No certification path provided. Attempting extension-based init.");
         if (this.isExtension(this.x509Cert, X509Identifiers.id_pe_authorityInfoAccess.getId()) &&
           this.getAccessMethod(this.x509Cert, X509ObjectIdentifiers.id_ad_caIssuers.getId()) != null) {
-          logger.info("Extension 'id-ad-caIssuers' present. Proceed with extension-based init.");
-          logger.info(String.format("Extension count: %d", this.getExtensionCount(this.x509Cert)));
+          log.info("Extension 'id-ad-caIssuers' present. Proceed with extension-based init.");
+          log.info(String.format("Extension count: %d", this.getExtensionCount(this.x509Cert)));
 
           // initialize root certificate to use as TrustAnchor and collect a certification path
           this.extensionsBasedInit(this.x509Cert);
         }
 
         if (this.root == null) {
-          logger.error("[Extension-based init failed. " +
+          log.info("[Extension-based init failed. " +
             "Could not retrieve a root certificate. Provide a certification path.");
           return new ValidationResult(MainIndication.INDETERMINATE, SubIndication.NO_CERTIFICATE_CHAIN_FOUND);
         }
 
       } else {
-        logger.info("Certification path provided.");
+        log.info("Certification path provided.");
 
         this.root = this.getPathsRootCert(this.certPath);
       }
@@ -412,24 +370,6 @@ public class X509CertificateValidator implements X509Validation {
       return this.validateCertificationPath();
     }
     return res;
-  }
-
-  private X509CRL getX509CRLfromURL(String fileURL) {
-
-    try {
-      CertificateFactory cf = CertificateFactory.getInstance("X.509");
-      if (fileURL != null) {
-        URL oURL = new URL(fileURL);
-        InputStream crlStream = oURL.openStream();
-        X509CRL crl = (X509CRL) cf.generateCRL(crlStream);
-
-        return crl;
-      }
-    } catch (Exception e) {
-      //CertificateValidationException, MalformedURLException, IOException, CRLException
-      e.printStackTrace();
-    }
-    return null;
   }
 
   /**

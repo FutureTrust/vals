@@ -4,7 +4,6 @@ import eu.futuretrust.vals.core.detection.FormatDetector;
 import eu.futuretrust.vals.core.enums.SignedObjectFormat;
 import eu.futuretrust.vals.core.signature.exceptions.FormatException;
 import eu.futuretrust.vals.core.signature.exceptions.SignatureException;
-import eu.futuretrust.vals.protocol.enums.SignatureFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +38,7 @@ public final class VerifyRequestBuilderFactory
     switch (signatureFormat) {
       case XML:
         return new XadesVerifyRequestBuilder(signature);
-      case CMS:
+      case PKCS7:
         return new CadesVerifyRequestBuilder(signature);
       case PDF:
         return new PadesVerifyRequestBuilder(signature);

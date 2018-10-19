@@ -72,7 +72,7 @@ public final class TypeDetector {
     boolean isAttached = CadesUtils.isAttachedSignature(cmsSignature);
     boolean isDetached = CadesUtils.isDetachedSignature(cmsSignature);
 
-    return getSignedObjectType(SignedObjectFormat.CMS, false, isAttached, isDetached);
+    return getSignedObjectType(SignedObjectFormat.PKCS7, false, isAttached, isDetached);
   }
 
   private static SignedObjectType getSignedObjectType(SignedObjectFormat signatureFormat,

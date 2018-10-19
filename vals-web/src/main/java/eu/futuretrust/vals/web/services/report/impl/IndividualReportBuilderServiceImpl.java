@@ -253,11 +253,11 @@ public class IndividualReportBuilderServiceImpl implements IndividualReportBuild
     // <DigestAlgAndValue> [Optional]
     // This element contains the hash value of the signature or validation data under consideration, where
     // the signed object itself (e.g. the <ds:Signature>-element in case of an XML-signature according to [RFC3275],
-    // the SignedData-structure in case of a CMS-signature according to [RFC3852] [...])
+    // the SignedData-structure in case of a PKCS7-signature according to [RFC3852] [...])
     // serves as input for the hash-calculation.
     // The structure of the DigestAlgAndValueType is defined in [XAdES].
     // NOTE: For XadES, the <ds:Signature>-element; it is the whole XML-signature for detached and enveloping but NOT for enveloped (this why it could be interesting to have the SignaturePtr on <ds:Signature> in case of enveloped signature)
-    // NOTE: For CadES, the SignedData; it is the whole CMS-signature file
+    // NOTE: For CadES, the SignedData; it is the whole PKCS7-signature file
     DigestAlgAndValueType digestAndValue;
     try {
       digestAndValue = this.createDigestAlgAndValue(signedObject);

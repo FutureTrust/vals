@@ -57,7 +57,7 @@ public final class FormatDetector {
     Optional<SignedObjectFormat> optionalSignatureFormat = SignedObjectFormat.fromString(fileType);
     if (!optionalSignatureFormat.isPresent()) {
       throw new FormatException(
-          "The signature format cannot be detected (please check that you are submitting a XML, PDF, CMS document or ASiC container)");
+          "The signature format cannot be detected (please check that you are submitting a XML, PDF, PKCS7 document or ASiC container)");
     }
     return optionalSignatureFormat.get();
   }

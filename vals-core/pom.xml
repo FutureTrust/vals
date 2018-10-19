@@ -49,13 +49,13 @@
     <!-- Bouncy castle dependencies -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcprov-jdk15on</artifactId>
-      <version>${bouncycastle.version}</version>
+      <artifactId>bc-java</artifactId>
+      <version>1.58-ers</version>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bcmail-jdk15on</artifactId>
-      <version>${bouncycastle.version}</version>
+      <artifactId>bcpkix-jdk15on</artifactId>
+      <version>1.58</version>
     </dependency>
 
     <!-- SD-DSS dependencies-->
@@ -85,6 +85,44 @@
       <version>${sd-dss.version}</version>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>sonar</id>
+      <properties>
+        <sonar.host.url>http://sonarqube:9000</sonar.host.url>
+        <sonar.login>admin</sonar.login>
+        <sonar.password>admin</sonar.password>
+      </properties>
+    </profile>
+    <profile>
+      <id>owasp</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.owasp</groupId>
+            <artifactId>dependency-check-maven</artifactId>
+            <version>3.1.1</version>
+            <configuration>
+              <failBuildOnCVSS>0</failBuildOnCVSS>
+              <suppressionFile>owasp-dependency-check-exclude.xml</suppressionFile>
+              <cveUrl20Modified>https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-Modified.xml.gz
+              </cveUrl20Modified>
+              <cveUrl20Base>https://nvd.nist.gov/feeds/xml/cve/2.0/nvdcve-2.0-%d.xml.gz</cveUrl20Base>
+            </configuration>
+            <executions>
+              <execution>
+                <phase>compile</phase>
+                <goals>
+                  <goal>aggregate</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 
 </project>
