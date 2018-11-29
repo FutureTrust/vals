@@ -22,6 +22,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
+        <module>vals-common</module>
         <module>vals-jaxb</module>
         <module>vals-core</module>
         <module>vals-policy</module>
@@ -43,10 +44,10 @@
 
         <commons-io.version>2.6</commons-io.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <bouncycastle.version>1.0-SNAPSHOT</bouncycastle.version>
+        <bouncycastle.version>1.59-ers</bouncycastle.version>
         <jaxb2-namespace.version>1.3</jaxb2-namespace.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sd-dss.version>5.3-FT</sd-dss.version>
+        <sd-dss.version>5.3.2-FT</sd-dss.version>
         <tika.version>1.17</tika.version>
         <xml-bind.version>2.3.0</xml-bind.version>
         <xmlsec.version>2.0.8</xmlsec.version>

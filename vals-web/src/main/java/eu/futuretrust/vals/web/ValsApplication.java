@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 @SpringBootApplication
-public class ValsApplication extends SpringBootServletInitializer {
+public class ValsApplication { //extends SpringBootServletInitializer {
 
   public static void main(final String[] args) {
     org.apache.xml.security.Init.init();
@@ -37,10 +37,10 @@ public class ValsApplication extends SpringBootServletInitializer {
   /**
    * To run the application as a deployed WAR archive
    */
-  @Override
+  /*@Override
   protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
     return builder.sources(ValsApplication.class);
-  }
+  }*/
 
   @Bean
   @Qualifier(value = "jaxbBean")

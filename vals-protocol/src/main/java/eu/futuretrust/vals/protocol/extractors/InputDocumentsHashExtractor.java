@@ -13,11 +13,12 @@ import eu.futuretrust.vals.protocol.input.documents.InputDocumentHash;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InputDoucmentsHashExtractor {
+public class InputDocumentsHashExtractor
+{
 
   private VerifyRequestType verifyRequest;
 
-  public InputDoucmentsHashExtractor(VerifyRequestType verifyRequest) {
+  public InputDocumentsHashExtractor(VerifyRequestType verifyRequest) {
     this.verifyRequest = verifyRequest;
   }
 

@@ -16,5 +16,5 @@ package eu.futuretrust.vals.protocol.enums;
 
 public enum DSSResponseType
 {
-  JSON, XML;
+  JSON, XML
 }

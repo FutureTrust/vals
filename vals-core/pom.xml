@@ -57,6 +57,16 @@
       <artifactId>bcpkix-jdk15on</artifactId>
       <version>1.58</version>
     </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk15on</artifactId>
+      <version>${bouncycastle.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bccore-jdk15on</artifactId>
+      <version>${bouncycastle.version}</version>
+    </dependency>
 
     <!-- SD-DSS dependencies-->
     <dependency>
@@ -83,6 +93,16 @@
       <groupId>eu.europa.ec.joinup.sd-dss</groupId>
       <artifactId>dss-asic-xades</artifactId>
       <version>${sd-dss.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>eu.europa.ec.joinup.sd-dss</groupId>
+      <artifactId>dss-document</artifactId>
+      <version>${sd-dss.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>eu.futuretrust.vals</groupId>
+      <artifactId>vals-common</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 

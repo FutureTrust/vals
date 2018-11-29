@@ -63,6 +63,7 @@
           <xs:element minOccurs="0" ref="etsival:SignVerificationReport"/>
           <xs:element minOccurs="0" name="ReturnAugmentedSignature"
             type="etsival:ReturnAugmentedSignatureType"/>
+          <xs:element minOccurs="0" name="SignatureType" type="xs:string"/>
           <!--<xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other"/>-->
         </xs:sequence>
       </xs:extension>

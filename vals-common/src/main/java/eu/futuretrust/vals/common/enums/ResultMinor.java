@@ -12,7 +12,7 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
-package eu.futuretrust.vals.core.enums;
+package eu.futuretrust.vals.common.enums;
 
 public enum ResultMinor
 {
@@ -135,28 +135,7 @@ public enum ResultMinor
    * trusted root certification authority via potential intermediate certification authorities.
    */
   CERTIFICATE_CHAIN_NOT_COMPLETE(
-          "urn:oasis:names:tc:dss:1.0:resultminor:CertificateChainNotComplete"),
-
-  /**
-   * The certificate has been revoked, according to the retrieved revocation information.
-   */
-  REVOKED(
-          "urn:oasis:names:tc:dss:1.0:resultminor:certificate:revoked"),
-
-  /**
-   * The certificate has expired.
-   */
-  EXPIRED("urn:oasis:names:tc:dss:1.0:resultminor:certificate:expired"),
-
-  /**
-   * The certificate's status is currently on hold.
-   */
-  ON_HOLD("urn:oasis:names:tc:dss:1.0:resultminor:certificate:onHold"),
-
-  /**
-   * The certificate is not yet valid
-   */
-  NOT_VALID_YET("urn:oasis:names:tc:dss:1.0:resultminor:certificate:notValidYet");
+          "urn:oasis:names:tc:dss:1.0:resultminor:CertificateChainNotComplete");
 
   private String uri;
 

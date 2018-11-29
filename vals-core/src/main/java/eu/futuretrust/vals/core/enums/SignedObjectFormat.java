@@ -30,7 +30,8 @@ public enum SignedObjectFormat
   BYTES("application/octet-stream"),
   TIMESTAMP("application/vnd.etsi.timestamp-token"),
   TSL("application/vnd.etsi.tsl.der", "application/vnd.etsi.tsl+xml"),
-  JWT("application/jwt");
+  JWT("application/jwt"),
+  SAMLv2("application/xml");
 
   private String[] mimeTypes;
 

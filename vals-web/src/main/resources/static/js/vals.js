@@ -188,8 +188,13 @@ let parseVerifyResponse = function(verifyResponse, error) {
     let globalResult = verifyResponse.result.resultMajor;
 
     if (globalResult == "urn:oasis:names:tc:dss:1.0:resultmajor:Success") {
-        let result = verifyResponse.optionalOutputs.individualReport[0].result;
-        displayResult(result.resultMajor, result.resultMinor, false);
+        console.log(verifyResponse);
+        if (verifyResponse.appliedProfile.length > 0 && verifyResponse.appliedProfile[0] == "urn:oasis:names:tc:dss:1.0:profiles:EvidenceRecord") {
+            displayResult(verifyResponse.result.resultMajor, verifyResponse.result.resultMinor);
+        } else {
+            let result = verifyResponse.optionalOutputs.individualReport[0].result;
+            displayResult(result.resultMajor, result.resultMinor, false);
+        }
     } else {
         displayResult(null, null, true);
     }

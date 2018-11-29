@@ -224,6 +224,11 @@ public abstract class VerifyRequestBuilder
       verifyRequest.getOptionalInputs().setVerifyManifests(true);
     }
 
+    protected void setERSSignatureType(String ersSignatureType) {
+        checkOptionalInputsInstance();
+        verifyRequest.getOptionalInputs().setSignatureType(ersSignatureType);
+    }
+
     /**
      * Make sure that the input documents object has been instantiated
      */
