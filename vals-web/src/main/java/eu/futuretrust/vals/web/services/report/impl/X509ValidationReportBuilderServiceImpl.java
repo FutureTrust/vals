@@ -218,8 +218,6 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
 
     if (certificateToken.isSelfIssued()
           || certificateToken.isSelfSigned()
-          || null == certificateToken.getIssuerToken()
-          || null == certificateToken.getTrustAnchor()
           || certificateReports.getSimpleReport().getJaxbModel().getChain().isEmpty())
     {
       return true;
