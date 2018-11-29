@@ -159,11 +159,7 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
       return ResultMinor.EXPIRED;
     }
 
-    if (isCertificateOnHold(report, certId)){
-      return ResultMinor.ON_HOLD;
-    }
-
-    if (isCertificateChainNotComplete(reports, certificateToken)) {
+    if (isCertificateChainIncomplete(reports, certificateToken)) {
       return ResultMinor.CERTIFICATE_CHAIN_NOT_COMPLETE;
     }
 
@@ -217,16 +213,17 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
     return new Date().before(certificateToken.getNotBefore());
   }
 
-  private boolean isCertificateChainNotComplete(final CertificateReports certificateReports,
+  private boolean isCertificateChainIncomplete(final CertificateReports certificateReports,
                                                 final CertificateToken certificateToken) {
 
-    SubIndication subIndication = certificateReports.getDetailedReport()
-            .getBasicBuildingBlockById(certificateToken.getDSSIdAsString())
-            .getConclusion()
-            .getSubIndication();
-
-    return subIndication.equals(SubIndication.NO_CERTIFICATE_CHAIN_FOUND)
-            || subIndication.equals(SubIndication.CHAIN_CONSTRAINTS_FAILURE)
-            || subIndication.equals(SubIndication.CERTIFICATE_CHAIN_GENERAL_FAILURE);
+    if (certificateToken.isSelfIssued()
+          || certificateToken.isSelfSigned()
+          || null == certificateToken.getIssuerToken()
+          || null == certificateToken.getTrustAnchor()
+          || certificateReports.getSimpleReport().getJaxbModel().getChain().isEmpty())
+    {
+      return true;
+    }
+    return false;
   }
 }
