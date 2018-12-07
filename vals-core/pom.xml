@@ -17,7 +17,7 @@
   <parent>
     <artifactId>vals</artifactId>
     <groupId>eu.futuretrust.vals</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
@@ -49,13 +49,8 @@
     <!-- Bouncy castle dependencies -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
-      <artifactId>bc-java</artifactId>
-      <version>1.58-ers</version>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk15on</artifactId>
-      <version>1.58</version>
+      <version>1.59-ers</version>
     </dependency>
     <dependency>
       <groupId>org.bouncycastle</groupId>
@@ -102,7 +97,7 @@
     <dependency>
       <groupId>eu.futuretrust.vals</groupId>
       <artifactId>vals-common</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.1.0</version>
     </dependency>
   </dependencies>
 

@@ -116,6 +116,7 @@ public class CertificateVerifierServiceImpl implements CertificateVerifierServic
       job.refresh();
     }
 
+    //todo: extract and make configurable
     if (((new Date()).getTime() - refreshDate.getTime()) >= 1000 * 60 * 60 * 24) {
       refreshDate = new Date();
       job.refresh();

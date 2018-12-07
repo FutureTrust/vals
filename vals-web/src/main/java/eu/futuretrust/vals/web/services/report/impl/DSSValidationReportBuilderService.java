@@ -81,24 +81,6 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
         policy.getContent(), inputDocuments, inputDocumentHashes);
     Reports reports = validation.validate(certificateVerifierService.getCertificateVerifier());
 
-    for (SignatureWrapper signatureWrapper : reports.getDiagnosticData().getAllSignatures()) {
-      List<XmlChainItem> certificateChain = signatureWrapper.getCertificateChain();
-      if (certificateChain == null || certificateChain.isEmpty()) {
-        LOGGER.info("Certificate chain is empty");
-      } else {
-        LOGGER.info("Certificate chain has " + certificateChain.size() + " certificates");
-        String firstSignatureId = reports.getSimpleReport().getFirstSignatureId();
-        eu.europa.esig.dss.validation.policy.rules.SubIndication subIndication = reports
-            .getSimpleReport().getSubIndication(firstSignatureId);
-        if (subIndication != null) {
-          LOGGER.info(subIndication.toString());
-        } else {
-          LOGGER.info(reports.getSimpleReport().getIndication(firstSignatureId).toString());
-        }
-      }
-    }
-
-    //Todo: support multiple signatures - loop through signedObject Ids instead of only checking the first one
     final String signatureId = reports.getDiagnosticData().getFirstSignatureId();
     final SignatureWrapper signatureWrapper = reports.getDiagnosticData()
         .getSignatureById(signatureId);
