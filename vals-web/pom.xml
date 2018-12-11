@@ -12,11 +12,6 @@
     <artifactId>vals-web</artifactId>
     <description>Web application</description>
 
-    <properties>
-        <docker.image.prefix>springio</docker.image.prefix>
-        <start-class>eu.futuretrust.vals.web.ValsApplication</start-class>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>eu.futuretrust.vals</groupId>
