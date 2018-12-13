@@ -56,9 +56,9 @@
 
     <repositories>
         <repository>
-            <id>cefdigital</id>
-            <name>cefdigital</name>
-            <url>https://ec.europa.eu/cefdigital/artifact/content/repositories/esignaturedss/</url>
+            <id>FutureTrust</id>
+            <name>FutureTrust</name>
+            <url>https://mvn.ecsec.de/repository/FutureTrust</url>
         </repository>
     </repositories>
 
