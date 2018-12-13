@@ -4,11 +4,13 @@ import eu.europa.esig.dss.client.crl.OnlineCRLSource;
 import eu.europa.esig.dss.client.http.commons.CommonsDataLoader;
 import eu.europa.esig.dss.client.http.commons.FileCacheDataLoader;
 import eu.europa.esig.dss.client.ocsp.OnlineOCSPSource;
+import eu.europa.esig.dss.tsl.ServiceInfo;
 import eu.europa.esig.dss.tsl.TrustedListsCertificateSource;
 import eu.europa.esig.dss.tsl.service.TSLRepository;
 import eu.europa.esig.dss.tsl.service.TSLValidationJob;
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.CommonCertificateVerifier;
+import eu.europa.esig.dss.x509.CertificateToken;
 import eu.europa.esig.dss.x509.KeyStoreCertificateSource;
 import eu.europa.esig.dss.x509.crl.CRLSource;
 import eu.europa.esig.dss.x509.ocsp.OCSPSource;
@@ -17,6 +19,9 @@ import eu.futuretrust.vals.core.enums.ResultMinor;
 import eu.futuretrust.vals.protocol.exceptions.KeystoreLoadingException;
 import eu.futuretrust.vals.web.properties.CryptoProperties;
 import eu.futuretrust.vals.web.services.response.CertificateVerifierService;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +33,7 @@ import java.util.Date;
 @Service
 public class CertificateVerifierServiceImpl implements CertificateVerifierService {
 
+  private final static Logger LOGGER = LoggerFactory.getLogger(CertificateVerifierServiceImpl.class);
   private static final String LOTL_ROOT_SCHEME_URL = "https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl.html";
   private static final String LOTL_URL = "https://ec.europa.eu/information_society/policy/esignature/trusted-list/tl-mp.xml";
   private static final String LOTL_ISO_CODE = "EU";
@@ -120,7 +126,17 @@ public class CertificateVerifierServiceImpl implements CertificateVerifierServic
       refreshDate = new Date();
       job.refresh();
     }
-
+    try {
+      KeyStoreCertificateSource keyStoreCertificateSource = getLocalTrustedSource();
+      if (keyStoreCertificateSource != null) {
+        ServiceInfo serviceInfo = new ServiceInfo();
+        for (CertificateToken certificateToken : keyStoreCertificateSource.getCertificates()) {
+          certificateSource.addCertificate(certificateToken, serviceInfo);
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.warn("Failed to load local keystore certificates: %s", e);
+    }
     certificateVerifier.setTrustedCertSource(certificateSource);
     certificateVerifier.setDataLoader(fileCacheDataLoader);
   }
@@ -132,5 +148,16 @@ public class CertificateVerifierServiceImpl implements CertificateVerifierServic
     final FileInputStream keystoreIS = new FileInputStream(new File(keystorePath));
     return new KeyStoreCertificateSource(keystoreIS, cryptoProperties.getKeystoreType(),
         keystorePassword);
+  }
+
+  private KeyStoreCertificateSource getLocalTrustedSource() throws IOException {
+    final String keystorePath = cryptoProperties.getLocalKeystorePath();
+    final String keystorePassword = cryptoProperties.getLocalKeystorePassword();
+    if (StringUtils.isNotEmpty(keystorePath) && StringUtils.isNotEmpty(keystorePassword)) {
+      final FileInputStream keystoreIS = new FileInputStream(new File(keystorePath));
+      return new KeyStoreCertificateSource(keystoreIS, cryptoProperties.getKeystoreType(),
+          keystorePassword);
+    }
+    return null;
   }
 }
