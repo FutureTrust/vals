@@ -13,6 +13,9 @@ import eu.futuretrust.vals.core.signature.exceptions.SignatureException;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.AppliedSignatureValidationPolicyType;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.OptionalOutputsVerifyType;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyRequestType;
+import eu.futuretrust.vals.jaxb.etsi.esi.validation.report.SignatureValidationReportType;
+import eu.futuretrust.vals.jaxb.etsi.esi.validation.report.ValidationObjectList;
+import eu.futuretrust.vals.jaxb.etsi.esi.validation.report.ValidationObjectListType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.ManifestResultType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.ResultType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.VerificationTimeInfoType;
@@ -40,6 +43,7 @@ import eu.futuretrust.vals.protocol.validation.validity.DSSCertificateValidityPa
 import eu.futuretrust.vals.protocol.validation.validity.DSSOCSPValidityParser;
 import eu.futuretrust.vals.protocol.validation.validity.DSSTimestampValidityParser;
 import eu.futuretrust.vals.web.services.report.IndividualReportBuilderService;
+import eu.futuretrust.vals.web.services.report.SignatureValidationReportBuilderService;
 import eu.futuretrust.vals.web.services.report.ValidationReportBuilderService;
 import eu.futuretrust.vals.web.services.response.CertificateVerifierService;
 import org.apache.commons.collections.CollectionUtils;
@@ -62,12 +66,16 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
 
   private final CertificateVerifierService certificateVerifierService;
   private final IndividualReportBuilderService individualReportBuilderService;
+  private final SignatureValidationReportBuilderService signatureValidationReportBuilderService;
 
   @Autowired
-  public DSSValidationReportBuilderService(@Qualifier("certificateVerifierServiceImpl") final CertificateVerifierService certificateVerifierService,
-      IndividualReportBuilderService individualReportBuilderService) {
+  public DSSValidationReportBuilderService(
+      @Qualifier("certificateVerifierServiceImpl") final CertificateVerifierService certificateVerifierService,
+      IndividualReportBuilderService individualReportBuilderService,
+      SignatureValidationReportBuilderService signatureValidationReportBuilderService) {
     this.certificateVerifierService = certificateVerifierService;
     this.individualReportBuilderService = individualReportBuilderService;
+    this.signatureValidationReportBuilderService = signatureValidationReportBuilderService;
   }
 
   @Override
@@ -154,8 +162,48 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
             mainIndication,
             subIndication
         );
+        ValidationObjectListType validationObjectListType = null;
+        if (CollectionUtils.isNotEmpty(individualReport) && individualReport.get(0).getDetails() != null) {
+          for (Object object : individualReport.get(0).getDetails().getAny()) {
+            if (object instanceof ValidationObjectList) {
+              validationObjectListType = ((ValidationObjectList) object).getValue();
+            }
+          }
+        }
+
+        for (SignatureWrapper individualSignatureWrapper : reports.getDiagnosticData().getSignatures()) {
+          String individualSignatureId = signatureWrapper.getId();
+          MainIndication individualMainIndication = DSSEnumsParser.parseMainIndication(
+              reports.getSimpleReport().getIndication(individualSignatureId));
+          SubIndication individualSubIndication = DSSEnumsParser.parseSubIndication(
+              reports.getSimpleReport().getSubIndication(individualSignatureId));
+          if (individualMainIndication == MainIndication.TOTAL_FAILED) {
+            if ((individualSubIndication == SubIndication.NOT_YET_VALID)
+                || (individualSubIndication == SubIndication.SIG_CONSTRAINTS_FAILURE)
+                || (individualSubIndication == SubIndication.CHAIN_CONSTRAINTS_FAILURE)
+                || (individualSubIndication == SubIndication.CRYPTO_CONSTRAINTS_FAILURE)) {
+              individualMainIndication = MainIndication.INDETERMINATE;
+            }
+          }
+
+          SignatureValidationReportType signatureValidationReportType =
+              signatureValidationReportBuilderService.generateSignatureValidationReportType(
+                  verifyRequest,
+                  individualSignatureWrapper,
+                  signedObject,
+                  policy,
+                  reports,
+                  reports.getDiagnosticData(),
+                  reports.getSimpleReport(),
+                  validationObjectListType,
+                  individualMainIndication,
+                  individualSubIndication
+              );
+            optionalOutputs.getSignatureValidationReport().add(signatureValidationReportType);
+        }
 
         optionalOutputs.getIndividualReport().addAll(individualReport);
+
         if (ResultMajor.SUCCESS.getURI().equals(validationReport.getResult().getResultMajor())) {
           validationReport.getResult().setResultMinor(null);
         }
