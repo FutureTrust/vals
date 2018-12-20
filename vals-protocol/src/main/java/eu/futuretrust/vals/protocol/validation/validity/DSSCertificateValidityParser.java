@@ -24,6 +24,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.util.encoders.Base64;
 
 public class DSSCertificateValidityParser {
@@ -119,8 +120,12 @@ public class DSSCertificateValidityParser {
       VerificationResultType validationResultType = ObjectFactoryUtils.FACTORY_OASIS_DSSX
           .createVerificationResultType();
       String reason = revocationWrapper.getReason();
-      RevocationReason revocationReasonURI = RevocationReason.fromURI(reason);
-      validationResultType.setResultMajor(revocationReasonURI.getURI());
+      RevocationReason revocationReasonURI = null;
+      if (StringUtils.isNotEmpty(reason)) {
+        revocationReasonURI = RevocationReason.fromURI(reason);
+      }
+      validationResultType.setResultMajor(revocationReasonURI != null?
+          revocationReasonURI.getURI() : RevocationReason.UNSPECIFIED.getURI());
       revocationInfo.setRevocationReason(validationResultType);
       certificateStatusType.setRevocationInfo(revocationInfo);
     }
