@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:crypto.properties")
+@PropertySource("file:${vals.external.crypto.config.path}")
 @ConfigurationProperties(prefix = "crypto")
 public class CryptoProperties
 {
@@ -17,6 +17,8 @@ public class CryptoProperties
   private String signingKeystorePath;
   private String signingKeystorePassword;
   private String tslCachePath;
+  private String localKeystorePath;
+  private String localKeystorePassword;
 
   public String getDigestAlgorithm()
   {
@@ -96,5 +98,21 @@ public class CryptoProperties
   public void setTslCachePath(String tslCachePath)
   {
     this.tslCachePath = tslCachePath;
+  }
+
+  public String getLocalKeystorePath() {
+    return localKeystorePath;
+  }
+
+  public void setLocalKeystorePath(String localKeystorePath) {
+    this.localKeystorePath = localKeystorePath;
+  }
+
+  public String getLocalKeystorePassword() {
+    return localKeystorePassword;
+  }
+
+  public void setLocalKeystorePassword(String localKeystorePassword) {
+    this.localKeystorePassword = localKeystorePassword;
   }
 }

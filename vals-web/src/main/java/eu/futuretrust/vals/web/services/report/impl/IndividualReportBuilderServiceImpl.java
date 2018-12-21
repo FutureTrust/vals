@@ -53,7 +53,6 @@ import eu.futuretrust.vals.protocol.exceptions.MessageDigestException;
 import eu.futuretrust.vals.protocol.exceptions.ValidationObjectException;
 import eu.futuretrust.vals.protocol.exceptions.VerifyResponseException;
 import eu.futuretrust.vals.protocol.helpers.MarshallerSingleton;
-import eu.futuretrust.vals.protocol.helpers.exceptions.MarshallerSingletonException;
 import eu.futuretrust.vals.protocol.input.Policy;
 import eu.futuretrust.vals.protocol.input.SignedObject;
 import eu.futuretrust.vals.protocol.output.Certificate;
@@ -644,7 +643,8 @@ public class IndividualReportBuilderServiceImpl implements IndividualReportBuild
    * @return an object representing the digest value and the digest algorithm used to compute the
    * digest value
    */
-  private DigestAlgAndValueType createDigestAlgAndValue(byte[] toBeDigested)
+  @Override
+  public DigestAlgAndValueType createDigestAlgAndValue(byte[] toBeDigested)
       throws MessageDigestException {
 
     try {

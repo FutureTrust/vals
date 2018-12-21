@@ -3,6 +3,7 @@
   xmlns:vr="urn:oasis:names:tc:dss:1.0:profiles:verificationreport:schema#"
   xmlns:xades="http://uri.etsi.org/01903/v1.3.2#"
   xmlns:dss="urn:oasis:names:tc:dss:2.0:core:schema"
+  xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   targetNamespace="http://uri.etsi.org/1191022/v1.1.1#" elementFormDefault="qualified"
   attributeFormDefault="unqualified">
@@ -25,11 +26,9 @@
   <xs:import namespace="urn:oasis:names:tc:dss:2.0:core:schema"
     schemaLocation="oasis-dss-core-2.0.xsd"/>
 
-
   <xs:complexType name="VOReferenceType">
     <xs:attribute name="VOReference" type="xs:IDREFS" use="required"/>
   </xs:complexType>
-
 
   <!-- 5.2 Signature Validation Report Element -->
 
@@ -268,5 +267,38 @@
       <xs:element name="PoEObject" type="etsivr:VOReferenceType" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
+
+  <xs:element name="SignatureValidationReport" type="etsivr:SignatureValidationReportType"/>
+  <xs:complexType name="SignatureValidationReportType">
+    <xs:sequence>
+      <xs:element name="SignatureIdentifier" type="etsivr:SignatureIdentifierType" minOccurs="0"/>
+      <xs:element name="SignersDocument" type="etsivr:SignersDocumentType" minOccurs="0"/>
+      <xs:element name="SignerInformation" type="etsivr:SignerInformationType" minOccurs="0"/>
+      <xs:element name="SignatureQuality" type="etsivr:SignatureQualityType" minOccurs="0"/>
+      <xs:element name="SignatureValidationProcessType" type="etsivr:SignatureValidationProcessType" minOccurs="0"/>
+      <xs:element name="ValidationStatus" type="etsivr:ValidationStatusType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignatureIdentifierType">
+    <xs:sequence>
+      <xs:element name="DigestAlgAndValue" type="xades:DigestAlgAndValueType" minOccurs="0"/>
+      <xs:element ref="ds:SignatureValue" minOccurs="0"/>
+      <xs:element name="HashOnly" type="xs:boolean"/>
+      <xs:element name="DocHashOnly" type="xs:boolean"/>
+      <xs:element name="DAIdentifier" type="xs:boolean"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="ValidationStatusType">
+    <xs:sequence>
+      <xs:element name="MainIndication" type="xs:anyURI"/>
+      <xs:element name="SubIndication" type="xs:anyURI" minOccurs="0"/>
+      <xs:element name="AssociatedValidationReportData" type="etsivr:ValidationReportDataType"
+                  minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
 
 </xs:schema>
