@@ -19,6 +19,7 @@ public class CryptoProperties
   private String tslCachePath;
   private String localKeystorePath;
   private String localKeystorePassword;
+  private String crlSourceFolderPath;
 
   public String getDigestAlgorithm()
   {
@@ -114,5 +115,13 @@ public class CryptoProperties
 
   public void setLocalKeystorePassword(String localKeystorePassword) {
     this.localKeystorePassword = localKeystorePassword;
+  }
+
+  public String getCrlSourceFolderPath() {
+    return crlSourceFolderPath;
+  }
+
+  public void setCrlSourceFolderPath(String crlSourceFolderPath) {
+    this.crlSourceFolderPath = crlSourceFolderPath;
   }
 }

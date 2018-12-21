@@ -13,6 +13,9 @@ import eu.europa.esig.dss.validation.CommonCertificateVerifier;
 import eu.europa.esig.dss.x509.CertificateToken;
 import eu.europa.esig.dss.x509.KeyStoreCertificateSource;
 import eu.europa.esig.dss.x509.crl.CRLSource;
+import eu.europa.esig.dss.x509.crl.ExternalResourcesCRLSource;
+import eu.europa.esig.dss.x509.crl.ListCRLSource;
+import eu.europa.esig.dss.x509.crl.OfflineCRLSource;
 import eu.europa.esig.dss.x509.ocsp.OCSPSource;
 import eu.futuretrust.vals.core.enums.ResultMajor;
 import eu.futuretrust.vals.core.enums.ResultMinor;
@@ -27,8 +30,16 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class CertificateVerifierServiceImpl implements CertificateVerifierService {
@@ -49,9 +60,14 @@ public class CertificateVerifierServiceImpl implements CertificateVerifierServic
     this.cryptoProperties = cryptoProperties;
     this.certificateVerifier.setDataLoader(new CommonsDataLoader());
     this.certificateVerifier.setOcspSource(new OnlineOCSPSource());
-    CRLSource crlSource = new OnlineCRLSource(new CommonsDataLoader());
-    this.certificateVerifier.setCrlSource(crlSource);
 
+    if (StringUtils.isNotEmpty(cryptoProperties.getCrlSourceFolderPath())) {
+      this.certificateVerifier.setCrlSource(getOfflineCRLSource());
+      this.certificateVerifier.setSignatureCRLSource(new ListCRLSource((OfflineCRLSource) getOfflineCRLSource()));
+    } else {
+      CRLSource crlSource = new OnlineCRLSource(new CommonsDataLoader());
+      this.certificateVerifier.setCrlSource(crlSource);
+    }
     try {
       initTrustedCertSource();
     } catch (KeystoreLoadingException e) {
@@ -160,5 +176,26 @@ public class CertificateVerifierServiceImpl implements CertificateVerifierServic
           keystorePassword);
     }
     return null;
+  }
+
+  private CRLSource getOfflineCRLSource() {
+    try {
+      List<InputStream> crlISList = new ArrayList<>();
+      try (Stream<Path> paths = Files.walk(Paths.get(cryptoProperties.getCrlSourceFolderPath()))) {
+        paths.filter(Files::isRegularFile).forEach(path -> {
+          try {
+            InputStream is = new FileInputStream(path.toFile());
+            crlISList.add(is);
+          } catch (FileNotFoundException e) {
+            LOGGER.error("Unable to read CRL file %s: %s", path.toAbsolutePath(), e);
+          }
+        });
+      }
+      InputStream[] inputStreams = new InputStream[crlISList.size()];
+      crlISList.toArray(inputStreams);
+      return new ExternalResourcesCRLSource(inputStreams);
+    } catch (Exception e) {
+      return new OnlineCRLSource(new CommonsDataLoader());
+    }
   }
 }
