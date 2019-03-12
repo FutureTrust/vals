@@ -18,11 +18,13 @@ import eu.futuretrust.vals.core.enums.ResultMajor;
 import eu.futuretrust.vals.core.enums.ResultMinor;
 import eu.futuretrust.vals.protocol.exceptions.KeystoreLoadingException;
 import eu.futuretrust.vals.web.properties.CryptoProperties;
+import eu.futuretrust.vals.web.services.gtls.GTSLCertificateSource;
 import eu.futuretrust.vals.web.services.response.CertificateVerifierService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -42,16 +44,17 @@ public class CertificateVerifierServiceImpl implements CertificateVerifierServic
   private CertificateVerifier certificateVerifier = new CommonCertificateVerifier();
   private Date refreshDate;
   private CryptoProperties cryptoProperties;
+  private String gtslEndpointUrl;
 
   @Autowired
-  public CertificateVerifierServiceImpl(CryptoProperties cryptoProperties) {
-
+  public CertificateVerifierServiceImpl(CryptoProperties cryptoProperties,
+                                        @Value("${vals.gtslEndpoint}") String gtslEndpointUrl) {
     this.cryptoProperties = cryptoProperties;
     this.certificateVerifier.setDataLoader(new CommonsDataLoader());
     this.certificateVerifier.setOcspSource(new OnlineOCSPSource());
     CRLSource crlSource = new OnlineCRLSource(new CommonsDataLoader());
     this.certificateVerifier.setCrlSource(crlSource);
-
+    this.gtslEndpointUrl = gtslEndpointUrl;
     try {
       initTrustedCertSource();
     } catch (KeystoreLoadingException e) {
@@ -140,6 +143,9 @@ public class CertificateVerifierServiceImpl implements CertificateVerifierServic
     }
     certificateVerifier.setTrustedCertSource(certificateSource);
     certificateVerifier.setDataLoader(fileCacheDataLoader);
+    if (StringUtils.isNotEmpty(gtslEndpointUrl)) {
+        certificateVerifier.setGtslCertSource(new GTSLCertificateSource(gtslEndpointUrl));
+    }
   }
 
   private KeyStoreCertificateSource getTslValidationKeystore() throws IOException {
