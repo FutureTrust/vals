@@ -57,7 +57,6 @@ public class X509ValidationReportBuilderServiceTests
   private X509ValidationReportBuilderServiceImpl reportBuilderService;
   private CertificateVerifier verifier;
 
-
   private Policy policy;
 
   @Before
