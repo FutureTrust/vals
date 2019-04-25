@@ -116,4 +116,15 @@
         </plugins>
     </build>
 
+    <distributionManagement>
+        <repository>
+            <id>FutureTrust</id>
+            <url>https://mvn.ecsec.de/repository/FutureTrust/</url>
+        </repository>
+        <snapshotRepository>
+            <id>FutureTrust</id>
+            <url>https://mvn.ecsec.de/repository/FutureTrust/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>

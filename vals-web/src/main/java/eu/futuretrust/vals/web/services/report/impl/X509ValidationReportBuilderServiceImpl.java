@@ -2,12 +2,12 @@ package eu.futuretrust.vals.web.services.report.impl;
 
 import eu.europa.esig.dss.client.http.NativeHTTPDataLoader;
 import eu.europa.esig.dss.validation.CertificateValidator;
-import eu.europa.esig.dss.validation.policy.rules.SubIndication;
 import eu.europa.esig.dss.validation.reports.CertificateReports;
 import eu.europa.esig.dss.validation.reports.SimpleCertificateReport;
 import eu.europa.esig.dss.x509.CertificateToken;
 import eu.futuretrust.vals.core.enums.ResultMajor;
 import eu.futuretrust.vals.core.enums.ResultMinor;
+import eu.futuretrust.vals.core.enums.SignedObjectFormat;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.OptionalOutputsVerifyType;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyRequestType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.ResultType;
@@ -29,6 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
     if (!isVerifyRequestValid(verifyRequest)){
 
       resultType.setResultMajor(ResultMajor.REQUESTER_ERROR.getURI());
+      resultType.setResultMinor(ResultMinor.GENERAL_ERROR.getURI());
       return new ValidationReport(resultType);
     }
 
@@ -115,6 +117,11 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
             || verifyRequestType.getOptionalInputs().getOther() != null)
             && verifyRequestType.getOptionalInputs().getOther().size() > 0) {
 
+      return false;
+    }
+
+    if (! Arrays.asList(SignedObjectFormat.X509.getMimeTypes())
+            .contains(verifyRequestType.getSignatureObject().getBase64Signature().getMimeType())) {
       return false;
     }
 
