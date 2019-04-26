@@ -8,12 +8,15 @@ import eu.europa.esig.dss.x509.CommonCertificateSource;
 import eu.europa.esig.dss.x509.crl.ExternalResourcesCRLSource;
 import eu.futuretrust.vals.core.enums.SignedObjectFormat;
 import eu.futuretrust.vals.core.enums.SignedObjectType;
+import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.OptionalInputsVerifyType;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyRequestType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.DocumentType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.Base64DataType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.InputDocumentsType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.SignatureObjectType;
+import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.UseVerificationTimeType;
 import eu.futuretrust.vals.protocol.enums.DSSResponseType;
+import eu.futuretrust.vals.protocol.helpers.XMLGregorianCalendarBuilder;
 import eu.futuretrust.vals.protocol.input.Policy;
 import eu.futuretrust.vals.protocol.input.SignedObject;
 import eu.futuretrust.vals.protocol.output.ValidationReport;
@@ -32,6 +35,7 @@ import java.nio.file.Files;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Date;
 import java.util.UUID;
 
 public class X509ValidationReportBuilderServiceTests
@@ -48,6 +52,7 @@ public class X509ValidationReportBuilderServiceTests
   private final static String REVOKED_CERT_PATH = "x509/vals_revoked.cer";
   private final static String VALID_CERT_PATH = "x509/vals_valid.cer";
   private final static String NOT_YET_VALID_CERT_PATH = "x509/vals_not_yet_valid.cer";
+  private final static String EXPIRED_CERT_PATH = "x509/vals_expired.cer";
   private final static String SELF_SIGNED_CERT_PATH = "x509/vals_self_signed.cer";
 
   private final static String DSS_POLICY_PATH = "policy/dss-default-policy.xml";
@@ -68,7 +73,7 @@ public class X509ValidationReportBuilderServiceTests
     InputStream caCrlIS = classLoader.getResourceAsStream(TEST_CA_CRL_PATH);
     final CryptoProperties properties = new CryptoProperties();
     properties.setTslCachePath("/tmp/tsl/cache");
-    properties.setKeystorePath(TSL_VALIDATION_KEYSTORE);
+    properties.setKeystorePath(classLoader.getResource(TSL_VALIDATION_KEYSTORE).getPath());
     properties.setKeystorePassword(TSL_PASSWORD);
     properties.setKeystoreType(TSL_KEYSTORE_TYPE);
 
@@ -115,15 +120,47 @@ public class X509ValidationReportBuilderServiceTests
     Assert.assertEquals("urn:oasis:names:tc:dss:1.0:resultminor:certificate:revoked", report.getResult().getResultMinor());
   }
 
-  // @Test
+  @Test
   public void testStatusNotValidYet() throws IOException
   {
-    VerifyRequestType verifyRequest = buildVerifyRequest(NOT_YET_VALID_CERT_PATH);
+    VerifyRequestType verifyRequest = buildVerifyRequest(VALID_CERT_PATH);
+    UseVerificationTimeType useVerificationTimeType = new UseVerificationTimeType();
+    useVerificationTimeType.setSpecificTime(XMLGregorianCalendarBuilder.createXMLGregorianCalendar(new Date(1428841824000l)));
+    OptionalInputsVerifyType optionalInputsVerifyType = new OptionalInputsVerifyType();
+    optionalInputsVerifyType.setUseVerificationTime(useVerificationTimeType);
+    verifyRequest.setOptionalInputs(optionalInputsVerifyType);
     SignedObject signedObject = buildSignedObject(verifyRequest);
 
     ValidationReport report = reportBuilderService.generate(verifyRequest, signedObject, policy, null, DSSResponseType.JSON);
 
     Assert.assertEquals("urn:oasis:names:tc:dss:1.0:resultminor:certificate:notValidYet", report.getResult().getResultMinor());
+  }
+
+  @Test
+  public void testStatusExpired() throws IOException
+  {
+    VerifyRequestType verifyRequest = buildVerifyRequest(EXPIRED_CERT_PATH);
+    SignedObject signedObject = buildSignedObject(verifyRequest);
+
+    ValidationReport report = reportBuilderService.generate(verifyRequest, signedObject, policy, null, DSSResponseType.JSON);
+
+    Assert.assertEquals("urn:oasis:names:tc:dss:1.0:resultminor:certificate:expired", report.getResult().getResultMinor());
+  }
+
+  @Test
+  public void testUseVerificationTime() throws IOException
+  {
+    VerifyRequestType verifyRequest = buildVerifyRequest(EXPIRED_CERT_PATH);
+    UseVerificationTimeType useVerificationTimeType = new UseVerificationTimeType();
+    useVerificationTimeType.setSpecificTime(XMLGregorianCalendarBuilder.createXMLGregorianCalendar(new Date(1428841824000l)));
+    OptionalInputsVerifyType optionalInputsVerifyType = new OptionalInputsVerifyType();
+    optionalInputsVerifyType.setUseVerificationTime(useVerificationTimeType);
+    verifyRequest.setOptionalInputs(optionalInputsVerifyType);
+    SignedObject signedObject = buildSignedObject(verifyRequest);
+
+    ValidationReport report = reportBuilderService.generate(verifyRequest, signedObject, policy, null, DSSResponseType.JSON);
+
+    Assert.assertEquals("urn:oasis:names:tc:dss:1.0:resultminor:valid:signature:OnAllDocuments", report.getResult().getResultMinor());
   }
 
   @Test
