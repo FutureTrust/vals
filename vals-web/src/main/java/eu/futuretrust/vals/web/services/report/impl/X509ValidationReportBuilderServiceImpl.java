@@ -21,6 +21,7 @@ import eu.futuretrust.vals.protocol.input.documents.InputDocument;
 import eu.futuretrust.vals.protocol.output.ValidationReport;
 import eu.futuretrust.vals.web.services.report.ValidationReportBuilderService;
 import eu.futuretrust.vals.web.services.response.CertificateVerifierService;
+import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -176,7 +177,7 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
   private NameIDType getSignerIdentity(final VerifyRequestType verifyRequest, final X509Certificate certificate) {
 
     if (verifyRequest.getOptionalInputs() != null
-            && verifyRequest.getOptionalInputs().isReturnSignerIdentity()) {
+            && BooleanUtils.isTrue(verifyRequest.getOptionalInputs().isReturnSignerIdentity())) {
       final String certIssuerName = certificate.getIssuerX500Principal().getName();
       final NameIDType nameIDType = new NameIDType();
       nameIDType.setValue(certIssuerName);
