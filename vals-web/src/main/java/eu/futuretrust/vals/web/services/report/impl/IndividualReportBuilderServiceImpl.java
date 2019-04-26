@@ -702,7 +702,7 @@ public class IndividualReportBuilderServiceImpl implements IndividualReportBuild
    * @see <a href="https://docbox.etsi.org/esi/open/Latest_Drafts/ESI-0019102-2v012.pdf">ETSI TS 119
    * 102-2</a> clauses 4.2.8 & 5.2.8
    */
-  private Optional<SignatureAttributes> getSignatureAttributes(
+  public Optional<SignatureAttributes> getSignatureAttributes(
       final SignedObject signature) throws IndividualReportException {
     if (signature.getFormat().equals(SignedObjectFormat.XML)) {
       try {
