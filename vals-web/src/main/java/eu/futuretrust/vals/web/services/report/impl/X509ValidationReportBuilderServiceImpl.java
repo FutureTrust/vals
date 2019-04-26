@@ -22,6 +22,7 @@ import eu.futuretrust.vals.protocol.output.ValidationReport;
 import eu.futuretrust.vals.web.services.report.ValidationReportBuilderService;
 import eu.futuretrust.vals.web.services.response.CertificateVerifierService;
 import org.apache.commons.lang.BooleanUtils;
+import org.bouncycastle.util.encoders.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -64,16 +65,19 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
     try
     {
       X509Certificate certificate = getCertificate(verifyRequest, signedObject);
+      Date useVerificationTime = getUseVerificationTime(verifyRequest);
       CertificateToken token = new CertificateToken(certificate);
 
       CertificateValidator validator = CertificateValidator.fromCertificate(token);
       validator.setCertificateVerifier(certificateVerifierService.getCertificateVerifier());
 
       certificateVerifierService.getCertificateVerifier().setDataLoader(new NativeHTTPDataLoader());
+      Date validationTime = useVerificationTime != null? useVerificationTime : new Date();
+      validator.setValidationTime(validationTime);
       CertificateReports reports = validator.validate();
 
       resultType.setResultMajor(ResultMajor.SUCCESS.getURI());
-      resultType.setResultMinor(getResultMinor(token, reports).getURI());
+      resultType.setResultMinor(getResultMinor(token, reports, validationTime).getURI());
 
       final NameIDType certIssuerName = getSignerIdentity(verifyRequest, certificate);
       if (certIssuerName != null) {
@@ -146,12 +150,14 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
     } else throw new CertificateException("No certificate found in request");
   }
 
-  private ResultMinor getResultMinor(final CertificateToken certificateToken, final CertificateReports reports) {
+  private ResultMinor getResultMinor(final CertificateToken certificateToken,
+                                     final CertificateReports reports,
+                                     final Date validationTime) {
 
     final SimpleCertificateReport report = reports.getSimpleReport();
     String certId = report.getCertificateIds().get(0);
 
-    if (isCertificateNotValidYet(certificateToken)) {
+    if (validationTime.before(certificateToken.getNotBefore())) {
       return ResultMinor.NOT_VALID_YET;
     }
 
@@ -163,7 +169,7 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
       return ResultMinor.REVOKED;
     }
 
-    if (certificateToken.isExpiredOn(new Date())) {
+    if (certificateToken.isExpiredOn(validationTime)) {
       return ResultMinor.EXPIRED;
     }
 
@@ -202,6 +208,25 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
     return null;
   }
 
+  private Date getUseVerificationTime(final VerifyRequestType verifyRequest) {
+    if (verifyRequest.getOptionalInputs() != null
+        && verifyRequest.getOptionalInputs().getUseVerificationTime() != null) {
+      if (BooleanUtils.isTrue(verifyRequest.getOptionalInputs().getUseVerificationTime().isCurrentTime())) {
+        return null;
+      } else if (verifyRequest.getOptionalInputs().getUseVerificationTime().getSpecificTime() != null) {
+        return verifyRequest.getOptionalInputs().getUseVerificationTime().getSpecificTime().toGregorianCalendar().getTime();
+      } else if (verifyRequest.getOptionalInputs().getUseVerificationTime().getBase64Content() != null) {
+        try {
+          String verificationTime = new String(Base64.decode(verifyRequest.getOptionalInputs().getUseVerificationTime().getBase64Content()));
+          return new Date(Long.parseLong(verificationTime));
+        } catch (Exception e) {
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+
   private boolean isCertificateRevoked(final CertificateToken certificateToken) {
 
     if(certificateToken.isRevoked() != null && certificateToken.isRevoked()) {
@@ -214,11 +239,6 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
 
     final String reason = report.getCertificateRevocationReason(id);
     return (reason != null && reason.equalsIgnoreCase("certificateHold"));
-  }
-
-  private boolean isCertificateNotValidYet(final CertificateToken certificateToken) {
-
-    return new Date().before(certificateToken.getNotBefore());
   }
 
   private boolean isCertificateChainIncomplete(final CertificateReports certificateReports,
