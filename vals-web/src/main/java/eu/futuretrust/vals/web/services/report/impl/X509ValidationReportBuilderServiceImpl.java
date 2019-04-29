@@ -146,7 +146,7 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
             && verifyRequest.getOptionalInputs().getAdditionalKeyInfo() != null)
     {
       return (X509Certificate) factory.generateCertificate(
-              new ByteArrayInputStream(verifyRequest.getOptionalInputs().getAdditionalKeyInfo().getX509Certificate()));
+              new ByteArrayInputStream(Base64.decode(verifyRequest.getOptionalInputs().getAdditionalKeyInfo().getX509Certificate())));
     } else throw new CertificateException("No certificate found in request");
   }
 
