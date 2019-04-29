@@ -114,14 +114,12 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
 
     //Elements of OptionalInputsBase MUST NOT be used with this profile
     if (verifyRequestType.getOptionalInputs() != null
-      && (verifyRequestType.getOptionalInputs().getServicePolicy() != null
-            && verifyRequestType.getOptionalInputs().getServicePolicy().size() > 0
+      && (CollectionUtils.isNotEmpty(verifyRequestType.getOptionalInputs().getServicePolicy())
             || verifyRequestType.getOptionalInputs().getClaimedIdentity() != null
             || verifyRequestType.getOptionalInputs().getLanguage() != null
             || verifyRequestType.getOptionalInputs().getSchemas() != null
             || verifyRequestType.getOptionalInputs().getAddTimestamp() != null
-            || verifyRequestType.getOptionalInputs().getOther() != null)
-            && verifyRequestType.getOptionalInputs().getOther().size() > 0) {
+            || CollectionUtils.isNotEmpty(verifyRequestType.getOptionalInputs().getOther()))) {
 
       return false;
     }
