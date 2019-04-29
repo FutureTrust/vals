@@ -21,6 +21,7 @@ import eu.futuretrust.vals.protocol.input.documents.InputDocument;
 import eu.futuretrust.vals.protocol.output.ValidationReport;
 import eu.futuretrust.vals.web.services.report.ValidationReportBuilderService;
 import eu.futuretrust.vals.web.services.response.CertificateVerifierService;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,10 +104,9 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
   private boolean isVerifyRequestValid(final VerifyRequestType verifyRequestType) {
 
     //InputDocument element MUT NOT be used
-    if (verifyRequestType.getInputDocuments() != null
-            && verifyRequestType.getInputDocuments() != null
-            && verifyRequestType.getInputDocuments().getDocument() != null
-            && verifyRequestType.getInputDocuments().getDocument().size() > 0) {
+    if (verifyRequestType.getInputDocuments() != null &&
+        (CollectionUtils.isNotEmpty(verifyRequestType.getInputDocuments().getDocument()) ||
+            CollectionUtils.isNotEmpty(verifyRequestType.getInputDocuments().getTransformedData()))) {
 
       return false;
     }
