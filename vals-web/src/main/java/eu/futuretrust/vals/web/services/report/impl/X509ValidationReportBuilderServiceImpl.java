@@ -72,19 +72,19 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
       validator.setCertificateVerifier(certificateVerifierService.getCertificateVerifier());
 
       certificateVerifierService.getCertificateVerifier().setDataLoader(new NativeHTTPDataLoader());
-      Date validationTime = useVerificationTime != null? useVerificationTime : new Date();
-      validator.setValidationTime(validationTime);
+      Date verificationTime = useVerificationTime != null? useVerificationTime : new Date();
+      validator.setValidationTime(verificationTime);
       CertificateReports reports = validator.validate();
 
       resultType.setResultMajor(ResultMajor.SUCCESS.getURI());
-      resultType.setResultMinor(getResultMinor(token, reports, validationTime).getURI());
+      resultType.setResultMinor(getResultMinor(token, reports, verificationTime).getURI());
 
       final NameIDType certIssuerName = getSignerIdentity(verifyRequest, certificate);
       if (certIssuerName != null) {
         optionalOutputs.setSignerIdentity(certIssuerName);
       }
 
-      final VerificationTimeInfoType verificationTimeInfo = getVerificationTimeInfo(verifyRequest);
+      final VerificationTimeInfoType verificationTimeInfo = getVerificationTimeInfo(verifyRequest, verificationTime);
       if (verificationTimeInfo != null)
       {
         optionalOutputs.setVerificationTimeInfo(verificationTimeInfo);
@@ -194,13 +194,14 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
     return null;
   }
 
-  private VerificationTimeInfoType getVerificationTimeInfo(final VerifyRequestType verifyRequest) {
+  private VerificationTimeInfoType getVerificationTimeInfo(final VerifyRequestType verifyRequest,
+                                                           final Date verificationTime) {
 
     if (verifyRequest.getOptionalInputs() != null
       && verifyRequest.getOptionalInputs().isReturnVerificationTimeInfo() != null
       && verifyRequest.getOptionalInputs().isReturnVerificationTimeInfo()) {
       VerificationTimeInfoType verificationTimeInfo = new VerificationTimeInfoType();
-      verificationTimeInfo.setVerificationTime(XMLGregorianCalendarBuilder.createXMLGregorianCalendar(new Date()));
+      verificationTimeInfo.setVerificationTime(XMLGregorianCalendarBuilder.createXMLGregorianCalendar(verificationTime));
 
       return verificationTimeInfo;
     }
