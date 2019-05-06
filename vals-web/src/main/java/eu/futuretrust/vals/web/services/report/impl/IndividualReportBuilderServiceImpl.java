@@ -83,6 +83,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -99,7 +100,10 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
 import org.bouncycastle.util.encoders.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -108,6 +112,8 @@ import org.xml.sax.SAXException;
 
 @Service
 public class IndividualReportBuilderServiceImpl implements IndividualReportBuilderService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(IndividualReportBuilderServiceImpl.class);
 
   private CryptoProperties cryptoProperties;
   private ValidationObjectsBuilderService validationObjectsBuilderService;
@@ -725,20 +731,24 @@ public class IndividualReportBuilderServiceImpl implements IndividualReportBuild
 
         Unmarshaller unmarshaller = new MarshallerSingleton().getUnmarshaller(
             eu.futuretrust.vals.jaxb.oasis.xmldsig.core.Signature.class);
-        eu.futuretrust.vals.jaxb.oasis.xmldsig.core.Signature unMarshalledSignature = (eu.futuretrust.vals.jaxb.oasis.xmldsig.core.Signature) unmarshaller
-            .unmarshal(new ByteArrayInputStream(signatureBytes));
-        for (ObjectType o : unMarshalledSignature.getValue().getObject()) {
-          for (Object o1 : o.getContent()) {
-            if (o1.getClass().equals(QualifyingProperties.class)) {
-              QualifyingProperties qualifyingProperties = (QualifyingProperties) o1;
-              SignatureAttributes signatureAttributes = new SignatureAttributes();
-              signatureAttributes
-                  .setSignedProperties(qualifyingProperties.getValue().getSignedProperties());
-              signatureAttributes
-                  .setUnsignedProperties(qualifyingProperties.getValue().getUnsignedProperties());
-              return Optional.of(signatureAttributes);
+        try {
+          eu.futuretrust.vals.jaxb.oasis.xmldsig.core.Signature unMarshalledSignature = (eu.futuretrust.vals.jaxb.oasis.xmldsig.core.Signature) unmarshaller
+              .unmarshal(new ByteArrayInputStream(signatureBytes));
+          for (ObjectType o : unMarshalledSignature.getValue().getObject()) {
+            for (Object o1 : o.getContent()) {
+              if (o1.getClass().equals(QualifyingProperties.class)) {
+                QualifyingProperties qualifyingProperties = (QualifyingProperties) o1;
+                SignatureAttributes signatureAttributes = new SignatureAttributes();
+                signatureAttributes
+                    .setSignedProperties(qualifyingProperties.getValue().getSignedProperties());
+                signatureAttributes
+                    .setUnsignedProperties(qualifyingProperties.getValue().getUnsignedProperties());
+                return Optional.of(signatureAttributes);
+              }
             }
           }
+        } catch (UnmarshalException e) {
+          LOGGER.error("Error umarshalling signature:" + e);
         }
       } catch (JAXBException | TransformerException | ParserConfigurationException | IOException | XPathExpressionException | SAXException e) {
         e.printStackTrace();
