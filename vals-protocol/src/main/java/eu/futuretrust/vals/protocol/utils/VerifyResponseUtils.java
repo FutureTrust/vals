@@ -44,10 +44,7 @@ public final class VerifyResponseUtils {
     result.setResultMinor(resultMinor);
 
     if (message != null) {
-      final InternationalStringType resultMessage = ObjectFactoryUtils.FACTORY_OASIS_CORE_2
-          .createInternationalStringType();
-      resultMessage.setValue(message);
-      resultMessage.setLang(Iso6391.ENGLISH.getIsoCode());
+      final InternationalStringType resultMessage = getResultMessage(message);
       result.setResultMessage(resultMessage);
     }
 
@@ -59,5 +56,13 @@ public final class VerifyResponseUtils {
 
     verifyResponse.setResult(result);
     return verifyResponse;
+  }
+
+  public static InternationalStringType getResultMessage(String message) {
+    final InternationalStringType resultMessage = ObjectFactoryUtils.FACTORY_OASIS_CORE_2
+        .createInternationalStringType();
+    resultMessage.setValue(message);
+    resultMessage.setLang(Iso6391.ENGLISH.getIsoCode());
+    return resultMessage;
   }
 }

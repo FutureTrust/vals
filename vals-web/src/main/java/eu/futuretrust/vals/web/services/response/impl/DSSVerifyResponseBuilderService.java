@@ -119,10 +119,12 @@ public class DSSVerifyResponseBuilderService implements VerifyResponseBuilderSer
                                                     final VerifyRequestType verifyRequest,
                                                     final Profile mainProfile,
                                                     final List<Profile> subProfiles) {
+    String resultMessage = report.getResult().getResultMessage() != null ?
+        report.getResult().getResultMessage().getValue() : null;
 
     VerifyResponseType verifyResponse = VerifyResponseUtils
             .getVerifyResponse(report.getResult().getResultMajor(), report.getResult().getResultMinor(),
-                    null, verifyRequest);
+                    resultMessage, verifyRequest);
     verifyResponse.setOptionalOutputs(report.getOptionalOutputs());
     verifyResponse.getAppliedProfile().add(mainProfile.getUri());
     verifyResponse.getAppliedProfile()

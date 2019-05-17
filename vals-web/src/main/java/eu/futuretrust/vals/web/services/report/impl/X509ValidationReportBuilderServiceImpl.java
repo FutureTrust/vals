@@ -14,11 +14,13 @@ import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.ResultType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.VerificationTimeInfoType;
 import eu.futuretrust.vals.jaxb.oasis.saml.v2.NameIDType;
 import eu.futuretrust.vals.protocol.enums.DSSResponseType;
+import eu.futuretrust.vals.protocol.exceptions.VerifyRequestException;
 import eu.futuretrust.vals.protocol.helpers.XMLGregorianCalendarBuilder;
 import eu.futuretrust.vals.protocol.input.Policy;
 import eu.futuretrust.vals.protocol.input.SignedObject;
 import eu.futuretrust.vals.protocol.input.documents.InputDocument;
 import eu.futuretrust.vals.protocol.output.ValidationReport;
+import eu.futuretrust.vals.protocol.utils.VerifyResponseUtils;
 import eu.futuretrust.vals.web.services.report.ValidationReportBuilderService;
 import eu.futuretrust.vals.web.services.response.CertificateVerifierService;
 import org.apache.commons.collections.CollectionUtils;
@@ -56,11 +58,13 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
     final ResultType resultType = new ResultType();
     final OptionalOutputsVerifyType optionalOutputs = new OptionalOutputsVerifyType();
 
-    if (!isVerifyRequestValid(verifyRequest)){
-
-      resultType.setResultMajor(ResultMajor.REQUESTER_ERROR.getURI());
-      resultType.setResultMinor(ResultMinor.GENERAL_ERROR.getURI());
-      return new ValidationReport(resultType);
+    try {
+        validateVerifyRequest(verifyRequest);
+    } catch (VerifyRequestException e) {
+        resultType.setResultMajor(ResultMajor.REQUESTER_ERROR.getURI());
+        resultType.setResultMinor(ResultMinor.GENERAL_ERROR.getURI());
+        resultType.setResultMessage(VerifyResponseUtils.getResultMessage(e.getMessage()));
+        return new ValidationReport(resultType);
     }
 
     try
@@ -101,7 +105,7 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
     return validationReport;
   }
 
-  private boolean isVerifyRequestValid(final VerifyRequestType verifyRequestType) {
+  private void validateVerifyRequest(final VerifyRequestType verifyRequestType) throws VerifyRequestException {
 
     //InputDocument element MUT NOT be used
     if (verifyRequestType.getInputDocuments() != null
@@ -109,7 +113,8 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
             || CollectionUtils.isNotEmpty(verifyRequestType.getInputDocuments().getTransformedData())
             || CollectionUtils.isNotEmpty(verifyRequestType.getInputDocuments().getDocumentHash()))) {
 
-      return false;
+        throw new VerifyRequestException("Elements of InputDocument MUST NOT be used with this profile",
+            ResultMajor.REQUESTER_ERROR, ResultMinor.GENERAL_ERROR);
     }
 
     //Elements of OptionalInputsBase MUST NOT be used with this profile
@@ -120,16 +125,15 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
             || verifyRequestType.getOptionalInputs().getSchemas() != null
             || verifyRequestType.getOptionalInputs().getAddTimestamp() != null
             || CollectionUtils.isNotEmpty(verifyRequestType.getOptionalInputs().getOther()))) {
-
-      return false;
+        throw new VerifyRequestException("Elements of OptionalInputBase MUST NOT be used with this profile",
+            ResultMajor.REQUESTER_ERROR, ResultMinor.GENERAL_ERROR);
     }
 
     if (! Arrays.asList(SignedObjectFormat.X509.getMimeTypes())
             .contains(verifyRequestType.getSignatureObject().getBase64Signature().getMimeType())) {
-      return false;
+        throw new VerifyRequestException("Invalid MimeType",
+            ResultMajor.REQUESTER_ERROR, ResultMinor.GENERAL_ERROR);
     }
-
-    return true;
   }
 
   private X509Certificate getCertificate(final VerifyRequestType verifyRequest,
