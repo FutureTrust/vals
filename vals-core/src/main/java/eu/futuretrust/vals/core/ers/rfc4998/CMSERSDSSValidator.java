@@ -169,7 +169,8 @@ public class CMSERSDSSValidator extends ERSDSSValidator {
     String signatureType = ERSSignatureType.RFC4998.getUrn();
     if (!verifyRequest.getProfile().contains(Profile.ERS.getUri()) ||
         verifyRequest.getInputDocuments() == null ||
-        !signatureType.equalsIgnoreCase(verifyRequest.getOptionalInputs().getSignatureType())) {
+        !( verifyRequest.getOptionalInputs() != null &&
+            signatureType.equalsIgnoreCase(verifyRequest.getOptionalInputs().getSignatureType()))) {
       throw new VerifyRequestException("Invalid profile or signature type", ResultMajor.REQUESTER_ERROR,
           ResultMinor.GENERAL_ERROR);
     }
