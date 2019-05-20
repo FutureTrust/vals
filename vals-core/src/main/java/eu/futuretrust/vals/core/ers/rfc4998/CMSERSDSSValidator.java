@@ -173,6 +173,13 @@ public class CMSERSDSSValidator extends ERSDSSValidator {
       throw new VerifyRequestException("Invalid profile or signature type", ResultMajor.REQUESTER_ERROR,
           ResultMinor.GENERAL_ERROR);
     }
+
+    if (verifyRequest.getOptionalInputs() != null &&
+        verifyRequest.getOptionalInputs().getAddTimestamp() != null) {
+      throw new VerifyRequestException("OptionalInputs/AddTimestamp element MUST NOT be used with this profile", ResultMajor.REQUESTER_ERROR,
+          ResultMinor.GENERAL_ERROR);
+    }
+
     validateInputDocuments(verifyRequest.getInputDocuments());
     checkDetachedDocumentsValid(verifyRequest.getInputDocuments().getDocument());
     checkDetachedDocumentHashesValid(verifyRequest.getInputDocuments().getDocumentHash());

@@ -12,6 +12,7 @@ import eu.futuretrust.vals.protocol.input.Policy;
 import eu.futuretrust.vals.protocol.input.SignedObject;
 import eu.futuretrust.vals.protocol.input.documents.InputDocument;
 import eu.futuretrust.vals.protocol.output.ValidationReport;
+import eu.futuretrust.vals.protocol.utils.VerifyResponseUtils;
 import eu.futuretrust.vals.web.services.report.ValidationReportBuilderService;
 import org.bouncycastle.cms.EvidenceRecordVerifier;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -34,6 +35,7 @@ public class ERSValidationReportBuilderService implements ValidationReportBuilde
         ResultType result = ObjectFactoryUtils.FACTORY_OASIS_CORE_2.createResultType();
         result.setResultMajor(e.getResultMajor().getURI());
         result.setResultMinor(e.getResultMinor().getURI());
+        result.setResultMessage(VerifyResponseUtils.getResultMessage(e.getMessage()));
         return new ValidationReport(result);
     }
     return new ValidationReport(verifyResponseType.getResult());
