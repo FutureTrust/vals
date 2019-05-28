@@ -33,9 +33,14 @@ import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.InputDocumentsType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.ResultType;
 import eu.futuretrust.vals.jaxb.utils.ObjectFactoryUtils;
 import org.apache.commons.lang.StringUtils;
+import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.cms.ArchiveTimeStamp;
+import org.bouncycastle.asn1.cms.ArchiveTimeStampChain;
 import org.bouncycastle.asn1.cms.DataGroup;
 import org.bouncycastle.asn1.cms.EvidenceRecord;
+import org.bouncycastle.asn1.cms.PartialHashtree;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.cms.ArchiveTimeStampValidationException;
 import org.bouncycastle.cms.EvidenceRecordVerifier;
@@ -97,6 +102,14 @@ public class CMSERSDSSValidator extends ERSDSSValidator {
           value = (documents.size() > 1) ? new DataGroup(documentsByteArr) : documentsByteArr.get(0);
           algorithmIdentifier = null;
         }
+
+        // NOT ALL PROTECTED
+/*        ArchiveTimeStampChain next = (ArchiveTimeStampChain) evidenceRecord.getArchiveTimeStampSequence().getArchiveTimeStampChains().iterator().next();
+        ArchiveTimeStamp next1 = (ArchiveTimeStamp) next.getArchiveTimestamps().iterator().next();
+        PartialHashtree reducedHashTree = (PartialHashtree) next1.getReducedHashTree();
+        ASN1Encodable objectAt = reducedHashTree.getValues().getObjectAt(0);*/
+
+
         verifier.validate(evidenceRecord, value, algorithmIdentifier);
       } catch (IOException | CertificateException | TSPException | NoSuchAlgorithmException
           | PartialHashTreeVerificationException | OperatorCreationException
