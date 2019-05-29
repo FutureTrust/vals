@@ -187,7 +187,9 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
         optionalOutputs.getIndividualReport().addAll(individualReport);
 
         if (ResultMajor.SUCCESS.getURI().equals(validationReport.getResult().getResultMajor())) {
-          validationReport.getResult().setResultMinor(null);
+          if (mainIndication == MainIndication.TOTAL_PASSED && subIndication == null) {
+            result.setResultMinor(ResultMinor.ON_ALL_DOCUMENTS.getURI());
+          }
         }
       }
 
