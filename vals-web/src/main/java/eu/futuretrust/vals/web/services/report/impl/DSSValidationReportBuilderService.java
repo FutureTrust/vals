@@ -187,8 +187,14 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
         optionalOutputs.getIndividualReport().addAll(individualReport);
 
         if (ResultMajor.SUCCESS.getURI().equals(validationReport.getResult().getResultMajor())) {
+          // Result when signature validates successfully
           if (mainIndication == MainIndication.TOTAL_PASSED && subIndication == null) {
             result.setResultMinor(ResultMinor.ON_ALL_DOCUMENTS.getURI());
+          }
+          // Result when detached signature without document/document-hash
+          if (mainIndication == MainIndication.INDETERMINATE && subIndication == SubIndication.SIGNED_DATA_NOT_FOUND) {
+              result.setResultMajor(ResultMajor.REQUESTER_ERROR.getURI());
+              result.setResultMinor(ResultMinor.INCORRECT_SIGNATURE.getURI());
           }
         }
       }
