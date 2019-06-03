@@ -20,6 +20,7 @@ import eu.futuretrust.vals.protocol.input.Policy;
 import eu.futuretrust.vals.protocol.input.SignedObject;
 import eu.futuretrust.vals.protocol.input.documents.InputDocument;
 import eu.futuretrust.vals.protocol.output.ValidationReport;
+import eu.futuretrust.vals.protocol.utils.VerifyRequestUtils;
 import eu.futuretrust.vals.protocol.utils.VerifyResponseUtils;
 import eu.futuretrust.vals.web.services.report.ValidationReportBuilderService;
 import eu.futuretrust.vals.web.services.response.CertificateVerifierService;
@@ -70,7 +71,7 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
     try
     {
       X509Certificate certificate = getCertificate(verifyRequest, signedObject);
-      Date useVerificationTime = getUseVerificationTime(verifyRequest);
+      Date useVerificationTime = VerifyRequestUtils.getUseVerificationTime(verifyRequest);
       CertificateToken token = new CertificateToken(certificate);
 
       CertificateValidator validator = CertificateValidator.fromCertificate(token);
@@ -209,25 +210,6 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
       return verificationTimeInfo;
     }
 
-    return null;
-  }
-
-  private Date getUseVerificationTime(final VerifyRequestType verifyRequest) {
-    if (verifyRequest.getOptionalInputs() != null
-        && verifyRequest.getOptionalInputs().getUseVerificationTime() != null) {
-      if (BooleanUtils.isTrue(verifyRequest.getOptionalInputs().getUseVerificationTime().isCurrentTime())) {
-        return null;
-      } else if (verifyRequest.getOptionalInputs().getUseVerificationTime().getSpecificTime() != null) {
-        return verifyRequest.getOptionalInputs().getUseVerificationTime().getSpecificTime().toGregorianCalendar().getTime();
-      } else if (verifyRequest.getOptionalInputs().getUseVerificationTime().getBase64Content() != null) {
-        try {
-          String verificationTime = new String(Base64.decode(verifyRequest.getOptionalInputs().getUseVerificationTime().getBase64Content()));
-          return new Date(Long.parseLong(verificationTime));
-        } catch (Exception e) {
-          return null;
-        }
-      }
-    }
     return null;
   }
 

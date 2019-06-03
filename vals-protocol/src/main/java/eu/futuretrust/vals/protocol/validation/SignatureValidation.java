@@ -7,6 +7,8 @@ import eu.europa.esig.dss.InMemoryDocument;
 import eu.europa.esig.dss.utils.Utils;
 import eu.europa.esig.dss.validation.CertificateVerifier;
 import eu.europa.esig.dss.validation.SignedDocumentValidator;
+import eu.europa.esig.dss.validation.executor.CustomProcessExecutor;
+import eu.europa.esig.dss.validation.executor.ProcessExecutor;
 import eu.europa.esig.dss.validation.reports.Reports;
 import eu.futuretrust.vals.core.enums.ResultMajor;
 import eu.futuretrust.vals.core.enums.ResultMinor;
@@ -20,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,7 @@ public class SignatureValidation {
   private byte[] policy;
   private List<InputDocument> documents;
   private List<InputDocumentHash> documentHashes;
+  private Date verificationTime;
 
   /**
    * @param signature a xml, cms or pdf signature
@@ -114,6 +118,12 @@ public class SignatureValidation {
 
     validator.setDetachedContents(detachedList);
 
+    if (verificationTime != null) {
+      ProcessExecutor processExecutor = new CustomProcessExecutor();
+      processExecutor.setCurrentTime(verificationTime);
+      validator.setProcessExecutor(processExecutor);
+    }
+
     validator.setCertificateVerifier(certificateVerifier);
 
     if (policy == null) {
@@ -124,4 +134,11 @@ public class SignatureValidation {
     }
   }
 
+  public Date getVerificationTime() {
+    return verificationTime;
+  }
+
+  public void setVerificationTime(Date verificationTime) {
+    this.verificationTime = verificationTime;
+  }
 }

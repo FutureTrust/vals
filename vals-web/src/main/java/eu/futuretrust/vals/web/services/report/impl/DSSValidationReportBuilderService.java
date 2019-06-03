@@ -34,6 +34,7 @@ import eu.futuretrust.vals.protocol.input.SignedObject;
 import eu.futuretrust.vals.protocol.input.documents.InputDocument;
 import eu.futuretrust.vals.protocol.input.documents.InputDocumentHash;
 import eu.futuretrust.vals.protocol.output.*;
+import eu.futuretrust.vals.protocol.utils.VerifyRequestUtils;
 import eu.futuretrust.vals.protocol.validation.DSSCertificateWrapperParser;
 import eu.futuretrust.vals.protocol.validation.DSSEnumsParser;
 import eu.futuretrust.vals.protocol.validation.DSSRevocationWrapperParser;
@@ -87,6 +88,12 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
         .findInputDocumentHashes(verifyRequest);
     SignatureValidation validation = new SignatureValidation(signedObject.getContent(),
         policy.getContent(), inputDocuments, inputDocumentHashes);
+
+    Date useVerificationTime = VerifyRequestUtils.getUseVerificationTime(verifyRequest);
+    if (useVerificationTime != null) {
+      validation.setVerificationTime(useVerificationTime);
+    }
+
     Reports reports = validation.validate(certificateVerifierService.getCertificateVerifier());
 
     final String signatureId = reports.getDiagnosticData().getFirstSignatureId();

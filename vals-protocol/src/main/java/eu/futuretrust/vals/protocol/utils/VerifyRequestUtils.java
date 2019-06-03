@@ -20,6 +20,10 @@ import eu.futuretrust.vals.core.enums.ResultMajor;
 import eu.futuretrust.vals.core.enums.ResultMinor;
 import eu.futuretrust.vals.protocol.exceptions.ProfileNotFoundException;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyRequestType;
+import org.apache.commons.lang.BooleanUtils;
+import org.bouncycastle.util.encoders.Base64;
+
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,5 +74,24 @@ public class VerifyRequestUtils {
         .map(Profile::fromUri)
         .filter(profile -> profile.getType().equals(ProfileType.SUB))
         .collect(Collectors.toList());
+  }
+
+  public static Date getUseVerificationTime(final VerifyRequestType verifyRequest) {
+    if (verifyRequest.getOptionalInputs() != null
+        && verifyRequest.getOptionalInputs().getUseVerificationTime() != null) {
+      if (BooleanUtils.isTrue(verifyRequest.getOptionalInputs().getUseVerificationTime().isCurrentTime())) {
+        return null;
+      } else if (verifyRequest.getOptionalInputs().getUseVerificationTime().getSpecificTime() != null) {
+        return verifyRequest.getOptionalInputs().getUseVerificationTime().getSpecificTime().toGregorianCalendar().getTime();
+      } else if (verifyRequest.getOptionalInputs().getUseVerificationTime().getBase64Content() != null) {
+        try {
+          String verificationTime = new String(Base64.decode(verifyRequest.getOptionalInputs().getUseVerificationTime().getBase64Content()));
+          return new Date(Long.parseLong(verificationTime));
+        } catch (Exception e) {
+          return null;
+        }
+      }
+    }
+    return null;
   }
 }
