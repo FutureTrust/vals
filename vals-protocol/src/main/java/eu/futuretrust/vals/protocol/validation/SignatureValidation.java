@@ -100,7 +100,7 @@ public class SignatureValidation {
             DigestDocument digestDocument = new DigestDocument();
             for (HashedDocument hashedDocument : inputDocumentHash.getHashedDocuments()) {
               digestDocument.addDigest(
-                  DigestAlgorithm.forName(hashedDocument.getHashingAlgorithm(), DigestAlgorithm.SHA256),
+                  DigestAlgorithm.forXML(hashedDocument.getHashingAlgorithm(), DigestAlgorithm.SHA256),
                   new String(hashedDocument.getHashedContent()));
             }
             return digestDocument;
@@ -120,8 +120,7 @@ public class SignatureValidation {
       return validator.validateDocument();
     } else {
       ByteArrayInputStream policyInputStream = new ByteArrayInputStream(policy);
-      return validator.validateDocument(
-          policyInputStream);
+      return validator.validateDocument(policyInputStream);
     }
   }
 

@@ -196,6 +196,11 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
               result.setResultMajor(ResultMajor.REQUESTER_ERROR.getURI());
               result.setResultMinor(ResultMinor.INCORRECT_SIGNATURE.getURI());
           }
+          // Result when detached signature with not matching document/document-hash
+          if (mainIndication == MainIndication.TOTAL_FAILED && subIndication == SubIndication.HASH_FAILURE) {
+            result.setResultMajor(ResultMajor.REQUESTER_ERROR.getURI());
+            result.setResultMinor(ResultMinor.NOT_SUPPORTED.getURI());
+          }
         }
       }
 
