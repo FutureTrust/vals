@@ -1,10 +1,10 @@
 package eu.futuretrust.vals.web.services.report.impl;
 
-import eu.europa.esig.dss.jaxb.diagnostic.XmlChainItem;
 import eu.europa.esig.dss.validation.reports.Reports;
 import eu.europa.esig.dss.validation.reports.wrapper.*;
 import eu.futuretrust.vals.core.enums.ResultMajor;
 import eu.futuretrust.vals.core.enums.ResultMinor;
+import eu.futuretrust.vals.core.enums.SignedObjectType;
 import eu.futuretrust.vals.core.etsi.esi.enums.MainIndication;
 import eu.futuretrust.vals.core.etsi.esi.enums.SubIndication;
 import eu.futuretrust.vals.core.manifest.ManifestVerifier;
@@ -35,6 +35,7 @@ import eu.futuretrust.vals.protocol.input.documents.InputDocument;
 import eu.futuretrust.vals.protocol.input.documents.InputDocumentHash;
 import eu.futuretrust.vals.protocol.output.*;
 import eu.futuretrust.vals.protocol.utils.VerifyRequestUtils;
+import eu.futuretrust.vals.protocol.utils.VerifyResponseUtils;
 import eu.futuretrust.vals.protocol.validation.DSSCertificateWrapperParser;
 import eu.futuretrust.vals.protocol.validation.DSSEnumsParser;
 import eu.futuretrust.vals.protocol.validation.DSSRevocationWrapperParser;
@@ -202,11 +203,20 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
           if (mainIndication == MainIndication.INDETERMINATE && subIndication == SubIndication.SIGNED_DATA_NOT_FOUND) {
               result.setResultMajor(ResultMajor.REQUESTER_ERROR.getURI());
               result.setResultMinor(ResultMinor.INCORRECT_SIGNATURE.getURI());
+            result.setResultMessage(VerifyResponseUtils.getResultMessage("Detached signature without input document/document-hash"));
           }
           // Result when detached signature with not matching document/document-hash
           if (mainIndication == MainIndication.TOTAL_FAILED && subIndication == SubIndication.HASH_FAILURE) {
             result.setResultMajor(ResultMajor.REQUESTER_ERROR.getURI());
             result.setResultMinor(ResultMinor.NOT_SUPPORTED.getURI());
+            result.setResultMessage(VerifyResponseUtils.getResultMessage("Detached signature with not-matching input document/document-hash"));
+          }
+          // Result when enveloping signature with input document/document-hash
+          if (SignedObjectType.ENVELOPING.equals(signedObject.getType()) &&
+              (CollectionUtils.isNotEmpty(inputDocuments) || CollectionUtils.isNotEmpty(inputDocumentHashes))) {
+            result.setResultMajor(ResultMajor.REQUESTER_ERROR.getURI());
+            result.setResultMinor(ResultMinor.GENERAL_ERROR.getURI());
+            result.setResultMessage(VerifyResponseUtils.getResultMessage("Enveloping signature with input document/document-hash"));
           }
         }
       }
