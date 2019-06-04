@@ -32,6 +32,7 @@ import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.DocumentType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.InputDocumentsType;
 import eu.futuretrust.vals.jaxb.oasis.dss.core.v2.ResultType;
 import eu.futuretrust.vals.jaxb.utils.ObjectFactoryUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cms.DataGroup;
@@ -167,11 +168,18 @@ public class CMSERSDSSValidator extends ERSDSSValidator {
    */
   private void validateVerifyRequest(final VerifyRequestType verifyRequest) throws VerifyRequestException {
     String signatureType = ERSSignatureType.RFC4998.getUrn();
+
     if (!verifyRequest.getProfile().contains(Profile.ERS.getUri()) ||
-        verifyRequest.getInputDocuments() == null ||
         !( verifyRequest.getOptionalInputs() != null &&
             signatureType.equalsIgnoreCase(verifyRequest.getOptionalInputs().getSignatureType()))) {
       throw new VerifyRequestException("Invalid profile or signature type", ResultMajor.REQUESTER_ERROR,
+          ResultMinor.GENERAL_ERROR);
+    }
+
+    if (verifyRequest.getInputDocuments() == null ||
+        (CollectionUtils.isEmpty(verifyRequest.getInputDocuments().getDocument()) &&
+            CollectionUtils.isEmpty(verifyRequest.getInputDocuments().getDocumentHash()))) {
+      throw new VerifyRequestException("No document/document-hash provided", ResultMajor.REQUESTER_ERROR,
           ResultMinor.GENERAL_ERROR);
     }
 
