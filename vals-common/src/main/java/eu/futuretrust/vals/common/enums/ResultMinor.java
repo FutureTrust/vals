@@ -38,8 +38,8 @@ public enum ResultMinor
    * The signature or timestamp is valid. However, the signature or timestamp does not cover all of
    * the input documents that were passed in by the client.
    */
-  NOT_ALL_DOCUMENTS_REFERENCED(
-          "urn:oasis:names:tc:dss:1.0:resultminor:valid:signature:NotAllDocumentsReferenced"),
+  NOT_ALL_DOCUMENTS_PROTECTED(
+          "urn:oasis:names:tc:dss:1.0:resultminor:valid:signature:NotAllDocumentsProtected"),
 
   /**
    * The signature fails to verify, for example due to the signed document being modified or the
