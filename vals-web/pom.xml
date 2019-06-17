@@ -81,7 +81,7 @@
         <dependency>
             <groupId>eu.futuretrust.vals</groupId>
             <artifactId>vals-jaxb</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.0</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
