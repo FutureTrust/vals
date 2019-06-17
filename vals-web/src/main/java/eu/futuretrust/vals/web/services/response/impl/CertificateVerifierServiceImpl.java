@@ -62,8 +62,11 @@ public class CertificateVerifierServiceImpl implements CertificateVerifierServic
     this.certificateVerifier.setOcspSource(new OnlineOCSPSource());
 
     if (StringUtils.isNotEmpty(cryptoProperties.getCrlSourceFolderPath())) {
-      this.certificateVerifier.setCrlSource(getOfflineCRLSource());
-      this.certificateVerifier.setSignatureCRLSource(new ListCRLSource((OfflineCRLSource) getOfflineCRLSource()));
+      CRLSource crlSource = getOfflineCRLSource();
+      this.certificateVerifier.setCrlSource(crlSource);
+      if (crlSource instanceof OfflineCRLSource) {
+        this.certificateVerifier.setSignatureCRLSource(new ListCRLSource((OfflineCRLSource) crlSource));
+      }
     } else {
       CRLSource crlSource = new OnlineCRLSource(new CommonsDataLoader());
       this.certificateVerifier.setCrlSource(crlSource);
