@@ -1,61 +1,188 @@
 <!DOCTYPE HTML>
-
+<!--
+	Alpha by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Comprehensive Validation Service</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
-    <link rel="stylesheet" th:href="@{/css/futuretrust.css}" />
-    <link rel="stylesheet" th:href="@{/css/main.css}" />
-    <link rel="stylesheet" th:href="@{/css/dropbox.css}" />
-    <link rel="icon" th:href="@{/images/icon.jpg}" sizes="16x16" type="image/jpeg" />
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
-    <!--[if lte IE 8]><link rel="stylesheet" th:href="@{/css/ie8.css}" /><![endif]-->
-</head>
-<body>
-    <div th:include="fragments/header"></div>
-    <div class="container validate">
-        <form class="dropbox validate has-advanced-upload" enctype="multipart/form-data">
-            <div class="dropbox__input dropbox__validation">
-                <svg class="dropbox__icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
-                <input class="dropbox__file" type="file" name="signature" id="file-signature" />
-                <label for="file-signature"><strong>Choose signature file</strong><span class="dropbox__dragndrop"> or drag it here</span>.</label>
-            </div>
-            <div class="dropbox__input dropbox__validation">
-                <svg class="dropbox__icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
-                <input class="dropbox__file" type="file" name="files[]" id="file-signed" data-multiple-caption="{count} files selected" th:multiple="multiple" />
-                <label for="file-signed"><strong>Choose detached content</strong><span class="dropbox__dragndrop"> or drag and drop it here</span>.</label>
-            </div>
-            <div class="dropbox__uploading">
-                <p>Uploading&hellip;</p>
-                <p><i class="fa fa-spinner"></i></p>
-            </div>
-            <div class="dropbox__success generate">Validation done!</div>
-            <div class="dropbox__error generate">An error occurred. Please try again.<span></span>.</div>
-        </form>
-        <div class="message"></div>
-        <div class="result">
-            <p class="result-major"></p>
-            <p class="result-minor"></p>
-        </div>
-        <div class="btn-center">
-            <a class="button special dropbox__trigger" id="reset-validation">Reset</a> <a class="button special dropbox__trigger" id="trigger-validation">Validate</a>
-        </div>
-    </div>
-    <div th:include="fragments/footer"></div>
+	<head>
+		<title>FutureTrust ValS</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" th:href="@{/css/main.css}"/>
+		<link rel=icon th:href="@{/images/futuretrust-icon.png}" sizes="16x16" type="image/png">
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body class="landing">
+		<div id="page-wrapper">
 
-    <!-- Scripts -->
-    <script th:src="@{/js/jquery.min.js}"></script>
-    <script th:src="@{/js/jquery.dropotron.min.js}"></script>
-    <script th:src="@{/js/jquery.scrollgress.min.js}"></script>
-    <script th:src="@{/js/skel.min.js}"></script>
-    <script th:src="@{/js/util.js}"></script>
-    <script th:src="@{/js/file-saver/FileSaver.min.js}"></script>
-    <!--[if lte IE 8]><script th:src="@{/js/ie/respond.min.js}"></script><![endif]-->
-    <script th:src="@{/js/vals.js}"></script>
-    <script type="text/javascript">
-        ValS.init();
-    </script>
-</body>
+			<!-- Header -->
+				<header id="header" class="alt">
+					<h1><a href="/">FutureTrust ValS</a></h1>
+					<nav id="nav">
+						<ul>
+							<li><a href="#home">Home</a></li>
+							<li><a href="#vals">Validation Service</a>
+							<!-- <li><a href="#">ASN.1 Viewer</a></li> -->
+                            <!-- <li><a href="/api/doc" class="button">API</a></li> -->
+                            </ul>
+                        </nav>
+                    </header>
+
+                <!-- Banner -->
+				<a name="home"></a>
+				<section id="banner" class="banner-home">
+					<h2>ValS</h2>
+					<p>Comprehensive Validation Service.</p>
+					<ul class="actions">
+						<li><a href="#ades" class="button">AdES</a></li>
+						<li><a href="#x509" class="button">X.509</a></li>
+						<li><a href="#demo" class="button validate">ERS</a></li>
+					</ul>
+					<a name="vals"></a>
+				</section>
+
+			<!-- Main -->
+				<section id="main" class="container">
+					<section class="box special">
+						<header class="major">
+							<h2>Validation Service</h2>
+							<p>The Validation Service implements the standard (ETSI EN 319 102-1) and validate arbitrary advanced electronic signatures using an XML-based validation policy and return a standardized validation report according to the forthcoming ETSI EN 319 102-2 standard. The FutureTrust Validation Service will be Open Source component, which may be used for the implementation of a “Qualified validation service for qualified electronic signatures” according to Article 33 of (2014/910/EU).</p>
+						</header>
+						<!-- <span class="image featured"><img th:src="@{/images/pic06.jpg}" alt="" /></span> -->
+					</section>
+
+					<!-- AdES -->
+					<a name="ades"></a>
+					<section class="box special features">
+						<div class="content">
+							<header class="major">
+								<h2>AdES!</h2>
+							</header>
+							<div class="validate-ades">
+								<p>Simply drag and drop the AdES signature to validate, along with the file it covers (if detached signature).</p>
+								<form class="dropbox has-advanced-upload" id="dropbox-val-ades" enctype="multipart/form-data" novalidate>
+									<div class="dropbox__input dropbox__validation" id="dropbox-ades">
+										<svg class="dropbox__icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
+										<input class="dropbox__file sign-file" type="file" name="files[]" id="ades-sign-file" />
+										<label class= "cursor-pointer" for="ades-sign-file">
+											<strong>Choose AdES signature file</strong><span class="dropbox__dragndrop"> or drag it here</span>
+										</label>
+									</div>
+									<div class="dropbox__input dropbox__validation" id="dropbox-file-ades">
+										<svg class="dropbox__icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
+										<input class="dropbox__file" type="file" name="files[]" id="ades-detach-file" />
+										<label class= "cursor-pointer" for="ades-detach-file">
+											<strong>Choose accompanying file</strong><span class="dropbox__dragndrop"> or drag it here</span>
+										</label>
+									</div>
+									<div class="dropbox__uploading" id="dropbox-uploading-ades"><p>Uploading&hellip;</p><p><i class="fa fa-spinner"></i></p></div>
+									<div class="dropbox__success validate-ades" id="dropbox-success-ades"></div>
+                                    <div class="dropbox__download download-button" id="download-request-ades">Download request &nbsp;<i class="fa fa-download"></i></div>
+                                    <div class="dropbox__download download-button" id="download-response-ades">Download response &nbsp;<i class="fa fa-download"></i></div>
+									<div class="dropbox__error validate-ades" id="dropbox-error-ades"></div>
+								</form>
+								<a class="button dropbox__trigger reset-validation" id="reset-validation-ades">Reset</a>
+								<a class="button special dropbox__trigger trigger-validation" id="trigger-validation-ades">Validate</a>
+							</div>
+						</div>
+					</section>
+
+					<!-- X.509 -->
+					<a name="x509"></a>
+					<section class="box special features">
+						<div class="content">
+							<header class="major">
+								<h2>X.509!</h2>
+							</header>
+							<div class="validate-x509">
+								<p>Simply drag and drop the X.509 certificate.</p>
+								<form class="dropbox has-advanced-upload" id="dropbox-val-x509" enctype="multipart/form-data" novalidate>
+									<div class="dropbox__input dropbox__validation" id="dropbox-x509">
+										<svg class="dropbox__icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
+										<input class="dropbox__file" type="file" name="files[]" id="x509-sign-file" />
+										<label class= "cursor-pointer" for="x509-sign-file">
+											<strong>Choose X.509 certificate file</strong><span class="dropbox__dragndrop"> or drag it here</span>
+										</label>
+									</div>
+									<div class="dropbox__uploading"><p>Uploading&hellip;</p><p><i class="fa fa-spinner"></i></p></div>
+									<div class="dropbox__success validate-x509" id="dropbox-success-x509"></div>
+									<div class="dropbox__download download-button" id="download-request-x509">Download request &nbsp;<i class="fa fa-download"></i></div>
+									<div class="dropbox__download download-button" id="download-response-x509">Download response &nbsp;<i class="fa fa-download"></i></div>
+									<div class="dropbox__error validate-x509" id="dropbox-error-x509"></div>
+								</form>
+								<a class="button dropbox__trigger" id="reset-validation-x509">Reset</a>
+								<a class="button special dropbox__trigger" id="trigger-validation-x509">Validate</a>
+							</div>
+						</div>
+					</section>
+
+					<!-- ERS -->
+					<a name="demo"></a>
+					<section class="box special features">
+						<div class="content">
+							<header class="major">
+								<h2>ERS!</h2>
+							</header>
+							<div class="validate">
+								<p>Simply drag and drop the Evidence Record to validate, along with the file it covers.</p>
+								<form class="dropbox has-advanced-upload" id="dropbox-val-ers" enctype="multipart/form-data" novalidate>
+									<div class="dropbox__input dropbox__validation" id="dropbox-ers">
+										<svg class="dropbox__icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
+										<input class="dropbox__file" type="file" name="files[]" id="ers-sign-file" />
+										<label class= "cursor-pointer" for="ers-sign-file">
+											<strong>Choose Evidence Record file</strong><span class="dropbox__dragndrop"> or drag it here</span>
+										</label>
+									</div>
+									<div class="dropbox__input dropbox__validation" id="dropbox-file-ers">
+										<svg class="dropbox__icon" xmlns="http://www.w3.org/2000/svg" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
+										<input class="dropbox__file" type="file" name="files[]" id="ers-detach-file" multiple/>
+										<label class= "cursor-pointer" for="ers-detach-file">
+											<strong>Choose accompanying file(s)</strong><span class="dropbox__dragndrop"> or drag it here</span>
+										</label>
+									</div>
+									<div class="dropbox__uploading"><p>Uploading&hellip;</p><p><i class="fa fa-spinner"></i></p></div>
+									<div class="dropbox__success validate" id="dropbox-success-ers"></div>
+									<div class="dropbox__download download-button" id="download-request-ers">Download request &nbsp;<i class="fa fa-download"></i></div>
+									<div class="dropbox__download download-button" id="download-response-ers">Download response &nbsp;<i class="fa fa-download"></i></div>
+									<div class="dropbox__error validate" id="dropbox-error-ers"></div>
+								</form>
+								<a class="button dropbox__trigger" id="reset-validation-ers">Reset</a>
+								<a class="button special dropbox__trigger" id="trigger-validation-ers">Validate</a>
+							</div>
+						</div>
+					</section>
+				</section>
+
+			<!-- Footer -->
+				<footer id="footer">
+					<ul class="copyright">
+						<li>&copy; FutureTrust Consortium. All rights reserved.</li>
+					</ul>
+				</footer>
+
+		</div>
+
+		<!-- Scripts -->
+			<script th:src="@{/js/jquery.min.js}"></script>
+			<script th:src="@{/js/jquery.dropotron.min.js}"></script>
+			<script th:src="@{/js/jquery.scrollgress.min.js}"></script>
+			<script th:src="@{/js/skel.min.js}"></script>
+			<script th:src="@{/js/util.js}"></script>
+			<!--[if lte IE 8]><script th:src="@{/js/ie/respond.min.js}"></script><![endif]-->
+			<script th:src="@{/js/main.js}"></script>
+			<script th:src="@{/js/crypto-js/crypto-js.js}"></script>
+			<script th:src="@{/js/crypto-js/core.js}"></script>
+			<script th:src="@{/js/crypto-js/sha256.js}"></script>
+			<script th:src="@{/js/crypto-js/enc-base64.js}"></script>
+			<script th:src="@{/js/file-saver/FileSaver.min.js}"></script>
+			<script th:src="@{/js/jquery-ajax/jquery-ajax-native.js}"></script>
+			<script th:src="@{/js/vals.js}"></script>
+
+	<script type="text/javascript">
+		Vals.init();
+	</script>
+
+	</body>
 </html>

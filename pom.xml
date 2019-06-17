@@ -52,6 +52,8 @@
         <xml-bind.version>2.3.0</xml-bind.version>
         <xmlsec.version>2.0.8</xmlsec.version>
         <thymeleaf-spring4.version>3.0.9</thymeleaf-spring4.version>
+        <thymeleaf.version>3.0.8.RELEASE</thymeleaf.version>
+        <thymeleaf-layout.version>2.2.2</thymeleaf-layout.version>
     </properties>
 
     <repositories>
