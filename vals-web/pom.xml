@@ -5,7 +5,7 @@
     <parent>
         <artifactId>vals</artifactId>
         <groupId>eu.futuretrust.vals</groupId>
-        <version>1.2.0</version>
+        <version>1.2.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -81,7 +81,7 @@
         <dependency>
             <groupId>eu.futuretrust.vals</groupId>
             <artifactId>vals-jaxb</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

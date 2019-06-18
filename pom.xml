@@ -19,7 +19,7 @@
     <groupId>eu.futuretrust.vals</groupId>
     <artifactId>vals</artifactId>
     <packaging>pom</packaging>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
 
     <modules>
         <module>vals-common</module>
