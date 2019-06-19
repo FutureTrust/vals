@@ -49,6 +49,7 @@ import org.bouncycastle.cms.PartialHashTreeVerificationException;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.DecoderException;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -142,6 +143,10 @@ public class CMSERSDSSValidator extends ERSDSSValidator {
             verifier.validate(evidenceRecord, value, algorithmIdentifier);
           }
         }
+      } catch (DecoderException e) {
+        // In case of malformed documents/document-hash
+        verifyResponse.setResult(getErrorResult(ResultMajor.REQUESTER_ERROR.getURI(), ResultMinor.NOT_SUPPORTED.getURI()));
+        return verifyResponse;
       } catch (IOException | CertificateException | TSPException | NoSuchAlgorithmException
           | PartialHashTreeVerificationException | OperatorCreationException
           | ArchiveTimeStampValidationException e) {
