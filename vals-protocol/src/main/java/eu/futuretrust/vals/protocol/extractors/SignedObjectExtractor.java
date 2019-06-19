@@ -28,6 +28,7 @@ import eu.futuretrust.vals.core.signature.exceptions.SignatureException;
 import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyRequestType;
 import eu.futuretrust.vals.protocol.exceptions.ProfileNotFoundException;
 import eu.futuretrust.vals.protocol.exceptions.SignedObjectNotFoundException;
+import eu.futuretrust.vals.protocol.exceptions.VerifyRequestException;
 import eu.futuretrust.vals.protocol.input.SignedObject;
 import eu.futuretrust.vals.protocol.utils.ProfileUtils;
 import java.util.List;
@@ -40,7 +41,7 @@ import org.bouncycastle.cms.CMSSignedData;
 public class SignedObjectExtractor {
 
   public SignedObject extract(final VerifyRequestType verifyRequest)
-      throws SignedObjectNotFoundException, FormatException, ProfileNotFoundException, SignatureException {
+      throws SignedObjectNotFoundException, FormatException, ProfileNotFoundException, SignatureException, VerifyRequestException {
     List<String> profiles = verifyRequest.getProfile();
 
     final byte[] signedObjectBytes = getSignedObjectBytes(verifyRequest);
@@ -53,7 +54,7 @@ public class SignedObjectExtractor {
 
 
   protected byte[] getSignedObjectBytes(final VerifyRequestType verifyRequest)
-      throws SignedObjectNotFoundException {
+      throws SignedObjectNotFoundException, VerifyRequestException {
     try
     {
       if (containsSignatureObject(verifyRequest))
@@ -66,8 +67,7 @@ public class SignedObjectExtractor {
             ResultMajor.REQUESTER_ERROR, ResultMinor.NOT_SUPPORTED);
       }
     } catch (Base64DecodingException e) {
-      throw new SignedObjectNotFoundException("No signed object found in the VerifyRequest",
-          ResultMajor.REQUESTER_ERROR, ResultMinor.NOT_SUPPORTED);
+      throw new VerifyRequestException("Request error", ResultMajor.REQUESTER_ERROR, ResultMinor.GENERAL_ERROR);
     }
   }
 
