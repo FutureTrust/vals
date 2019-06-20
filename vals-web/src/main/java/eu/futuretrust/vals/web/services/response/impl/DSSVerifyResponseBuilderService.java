@@ -106,7 +106,11 @@ public class DSSVerifyResponseBuilderService implements VerifyResponseBuilderSer
     } catch (SignedObjectException | InputDocumentException | VerifyResponseException e) {
       return VerifyResponseUtils
           .getVerifyResponse(e.getResultMajor(), e.getResultMinor(), e.getMessage(), verifyRequest);
-    } catch (SignatureException | ManifestException | FormatException e) {
+    } catch (SignatureException e) {
+      return VerifyResponseUtils
+          .getVerifyResponse(ResultMajor.REQUESTER_ERROR, ResultMinor.GENERAL_ERROR, e.getMessage(),
+              verifyRequest);
+    } catch (ManifestException | FormatException e) {
       return VerifyResponseUtils
           .getVerifyResponse(ResultMajor.RESPONDER_ERROR, ResultMinor.GENERAL_ERROR, e.getMessage(),
               verifyRequest);
