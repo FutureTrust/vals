@@ -49,6 +49,7 @@ import org.bouncycastle.cms.PartialHashTreeVerificationException;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.tsp.TSPException;
 import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.DecoderException;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -69,6 +70,7 @@ public class CMSERSDSSValidator extends ERSDSSValidator {
     this.verifier = evidenceRecordVerifier;
   }
 
+  @Override
   public VerifyResponseType validate(final VerifyRequestType verifyRequest) throws VerifyRequestException {
     VerifyResponseType verifyResponse = ObjectFactoryUtils.FACTORY_ETSI_119_442.createVerifyResponseType();
     if (verifyRequest == null || verifyRequest.getSignatureObject() == null) {
@@ -80,78 +82,87 @@ public class CMSERSDSSValidator extends ERSDSSValidator {
     Base64DataType base64Signature = verifyRequest.getSignatureObject().getBase64Signature();
     String mimeType = base64Signature.getMimeType();
     int documentsVerified = 0;
-    if (StringUtils.equalsIgnoreCase(mimeType, SignedObjectFormat.ERS_CMS.getMimeTypes()[0])) try {
-      InputDocumentsType inputDocuments = verifyRequest.getInputDocuments();
-      List<DocumentType> documents = inputDocuments.getDocument();
-      List<DocumentHashType> documentHashTypes = inputDocuments.getDocumentHash();
+    if (StringUtils.equalsIgnoreCase(mimeType, SignedObjectFormat.ERS_CMS.getMimeTypes()[0])) {
+      try {
+        InputDocumentsType inputDocuments = verifyRequest.getInputDocuments();
+        List<DocumentType> documents = inputDocuments.getDocument();
+        List<DocumentHashType> documentHashTypes = inputDocuments.getDocumentHash();
 
-      // Generate evidence record instance
-      final EvidenceRecord evidenceRecord = getEvidenceRecord(verifyRequest);
-      int groupSize = getFirstGroupSize(evidenceRecord);
+        // Generate evidence record instance
+        final EvidenceRecord evidenceRecord = getEvidenceRecord(verifyRequest);
+        int groupSize = getFirstGroupSize(evidenceRecord);
 
-      AlgorithmIdentifier algorithmIdentifier;
-      Object value;
-      if (!Utils.isCollectionEmpty(documentHashTypes)) {
-        algorithmIdentifier = findDigestAlgorithm(documentHashTypes);
-        if (groupSize < documentHashTypes.size()) {
-          // Validate each document-hash individually
+        AlgorithmIdentifier algorithmIdentifier;
+        Object value;
+        if (!Utils.isCollectionEmpty(documentHashTypes)) {
+          algorithmIdentifier = findDigestAlgorithm(documentHashTypes);
+          if (groupSize < documentHashTypes.size()) {
+            // Validate each document-hash individually
+            PartialHashTreeVerificationException hashTreeVerificationException = null;
+            for (DocumentHashType documentHashType : documentHashTypes) {
+              try {
+                verifier.validate(evidenceRecord, Base64.decode(documentHashType.getDigestInfos().get(0).getDigestValue()), algorithmIdentifier);
+                documentsVerified++;
+              } catch (PartialHashTreeVerificationException e) {
+                hashTreeVerificationException = e;
+              }
+            }
+            if (hashTreeVerificationException != null) {
+              throw hashTreeVerificationException;
+            }
+          } else {
+            List<byte[]> documentHashes = new ArrayList<>();
+            for (DocumentHashType documentHashType : documentHashTypes) {
+              documentHashes.add(Base64.decode(documentHashType.getDigestInfos().get(0).getDigestValue()));
+            }
+            value = (documentHashes.size() > 1) ? documentHashes : documentHashes.get(0);
+            verifier.validate(evidenceRecord, value, algorithmIdentifier);
+          }
+        } else {
+          algorithmIdentifier = null;
+          // Validate each document individually
           PartialHashTreeVerificationException hashTreeVerificationException = null;
-          for (DocumentHashType documentHashType : documentHashTypes) {
-            try {
-              verifier.validate(evidenceRecord, Base64.decode(documentHashType.getDigestInfos().get(0).getDigestValue()), algorithmIdentifier);
-              documentsVerified++;
-            } catch (PartialHashTreeVerificationException e) {
-              hashTreeVerificationException = e;
+          if (groupSize < documents.size()) {
+            for (DocumentType documentType : documents) {
+              try {
+                verifier.validate(evidenceRecord, Base64.decode(documentType.getBase64Data().getValue()), algorithmIdentifier);
+                documentsVerified++;
+              } catch (PartialHashTreeVerificationException e) {
+                hashTreeVerificationException = e;
+              }
             }
+            if (hashTreeVerificationException != null) {
+              throw hashTreeVerificationException;
+            }
+          } else {
+            List<byte[]> documentsByteArr = new ArrayList<>();
+            for (DocumentType documentType : documents) {
+              documentsByteArr.add(Base64.decode(documentType.getBase64Data().getValue()));
+            }
+            value = (documents.size() > 1) ? new DataGroup(documentsByteArr) : documentsByteArr.get(0);
+            verifier.validate(evidenceRecord, value, algorithmIdentifier);
           }
-          if (hashTreeVerificationException != null) {
-            throw hashTreeVerificationException;
-          }
-        } else {
-          List<byte[]> documentHashes = new ArrayList<>();
-          for (DocumentHashType documentHashType : documentHashTypes) {
-            documentHashes.add(Base64.decode(documentHashType.getDigestInfos().get(0).getDigestValue()));
-          }
-          value = (documentHashes.size() > 1) ? documentHashes : documentHashes.get(0);
-          verifier.validate(evidenceRecord, value, algorithmIdentifier);
         }
-      } else {
-        algorithmIdentifier = null;
-        // Validate each document individually
-        PartialHashTreeVerificationException hashTreeVerificationException = null;
-        if (groupSize < documents.size()) {
-          for (DocumentType documentType : documents) {
-            try {
-              verifier.validate(evidenceRecord, Base64.decode(documentType.getBase64Data().getValue()), algorithmIdentifier);
-              documentsVerified++;
-            } catch (PartialHashTreeVerificationException e) {
-              hashTreeVerificationException = e;
-            }
-          }
-          if (hashTreeVerificationException != null) {
-            throw hashTreeVerificationException;
-          }
+      } catch (DecoderException e) {
+        // In case of malformed documents/document-hash
+        verifyResponse.setResult(getErrorResult(ResultMajor.REQUESTER_ERROR.getURI(), ResultMinor.NOT_SUPPORTED.getURI()));
+        return verifyResponse;
+      } catch (IOException | CertificateException | TSPException | NoSuchAlgorithmException
+          | PartialHashTreeVerificationException | OperatorCreationException
+          | ArchiveTimeStampValidationException e) {
+        // Validation failed
+        if (documentsVerified > 0) {
+          verifyResponse.setResult(getErrorResult(ResultMajor.REQUESTER_ERROR.getURI(), ResultMinor.NOT_ALL_DOCUMENTS_PROTECTED.getURI()));
+          return verifyResponse;
         } else {
-          List<byte[]> documentsByteArr = new ArrayList<>();
-          for (DocumentType documentType : documents) {
-            documentsByteArr.add(Base64.decode(documentType.getBase64Data().getValue()));
-          }
-          value = (documents.size() > 1) ? new DataGroup(documentsByteArr) : documentsByteArr.get(0);
-          verifier.validate(evidenceRecord, value, algorithmIdentifier);
+          verifyResponse.setResult(getErrorResult(ResultMajor.REQUESTER_ERROR.getURI(), ResultMinor.GENERAL_ERROR.getURI()));
+          return verifyResponse;
         }
       }
-    } catch (IOException | CertificateException | TSPException | NoSuchAlgorithmException
-        | PartialHashTreeVerificationException | OperatorCreationException
-        | ArchiveTimeStampValidationException e) {
-      // Validation failed
-      if (documentsVerified > 0) {
-        verifyResponse.setResult(getErrorResult(ResultMajor.REQUESTER_ERROR.getURI(), ResultMinor.NOT_ALL_DOCUMENTS_PROTECTED.getURI()));
-        return verifyResponse;
-      } else {
-        verifyResponse.setResult(getErrorResult(ResultMajor.REQUESTER_ERROR.getURI(), ResultMinor.GENERAL_ERROR.getURI()));
-        return verifyResponse;
-      }
+    } else {
+      throw new VerifyRequestException("Invalid MimeType", ResultMajor.REQUESTER_ERROR, ResultMinor.GENERAL_ERROR);
     }
+
     // Validation success
     ResultType resultType = getResult();
     resultType.setResultMinor(ResultMinor.ON_ALL_DOCUMENTS.getURI());

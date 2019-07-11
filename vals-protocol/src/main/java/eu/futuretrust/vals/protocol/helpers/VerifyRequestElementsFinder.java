@@ -7,6 +7,7 @@ import eu.futuretrust.vals.jaxb.etsi.esi.validation.protocol.VerifyRequestType;
 import eu.futuretrust.vals.protocol.exceptions.InputDocumentException;
 import eu.futuretrust.vals.protocol.exceptions.ProfileNotFoundException;
 import eu.futuretrust.vals.protocol.exceptions.SignedObjectNotFoundException;
+import eu.futuretrust.vals.protocol.exceptions.VerifyRequestException;
 import eu.futuretrust.vals.protocol.extractors.InputDocumentsExtractor;
 import eu.futuretrust.vals.protocol.extractors.InputDocumentsHashExtractor;
 import eu.futuretrust.vals.protocol.extractors.PolicyExtractor;
@@ -25,7 +26,7 @@ public final class VerifyRequestElementsFinder {
   }
 
   public static SignedObject findSignature(VerifyRequestType verifyRequest)
-      throws SignedObjectNotFoundException, FormatException, ProfileNotFoundException, SignatureException {
+      throws SignedObjectNotFoundException, FormatException, ProfileNotFoundException, SignatureException, VerifyRequestException {
     SignedObjectExtractor extractor = new SignedObjectExtractor();
     return extractor.extract(verifyRequest);
   }
