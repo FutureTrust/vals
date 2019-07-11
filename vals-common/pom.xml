@@ -17,7 +17,7 @@
     <parent>
         <artifactId>vals</artifactId>
         <groupId>eu.futuretrust.vals</groupId>
-        <version>1.2.1</version>
+        <version>1.2.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
