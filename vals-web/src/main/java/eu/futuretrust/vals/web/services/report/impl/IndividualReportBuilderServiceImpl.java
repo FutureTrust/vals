@@ -150,7 +150,8 @@ public class IndividualReportBuilderServiceImpl implements IndividualReportBuild
       final List<Ocsp> ocsps,
       final List<Crl> crls,
       final MainIndication mainIndication,
-      final SubIndication subIndication) throws VerifyResponseException {
+      final SubIndication subIndication) throws VerifyResponseException
+  {
     final IndividualReportType individualReport = ObjectFactoryUtils.FACTORY_OASIS_DSSX
         .createIndividualReportType();
     individualReport.setDetails(ObjectFactoryUtils.FACTORY_OASIS_CORE_1.createAnyType());
@@ -190,7 +191,8 @@ public class IndividualReportBuilderServiceImpl implements IndividualReportBuild
       SubIndication subIndication,
       IndividualReportType individualReport,
       ValidationObjectListType validationObjectListType)
-      throws VerifyResponseException {
+      throws VerifyResponseException
+  {
     setSignatureIdentificationElement(signedObject.getContent(), individualReport);
     setValidatorInformation(individualReport);
     setSignatureValidationStatus(mainIndication, subIndication, individualReport);
@@ -292,7 +294,8 @@ public class IndividualReportBuilderServiceImpl implements IndividualReportBuild
    * @see <a href="https://docbox.etsi.org/esi/open/Latest_Drafts/ESI-0019102-2v012.pdf">ETSI TS 119
    * 102-2</a> clauses 4.2.3 & 5.2.3
    */
-  public void setValidatorInformation(IndividualReportType individualReport) {
+  public void setValidatorInformation(IndividualReportType individualReport)
+  {
     JAXBElement<String> subjectName = ObjectFactoryUtils.FACTORY_XML_DSIG
         .createX509DataTypeX509SubjectName(SubjectNameInfo.SUBJECT_NAME);
 
@@ -574,7 +577,8 @@ public class IndividualReportBuilderServiceImpl implements IndividualReportBuild
 
       throw new ValidationObjectException(errorMessage, ResultMajor.RESPONDER_ERROR,
           ResultMinor.GENERAL_ERROR);
-    } else {
+    }
+    else {
       ValidationObjectType validationObjectType = optionalValidationObjectType.get();
       VOReferenceType voReference = ObjectFactoryUtils.FACTORY_ETSI_119_102_2
           .createVOReferenceType();
@@ -773,33 +777,20 @@ public class IndividualReportBuilderServiceImpl implements IndividualReportBuild
   private SignerInformation getSignerInformation(
       final DiagnosticData diagnosticData,
       final SignatureWrapper signatureWrapper)
-      throws VerifyResponseException {
-    if (!signatureWrapper.getSigningCertificateId().equals("")) {
+      throws VerifyResponseException
+  {
+    if (!signatureWrapper.getSigningCertificateId().equals(""))
+    {
+      CertificateWrapper certificateWrapper = diagnosticData
+          .getUsedCertificateById(signatureWrapper.getSigningCertificateId());
 
-      try {
-        CertificateWrapper certificateWrapper = diagnosticData
-            .getUsedCertificateById(signatureWrapper.getSigningCertificateId());
-        DSSCertificateWrapperParser dssCertificateWrapperParser = new DSSCertificateWrapperParser();
-        XmlCertificate xmlCertificate = dssCertificateWrapperParser
-            .getXmlCertificateField(certificateWrapper);
-        byte[] certToBase64 = dssCertificateWrapperParser.getCertificateBase64(certificateWrapper);
-
-        SignerInformation signerInformation = new SignerInformation(certToBase64);
-
-        InputStream in = new ByteArrayInputStream(Base64.decode(certToBase64));
-        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
-        X509Certificate signerCert = (X509Certificate) certFactory.generateCertificate(in);
-
-        signerInformation.setDistinguishedName(signerCert.getSubjectDN().getName());
-        signerInformation.setPseudonym(xmlCertificate.getPseudonym());
-        return signerInformation;
-      } catch (DSSParserException | CertificateException e) {
-        String errorMessage = "Error while retrieving Signer Information" + e.getMessage();
-
-        throw new VerifyResponseException(errorMessage, ResultMajor.RESPONDER_ERROR,
-            ResultMinor.GENERAL_ERROR);
-      }
-    } else {
+      byte[] certToBase64 = certificateWrapper.getBinaries();
+      SignerInformation signerInformation = new SignerInformation(certToBase64);
+      signerInformation.setDistinguishedName(certificateWrapper.getCertificateDN());
+      signerInformation.setPseudonym(certificateWrapper.getPseudo());
+      return signerInformation;
+    }
+    else {
       String errorMessage = "Error while retrieving Signer Information";
 
       throw new VerifyResponseException(errorMessage,

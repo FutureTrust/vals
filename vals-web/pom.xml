@@ -5,7 +5,7 @@
     <parent>
         <artifactId>vals</artifactId>
         <groupId>eu.futuretrust.vals</groupId>
-        <version>1.2.2</version>
+        <version>1.2.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,7 +16,7 @@
         <dependency>
             <groupId>eu.futuretrust.vals</groupId>
             <artifactId>vals-protocol</artifactId>
-            <version>${project.version}</version>
+            <version>1.2.3</version>
         </dependency>
 
         <!-- Spring Boot dependencies -->

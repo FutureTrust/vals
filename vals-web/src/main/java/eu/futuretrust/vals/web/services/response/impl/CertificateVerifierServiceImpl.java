@@ -21,7 +21,7 @@ import eu.futuretrust.vals.core.enums.ResultMajor;
 import eu.futuretrust.vals.core.enums.ResultMinor;
 import eu.futuretrust.vals.protocol.exceptions.KeystoreLoadingException;
 import eu.futuretrust.vals.web.properties.CryptoProperties;
-import eu.futuretrust.vals.web.services.gtls.GTSLCertificateSource;
+import eu.futuretrust.vals.web.services.gtsl.GTSLCertificateSource;
 import eu.futuretrust.vals.web.services.response.CertificateVerifierService;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -63,6 +63,9 @@ public class CertificateVerifierServiceImpl implements CertificateVerifierServic
     this.cryptoProperties = cryptoProperties;
     this.certificateVerifier.setDataLoader(new CommonsDataLoader());
     this.certificateVerifier.setOcspSource(new OnlineOCSPSource());
+    this.certificateVerifier.setDataLoader(new CommonsDataLoader());
+    this.certificateVerifier.setIncludeCertificateRevocationValues(true);
+    this.certificateVerifier.setIncludeCertificateTokenValues(true);
     CRLSource crlSource;
     this.gtslEndpointUrl = gtslEndpointUrl;
 
@@ -154,9 +157,10 @@ public class CertificateVerifierServiceImpl implements CertificateVerifierServic
     try {
       KeyStoreCertificateSource keyStoreCertificateSource = getLocalTrustedSource();
       if (keyStoreCertificateSource != null) {
-        ServiceInfo serviceInfo = new ServiceInfo();
+        List<ServiceInfo> serviceInfos = new ArrayList<>();
+        serviceInfos.add(new ServiceInfo());
         for (CertificateToken certificateToken : keyStoreCertificateSource.getCertificates()) {
-          certificateSource.addCertificate(certificateToken, serviceInfo);
+          certificateSource.addCertificate(certificateToken, serviceInfos);
         }
       }
     } catch (Exception e) {

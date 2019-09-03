@@ -31,8 +31,7 @@ public class DSSCertificateWrapperParser {
       throw new DSSParserException("CertificateWrapper is null", ResultMajor.RESPONDER_ERROR,
           ResultMinor.GENERAL_ERROR);
     }
-    XmlCertificate xmlCertificate = getXmlCertificateField(certificateWrapper);
-    return Base64.encode(xmlCertificate.getBase64Encoded());
+    return certificateWrapper.getBinaries();
   }
 
   /**

@@ -841,7 +841,7 @@ public class ValidationReportDataBuilderServiceImpl implements ValidationReportD
   private List<byte[]> getTimestampsNotRespectingOrderingConstraints(final DiagnosticData diagnosticData) {
 
     return diagnosticData.getAllTimestamps().stream()
-            .map(timestampWrapper -> timestampWrapper.getBase64Encoded().getBytes())
+            .map(timestampWrapper -> timestampWrapper.getBinaries())
             .collect(Collectors.toList());
   }
 

@@ -1,9 +1,11 @@
 package eu.futuretrust.vals.web.services.report.impl;
 
 import eu.europa.esig.dss.client.http.NativeHTTPDataLoader;
+import eu.europa.esig.dss.jaxb.diagnostic.XmlCertificate;
 import eu.europa.esig.dss.validation.CertificateValidator;
 import eu.europa.esig.dss.validation.reports.CertificateReports;
 import eu.europa.esig.dss.validation.reports.SimpleCertificateReport;
+import eu.europa.esig.dss.validation.reports.wrapper.CertificateWrapper;
 import eu.europa.esig.dss.x509.CertificateToken;
 import eu.futuretrust.vals.core.enums.ResultMajor;
 import eu.futuretrust.vals.core.enums.ResultMinor;
@@ -38,6 +40,7 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class X509ValidationReportBuilderServiceImpl implements ValidationReportBuilderService {
@@ -156,32 +159,48 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
 
   private ResultMinor getResultMinor(final CertificateToken certificateToken,
                                      final CertificateReports reports,
-                                     final Date validationTime) {
+                                     final Date validationTime) throws CertificateException
+  {
 
-    final SimpleCertificateReport report = reports.getSimpleReport();
-    String certId = report.getCertificateIds().get(0);
+    Optional<XmlCertificate> first = reports.getDiagnosticDataJaxb().getUsedCertificates().stream()
+            .filter(cert -> cert.getSerialNumber().equals(certificateToken.getSerialNumber()))
+            .findFirst();
 
-    if (validationTime.before(certificateToken.getNotBefore())) {
-      return ResultMinor.NOT_VALID_YET;
+    if (first.isPresent())
+    {
+      final SimpleCertificateReport report = reports.getSimpleReport();
+      String certId = report.getCertificateIds().get(0);
+
+      if (validationTime.before(certificateToken.getNotBefore()))
+      {
+        return ResultMinor.NOT_VALID_YET;
+      }
+
+      if (isCertificateOnHold(report, certId))
+      {
+        return ResultMinor.ON_HOLD;
+      }
+
+      if (isCertificateRevoked(first.get()))
+      {
+        return ResultMinor.REVOKED;
+      }
+
+      if (certificateToken.isExpiredOn(validationTime))
+      {
+        return ResultMinor.EXPIRED;
+      }
+
+      if (isCertificateChainIncomplete(reports, certificateToken))
+      {
+        return ResultMinor.CERTIFICATE_CHAIN_NOT_COMPLETE;
+      }
+
+      return ResultMinor.ON_ALL_DOCUMENTS;
     }
-
-    if (isCertificateOnHold(report, certId)) {
-      return ResultMinor.ON_HOLD;
+    else {
+      throw new CertificateException("No certificate found in request");
     }
-
-    if (isCertificateRevoked(certificateToken)) {
-      return ResultMinor.REVOKED;
-    }
-
-    if (certificateToken.isExpiredOn(validationTime)) {
-      return ResultMinor.EXPIRED;
-    }
-
-    if (isCertificateChainIncomplete(reports, certificateToken)) {
-      return ResultMinor.CERTIFICATE_CHAIN_NOT_COMPLETE;
-    }
-
-    return ResultMinor.ON_ALL_DOCUMENTS;
   }
 
   private NameIDType getSignerIdentity(final VerifyRequestType verifyRequest, final X509Certificate certificate) {
@@ -213,12 +232,10 @@ public class X509ValidationReportBuilderServiceImpl implements ValidationReportB
     return null;
   }
 
-  private boolean isCertificateRevoked(final CertificateToken certificateToken) {
+  private boolean isCertificateRevoked(final XmlCertificate xmlCertificate) {
 
-    if(certificateToken.isRevoked() != null && certificateToken.isRevoked()) {
-      return true;
-    }
-    return false;
+    CertificateWrapper certificateWrapper = new CertificateWrapper(xmlCertificate);
+    return certificateWrapper.isRevoked();
   }
 
   private boolean isCertificateOnHold(final SimpleCertificateReport report, final String id) {

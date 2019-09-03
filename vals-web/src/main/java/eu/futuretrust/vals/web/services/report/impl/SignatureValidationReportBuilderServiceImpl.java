@@ -157,7 +157,7 @@ public class SignatureValidationReportBuilderServiceImpl implements SignatureVal
             signerInformationType.setSignerCertificate(voReferenceToCertificateObject);
             signerInformationType.setPseudonym(xmlCertificate.getPseudonym() != null);
         } catch (DSSParserException e) {
-            LOGGER.error("Finding VoRefrence to certificate object failed: %s", e);
+            LOGGER.error("Finding VoReference to certificate object failed: %s", e);
         }
         return signerInformationType;
     }

@@ -72,7 +72,7 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
 
   @Autowired
   public DSSValidationReportBuilderService(
-      @Qualifier("certificateVerifierServiceImpl") final CertificateVerifierService certificateVerifierService,
+      @Qualifier("httpCertificateVerifierService") final CertificateVerifierService certificateVerifierService,
       IndividualReportBuilderService individualReportBuilderService,
       SignatureValidationReportBuilderService signatureValidationReportBuilderService) {
     this.certificateVerifierService = certificateVerifierService;
@@ -205,11 +205,19 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
               result.setResultMinor(ResultMinor.INCORRECT_SIGNATURE.getURI());
             result.setResultMessage(VerifyResponseUtils.getResultMessage("Detached signature without input document/document-hash"));
           }
+          if (mainIndication == MainIndication.INDETERMINATE && subIndication == SubIndication.NO_CERTIFICATE_CHAIN_FOUND) {
+            result.setResultMajor(ResultMajor.INSUFFICIENT_INFORMATION.getURI());
+            result.setResultMinor(ResultMinor.CERTIFICATE_CHAIN_NOT_COMPLETE.getURI());
+          }
           // Result when detached signature with not matching document/document-hash
           if (mainIndication == MainIndication.TOTAL_FAILED && subIndication == SubIndication.HASH_FAILURE) {
             result.setResultMajor(ResultMajor.REQUESTER_ERROR.getURI());
             result.setResultMinor(ResultMinor.NOT_SUPPORTED.getURI());
             result.setResultMessage(VerifyResponseUtils.getResultMessage("Detached signature with not-matching input document/document-hash"));
+          }
+          if (mainIndication == MainIndication.INDETERMINATE && subIndication == SubIndication.TRY_LATER) {
+            result.setResultMajor(ResultMajor.INSUFFICIENT_INFORMATION.getURI());
+            result.setResultMinor(ResultMinor.CRL_NOT_AVAILABLE.getURI());
           }
           // Result when enveloping signature with input document/document-hash
           if (SignedObjectType.ENVELOPING.equals(signedObject.getType()) &&
@@ -455,7 +463,7 @@ public class DSSValidationReportBuilderService implements ValidationReportBuilde
               .getTimestampValidity();
 
       List<DigestAlgoAndValue> referencedObjectsByHash = new ArrayList<>();
-      timestamps.add(new Timestamp(timestampWrapper.getBase64Encoded().getBytes(), timeStampValidityType, new ArrayList<>(), referencedObjectsByHash,
+      timestamps.add(new Timestamp(timestampWrapper.getBinaries(), timeStampValidityType, new ArrayList<>(), referencedObjectsByHash,
       timestampWrapper.getProductionTime()));
     }
 

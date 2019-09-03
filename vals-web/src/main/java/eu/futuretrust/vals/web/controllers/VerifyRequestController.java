@@ -72,7 +72,7 @@ public class VerifyRequestController
     if (! MultipartFileUtils.valid(signature)) {
       return ResponseEntity.badRequest().build();
     }
-    //boolean docsVald = MultipartFileUtils.valid(documents);
+
     if (! MultipartFileUtils.valid(documents)) {
       return ResponseEntity.badRequest().build();
     }

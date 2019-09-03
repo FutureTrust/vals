@@ -1,4 +1,4 @@
-package eu.futuretrust.vals.web.services.gtls.dto;
+package eu.futuretrust.vals.web.services.gtsl.dto;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

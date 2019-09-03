@@ -1,11 +1,11 @@
-package eu.futuretrust.vals.web.services.gtls;
+package eu.futuretrust.vals.web.services.gtsl;
 
 import eu.europa.esig.dss.tsl.ServiceInfo;
 import eu.europa.esig.dss.x509.CertificateSourceType;
 import eu.europa.esig.dss.x509.CertificateToken;
 import eu.europa.esig.dss.x509.CommonTrustedCertificateSource;
 import eu.europa.esig.jaxb.tsl.TSPServiceType;
-import eu.futuretrust.vals.web.services.gtls.dto.ResultDTO;
+import eu.futuretrust.vals.web.services.gtsl.dto.ResultDTO;
 import eu.futuretrust.vals.web.services.helper.ServiceInfoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ public class GTSLCertificateSource extends CommonTrustedCertificateSource {
     }
 
     @Override
-    protected CertificateSourceType getCertificateSourceType() {
+    public CertificateSourceType getCertificateSourceType() {
         return CertificateSourceType.TRUSTED_LIST;
     }
 
@@ -44,7 +44,7 @@ public class GTSLCertificateSource extends CommonTrustedCertificateSource {
             TSPServiceType tspServiceType = fetchGtsl(base64Cert);
             if (tspServiceType != null) {
                 ServiceInfo serviceInfo = ServiceInfoHelper.buildServiceInfo(tspServiceType.getServiceInformation(), certificateToken.getCertificate());
-                return super.addCertificate(certificateToken, serviceInfo);
+                return super.addCertificate(certificateToken);
             }
         } catch (CertificateEncodingException e) {
             LOGGER.error("Certificate parsing error");

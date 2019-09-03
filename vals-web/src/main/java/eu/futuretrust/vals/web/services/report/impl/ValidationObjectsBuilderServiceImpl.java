@@ -51,7 +51,8 @@ public class ValidationObjectsBuilderServiceImpl implements ValidationObjectsBui
         signersDocument, certificates,
         listPOE, ocsps, crls);
 
-    for (Timestamp timestamp : listPOE) {
+    for (Timestamp timestamp : listPOE)
+    {
       Optional<ValidationObjectType> maybeTimestamp = findByBase64(timestamp.getBase64(),
           ValidationObjectTypeId.TIMESTAMP,
           validationObjectListType);

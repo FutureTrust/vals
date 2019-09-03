@@ -95,6 +95,7 @@ public class SignatureValidation {
 
     // Create the signature validator
     SignedDocumentValidator validator = SignedDocumentValidator.fromDocument(signatureDSSDocument);
+    validator.setCertificateVerifier(certificateVerifier);
 
     // Add the external documents
     List<DSSDocument> detachedList;

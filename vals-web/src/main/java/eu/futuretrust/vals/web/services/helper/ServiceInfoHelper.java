@@ -39,7 +39,7 @@ public class ServiceInfoHelper {
 
         if (tspServiceInformationType.getServiceName().getName() != null &&
             !tspServiceInformationType.getServiceName().getName().isEmpty()) {
-            serviceInfo.setServiceName(tspServiceInformationType.getServiceName().getName().get(0).getValue());
+            serviceInfo.setTspName(tspServiceInformationType.getServiceName().getName().get(0).getValue());
         }
 
         if (tspServiceInformationType.getServiceDigitalIdentity() != null) {
@@ -54,9 +54,11 @@ public class ServiceInfoHelper {
 
         final MutableTimeDependentValues<ServiceInfoStatus> status = new MutableTimeDependentValues<ServiceInfoStatus>();
         final Map<String, List<Condition>> qualifiersAndConditions = new HashMap<>();
-        final ServiceInfoStatus serviceInfoStatus = new ServiceInfoStatus(tspServiceInformationType.getServiceTypeIdentifier(),
-            tspServiceInformationType.getServiceStatus(), new HashMap<>(), new ArrayList<>(), new ArrayList<>(),
-            null, null, null);
+        final ServiceInfoStatus serviceInfoStatus = new ServiceInfoStatus(tspServiceInformationType.getServiceName().getName().get(0).getValue(),
+                tspServiceInformationType.getServiceTypeIdentifier(),
+                tspServiceInformationType.getServiceStatus(),
+                new HashMap<>(), new ArrayList<>(), new ArrayList<>(), null, null, null);
+
         status.addOldest(serviceInfoStatus);
         serviceInfo.setStatus(status);
 

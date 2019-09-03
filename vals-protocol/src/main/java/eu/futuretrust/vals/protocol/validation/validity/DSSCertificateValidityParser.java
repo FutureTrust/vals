@@ -63,31 +63,20 @@ public class DSSCertificateValidityParser {
   private void addCertificateContent() throws DSSParserException {
     CertificateContentType certificateContentType = ObjectFactoryUtils.FACTORY_OASIS_DSSX
         .createCertificateContentType();
-    DSSCertificateWrapperParser dssCertificateWrapperParser = new DSSCertificateWrapperParser();
-    byte[] certBase64 = dssCertificateWrapperParser.getCertificateBase64(certificateWrapper);
-    try {
-      CertificateFactory cf = CertificateFactory.getInstance("X.509");
-      X509Certificate cert = (X509Certificate) cf
-          .generateCertificate(new ByteArrayInputStream(Base64.decode(certBase64)));
 
-      certificateContentType.setVersion((BigInteger.valueOf(cert.getVersion())));
-      certificateContentType.setSerialNumber(cert.getSerialNumber());
-      certificateContentType.setSignatureAlgorithm(cert.getSigAlgName());
-      certificateContentType.setIssuer(cert.getIssuerDN().getName());
+      certificateContentType.setVersion((BigInteger.valueOf(certificateWrapper.getVersion())));
+      certificateContentType.setSerialNumber(new BigInteger(certificateWrapper.getSerialNumber()));
+      certificateContentType.setSignatureAlgorithm(certificateWrapper.getEncryptionAlgoUsedToSignThisToken());
+      certificateContentType.setIssuer(certificateWrapper.getCertificateIssuerDN());
 
       ValidityPeriodType validityPeriod = ObjectFactoryUtils.FACTORY_OASIS_DSSX
           .createValidityPeriodType();
       validityPeriod.setNotBefore(
-          XMLGregorianCalendarBuilder.createXMLGregorianCalendar(cert.getNotBefore()));
+          XMLGregorianCalendarBuilder.createXMLGregorianCalendar(certificateWrapper.getNotBefore()));
       validityPeriod
-          .setNotAfter(XMLGregorianCalendarBuilder.createXMLGregorianCalendar(cert.getNotAfter()));
+          .setNotAfter(XMLGregorianCalendarBuilder.createXMLGregorianCalendar(certificateWrapper.getNotAfter()));
       certificateContentType.setValidityPeriod(validityPeriod);
-      certificateContentType.setSubject(cert.getSubjectDN().getName());
-    } catch (java.security.cert.CertificateException e) {
-      throw new DSSParserException("X509 certificate encoding is erroneous",
-          ResultMajor.REQUESTER_ERROR,
-          ResultMinor.GENERAL_ERROR);
-    }
+      certificateContentType.setSubject(certificateWrapper.getCertificateDN());
   }
 
 
